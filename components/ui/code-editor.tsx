@@ -2,7 +2,7 @@
 
 import { Check, Copy } from "lucide-react"
 import { type UseInViewOptions, useInView } from "motion/react"
-import { useTheme } from "next-themes"
+import { useThemeContext } from "@/components/theme-provider"
 import * as React from "react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
@@ -94,7 +94,8 @@ function CodeEditor({
   onCopy,
   ...props
 }: CodeEditorProps) {
-  const { resolvedTheme } = useTheme()
+  const { isDarkMode } = useThemeContext()
+  const resolvedTheme = isDarkMode ? "dark" : "light"
 
   const editorRef = React.useRef<HTMLDivElement>(null)
   const [visibleCode, setVisibleCode] = React.useState("")
@@ -184,7 +185,7 @@ function CodeEditor({
         className,
       )}
       data-slot="code-editor"
-      {...(props as any)}
+      {...(props as React.ComponentProps<"div">)}
     >
       {header ? (
         <div className="bg-muted border-b border-border/75 dark:border-border/50 relative flex flex-row items-center justify-between gap-y-2 h-10 px-4">
@@ -232,7 +233,7 @@ function CodeEditor({
       ) : (
         copyButton && (
           <CopyButton
-            className="absolute right-2 top-2 z-[2] backdrop-blur-md bg-transparent hover:bg-black/5 dark:hover:bg-white/10"
+            className="absolute right-2 top-2 z-2 backdrop-blur-md bg-transparent hover:bg-black/5 dark:hover:bg-white/10"
             content={code}
             onCopy={onCopy}
             size="sm"
@@ -246,7 +247,7 @@ function CodeEditor({
       >
         <div
           className={cn(
-            "[&>pre,_&_code]:!bg-transparent [&>pre,_&_code]:[background:transparent_!important] [&>pre,_&_code]:border-none [&_code]:!text-[13px]",
+            "[&>pre,&_code]:bg-transparent! [&>pre,&_code]:[background:transparent_!important] [&>pre,&_code]:border-none [&_code]:text-[13px]!",
             cursor &&
               !isDone &&
               "[&_.line:last-of-type::after]:content-['|'] [&_.line:last-of-type::after]:animate-pulse [&_.line:last-of-type::after]:inline-block [&_.line:last-of-type::after]:w-[1ch] [&_.line:last-of-type::after]:-translate-px",

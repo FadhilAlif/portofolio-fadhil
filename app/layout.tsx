@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils"
 import { Suspense } from "react"
 import RootProvider from "@/lib/root-provider"
 import LoadingSpinner from "@/components/ui/loading-spinner"
+import { FloatingDock } from "@/components/navigation/floating-dock"
 
 const fontSans = Geist({
   subsets: ["latin"],
@@ -40,7 +41,10 @@ export default function RootLayout({
     >
       <body>
         <Suspense fallback={<LoadingSpinner />}>
-          <RootProvider>{children}</RootProvider>
+          <RootProvider>
+            {children}
+            <FloatingDock />
+          </RootProvider>
         </Suspense>
       </body>
     </html>
