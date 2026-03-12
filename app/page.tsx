@@ -8,6 +8,10 @@ import {
   PhoneCallIcon,
 } from "@phosphor-icons/react"
 import { SpotlightBackground } from "@/components/ui/spotlight"
+import {
+  SkillCategory,
+  type SkillCategoryItem,
+} from "@/components/ui/skill-category"
 import { PixelImage } from "@/components/icons/pixel-image"
 import { FadhilSignatureEffect } from "@/components/ui/apple-hello-effect"
 
@@ -91,10 +95,74 @@ const educations = [
   },
 ]
 
-export default function Page() {
-  const skillIconsOptions =
-    "js,ts,dart,go,java,php,c,react,nextjs,vue,nuxtjs,flutter,html,css,tailwind,bootstrap,express,nestjs,flask,postgres,mysql,mongodb,git,github,docker,firebase,supabase,postman,figma"
+type SkillGroup = {
+  title: string
+  skills: SkillCategoryItem[]
+}
 
+const skillGroups: SkillGroup[] = [
+  {
+    title: "Programming Languages",
+    skills: [
+      { label: "JavaScript", iconId: "js" },
+      { label: "TypeScript", iconId: "ts" },
+      { label: "Dart", iconId: "dart" },
+      { label: "Golang", iconId: "go" },
+      { label: "Java", iconId: "java" },
+      { label: "PHP", iconId: "php" },
+      { label: "C", iconId: "c" },
+    ],
+  },
+  {
+    title: "Frameworks & Libraries",
+    skills: [
+      { label: "React", iconId: "react" },
+      { label: "Next.js", iconId: "nextjs" },
+      { label: "Vue", iconId: "vue" },
+      { label: "Nuxt.js", iconId: "nuxtjs" },
+      { label: "Flutter", iconId: "flutter" },
+      { label: "HTML", iconId: "html" },
+      { label: "CSS", iconId: "css" },
+      { label: "Tailwind CSS", iconId: "tailwind" },
+      { label: "Bootstrap", iconId: "bootstrap" },
+      { label: "Express", iconId: "express" },
+      { label: "NestJS", iconId: "nestjs" },
+      { label: "Flask", iconId: "flask" },
+      { label: "Pinia", iconId: "pinia" },
+      { label: "vite", iconId: "vite" },
+      // { label: "RESTful APIs", iconId: null },
+      // { label: "Fiber", iconId: null },
+      // { label: "Zustand", iconId: null },
+      // { label: "TanStack Query", iconId: null },
+    ],
+  },
+  {
+    title: "Databases",
+    skills: [
+      { label: "PostgreSQL", iconId: "postgres" },
+      { label: "MySQL", iconId: "mysql" },
+      { label: "MongoDB", iconId: "mongodb" },
+      { label: "Firebase", iconId: "firebase" },
+      { label: "Supabase", iconId: "supabase" },
+    ],
+  },
+  {
+    title: "Tools & Platforms",
+    skills: [
+      { label: "Git", iconId: "git" },
+      { label: "GitHub", iconId: "github" },
+      { label: "Docker", iconId: "docker" },
+      { label: "Postman", iconId: "postman" },
+      { label: "Figma", iconId: "figma" },
+      { label: "Jenkins", iconId: "jenkins" },
+      { label: "Vercel", iconId: "vercel" },
+      // { label: "Trello", iconId: null },
+      // { label: "Canva", iconId: null },
+    ],
+  },
+]
+
+export default function Page() {
   return (
     <div className="relative flex min-h-svh flex-col bg-background pb-32 text-foreground">
       <SpotlightBackground
@@ -168,7 +236,7 @@ export default function Page() {
             </div>
 
             <div className="flex shrink-0 flex-col items-center justify-center gap-6">
-              <div className="relative flex h-72 w-56 rotate-2 transform items-center justify-center overflow-hidden rounded-[2rem] border-[6px] border-background bg-background shadow-xl ring-1 ring-border/50 transition-transform duration-300 hover:rotate-0 md:h-80 md:w-64 lg:h-[360px] lg:w-[280px]">
+              <div className="relative flex h-72 w-56 rotate-2 transform items-center justify-center overflow-hidden rounded-[2rem] border-[6px] border-background bg-background shadow-xl ring-1 ring-border/50 transition-transform duration-300 hover:rotate-0 md:h-80 md:w-64 lg:h-90 lg:w-70">
                 <PixelImage
                   src="/assets/fadhil-photo-profie.png"
                   grid="8x8"
@@ -306,28 +374,25 @@ export default function Page() {
 
           {/* Skills Section */}
           <section className="flex w-full flex-col gap-6 border-t border-border pt-12">
-            <h3 className="text-2xl font-semibold tracking-tight text-foreground">
-              Skills
-            </h3>
-            <p className="text-sm text-muted-foreground">
-              A selection of tools, languages, and frameworks I use to build
-              digital solutions.
-            </p>
-            <div className="mt-4 flex flex-col gap-4">
-              {/* Light Theme Icons */}
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                className="mx-auto w-full max-w-3xl md:mx-0 dark:hidden"
-                src={`https://skillicons.dev/icons?i=${skillIconsOptions}&theme=light&perline=12`}
-                alt="Skills Icons"
-              />
-              {/* Dark Theme Icons */}
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                className="mx-auto hidden w-full max-w-3xl md:mx-0 dark:block"
-                src={`https://skillicons.dev/icons?i=${skillIconsOptions}&theme=dark&perline=12`}
-                alt="Skills Icons"
-              />
+            <div>
+              <h3 className="text-2xl font-semibold tracking-tight text-foreground">
+                Skills
+              </h3>
+              <p className="mt-1 text-sm text-muted-foreground">
+                A selection of tools, languages, and frameworks I use to build
+                digital solutions.
+              </p>
+            </div>
+            <div className="mt-2 flex flex-col divide-y divide-border/50">
+              {skillGroups.map((group) => (
+                <SkillCategory
+                  key={group.title}
+                  title={group.title}
+                  skills={group.skills}
+                  perLine={12}
+                  className="py-6 first:pt-0 last:pb-0"
+                />
+              ))}
             </div>
           </section>
         </div>
