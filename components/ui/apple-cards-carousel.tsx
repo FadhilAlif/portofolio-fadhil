@@ -120,7 +120,6 @@ export const Carousel = ({ items, initialScroll = 0 }: CarouselProps) => {
                     duration: 0.5,
                     delay: 0.2 * index,
                     ease: "easeOut",
-                    once: true,
                   },
                 }}
                 className="rounded-3xl last:pr-[5%] md:last:pr-[33%]"
@@ -225,6 +224,7 @@ export const Card = ({ card, index, layout = false }: CardProps) => {
                 type="button"
                 className="sticky top-4 right-0 ml-auto flex h-8 w-8 items-center justify-center rounded-full bg-black dark:bg-white"
                 onClick={handleClose}
+                aria-label="Close"
               >
                 <IconX className="h-6 w-6 text-neutral-100 dark:text-neutral-900" />
               </button>
@@ -298,7 +298,7 @@ export const BlurImage = ({
     <Image
       alt={alt ? alt : "Background of a beautiful view"}
       className={cn(
-        "h-full w-full transition duration-300 object-cover",
+        "h-full w-full object-cover transition duration-300",
         isLoading ? "blur-sm" : "blur-0",
         className
       )}
