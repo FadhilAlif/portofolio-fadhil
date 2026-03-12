@@ -7,6 +7,9 @@ import {
   MapPinIcon,
   PhoneCallIcon,
 } from "@phosphor-icons/react"
+import { SpotlightBackground } from "@/components/ui/spotlight"
+import { PixelImage } from "@/components/icons/pixel-image"
+import { FadhilSignatureEffect } from "@/components/ui/apple-hello-effect"
 
 const experiences = [
   {
@@ -94,67 +97,90 @@ export default function Page() {
 
   return (
     <div className="relative flex min-h-svh flex-col bg-background pb-32 text-foreground">
-      <header className="sticky top-0 z-40 flex items-center justify-between border-b border-border bg-background/80 px-6 py-3 backdrop-blur">
+      <SpotlightBackground
+        className="fixed inset-0 z-0 bg-background"
+        colors={["rgba(120, 119, 198, 0.35)", "rgba(59, 130, 246, 0.25)"]}
+        ambient={true}
+      />
+      {/* <header className="sticky top-0 z-40 flex items-center justify-between border-b border-border bg-background/80 px-6 py-3 backdrop-blur">
         <span className="text-xs font-medium tracking-widest text-muted-foreground uppercase">
           fadhil.dev
         </span>
-      </header>
+      </header> */}
 
-      <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col px-6">
+      <main className="relative z-10 mx-auto flex w-full max-w-5xl flex-1 flex-col px-6">
         {/* Hero & About Section */}
-        <section className="flex flex-col border-b border-border pt-20 pb-10">
-          <div className="flex min-h-[40vh] flex-col justify-center">
-            <h1 className="mb-2 text-4xl font-semibold tracking-tight md:text-5xl">
-              FADHIL ALIF PRIYATNO
-            </h1>
-            <h2 className="mb-6 text-2xl font-medium text-muted-foreground md:text-3xl">
-              Full-Stack Engineer
-            </h2>
+        <section className="relative mt-8 mb-8 flex w-full flex-col border-b border-border/50 py-12 md:py-20">
+          <div className="relative z-10 flex min-h-[40vh] flex-col-reverse justify-center gap-12 md:flex-row md:items-center md:justify-between">
+            <div className="flex flex-1 flex-col text-center md:text-left">
+              <h1 className="mb-2 text-4xl font-bold tracking-tight text-foreground md:text-5xl lg:text-6xl">
+                FADHIL ALIF PRIYATNO
+              </h1>
+              <h2 className="mb-6 text-xl font-medium text-primary/80 md:text-2xl">
+                Full-Stack Engineer
+              </h2>
 
-            <div className="mb-8 flex flex-wrap gap-4 text-sm text-muted-foreground">
-              <span className="flex items-center gap-1.5 transition-colors hover:text-foreground">
-                <MapPinIcon className="h-4 w-4" /> Bantul, Yogyakarta
-              </span>
-              <a
-                href="tel:+6285727304551"
-                className="flex items-center gap-1.5 transition-colors hover:text-foreground"
-              >
-                <PhoneCallIcon className="h-4 w-4" /> +62 85727304551
-              </a>
-              <a
-                href="mailto:fadhil.alifp@gmail.com"
-                className="flex items-center gap-1.5 transition-colors hover:text-foreground"
-              >
-                <EnvelopeIcon className="h-4 w-4" /> fadhil.alifp@gmail.com
-              </a>
-              <a
-                href="https://linkedin.com/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-1.5 transition-colors hover:text-foreground"
-              >
-                <LinkedinLogoIcon className="h-4 w-4" /> LinkedIn
-              </a>
-              <a
-                href="https://github.com/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-1.5 transition-colors hover:text-foreground"
-              >
-                <GithubLogoIcon className="h-4 w-4" /> Github
-              </a>
+              <div className="mb-8 flex flex-wrap justify-center gap-4 text-sm font-medium text-muted-foreground md:justify-start lg:text-base">
+                <span className="flex items-center gap-1.5 transition-colors hover:text-foreground">
+                  <MapPinIcon className="h-4 w-4" /> Bantul, Yogyakarta
+                </span>
+                <a
+                  href="tel:+6285727304551"
+                  className="flex items-center gap-1.5 transition-colors hover:text-foreground"
+                >
+                  <PhoneCallIcon className="h-4 w-4" /> +62 85727304551
+                </a>
+                <a
+                  href="mailto:fadhil.alifp@gmail.com"
+                  className="flex items-center gap-1.5 transition-colors hover:text-foreground"
+                >
+                  <EnvelopeIcon className="h-4 w-4" /> fadhil.alifp@gmail.com
+                </a>
+                <a
+                  href="https://www.linkedin.com/in/fadhilalifpriyatno"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1.5 transition-colors hover:text-foreground"
+                >
+                  <LinkedinLogoIcon className="h-4 w-4" /> LinkedIn
+                </a>
+                <a
+                  href="https://github.com/fadhilalif"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1.5 transition-colors hover:text-foreground"
+                >
+                  <GithubLogoIcon className="h-4 w-4" /> Github
+                </a>
+              </div>
+
+              <div className="prose dark:prose-invert mx-auto max-w-2xl leading-relaxed text-muted-foreground md:mx-0 lg:text-lg">
+                <p>
+                  Fresh Graduate in Information Technology currently working as
+                  a Full-Stack Engineer at Telkomsigma, a subsidiary of PT
+                  Telkom Indonesia. Experienced in building enterprise systems
+                  and scalable web and mobile applications using modern frontend
+                  and backend technologies. Strong in Agile collaboration,
+                  cross-functional teamwork, and delivering secure, reliable,
+                  and user-focused digital solutions.
+                </p>
+              </div>
             </div>
 
-            <div className="prose dark:prose-invert max-w-3xl leading-relaxed text-muted-foreground">
-              <p>
-                Fresh Graduate in Information Technology currently working as a
-                Full-Stack Engineer at Telkomsigma, a subsidiary of PT Telkom
-                Indonesia. Experienced in building enterprise systems and
-                scalable web and mobile applications using modern frontend and
-                backend technologies. Strong in Agile collaboration,
-                cross-functional teamwork, and delivering secure, reliable, and
-                user-focused digital solutions.
-              </p>
+            <div className="flex shrink-0 flex-col items-center justify-center gap-6">
+              <div className="relative flex h-72 w-56 rotate-2 transform items-center justify-center overflow-hidden rounded-[2rem] border-[6px] border-background bg-background shadow-xl ring-1 ring-border/50 transition-transform duration-300 hover:rotate-0 md:h-80 md:w-64 lg:h-[360px] lg:w-[280px]">
+                <PixelImage
+                  src="/assets/fadhil-photo-profie.png"
+                  grid="8x8"
+                  className="h-full w-full object-cover grayscale-0"
+                  grayscaleAnimation={true}
+                  pixelFadeInDuration={800}
+                />
+              </div>
+              <FadhilSignatureEffect
+                className="h-20 pb-4 text-foreground/80 md:h-24"
+                speed={1.2}
+              />
             </div>
           </div>
         </section>
