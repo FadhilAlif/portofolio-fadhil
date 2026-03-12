@@ -1,23 +1,31 @@
 "use client"
 
 import * as React from "react"
-import { ThemeProvider as NextThemesProvider } from "next-themes"
 import { useThemeAnimation } from "@/hooks/use-theme-animation"
+import { useDarkMode, type DarkModeReturn } from "@/hooks/use-dark-mode"
 
-function ThemeProvider({
-  children,
-  ...props
-}: React.ComponentProps<typeof NextThemesProvider>) {
+const ThemeContext = React.createContext<DarkModeReturn | undefined>(undefined)
+
+export function useThemeContext() {
+  const context = React.useContext(ThemeContext)
+  if (!context) {
+    throw new Error("useThemeContext must be used within a ThemeProvider")
+  }
+  return context
+}
+
+function ThemeProvider({ children }: { children: React.ReactNode }) {
+  const darkMode = useDarkMode({
+    defaultValue: true,
+    localStorageKey: "portfolio-theme",
+    applyDarkClass: true,
+  })
+
   return (
-    <NextThemesProvider
-      attribute="class"
-      defaultTheme="dark"
-      enableSystem
-      {...props}
-    >
+    <ThemeContext.Provider value={darkMode}>
       <ThemeHotkey />
       {children}
-    </NextThemesProvider>
+    </ThemeContext.Provider>
   )
 }
 

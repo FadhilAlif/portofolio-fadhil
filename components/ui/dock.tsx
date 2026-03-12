@@ -37,6 +37,8 @@ interface DockProps {
 interface DockItemProps {
   className?: string
   children: React.ReactNode
+  onClick?: React.MouseEventHandler<HTMLDivElement>
+  active?: boolean
 }
 interface DockLabelProps {
   className?: string
@@ -102,7 +104,7 @@ function Dock({
         aria-label="Application dock"
         className={cn(
           "mx-auto flex w-fit gap-4 rounded-2xl bg-gray-50 px-4 dark:bg-neutral-900",
-          className,
+          className
         )}
         onMouseLeave={() => {
           isHovered.set(0)
@@ -115,20 +117,22 @@ function Dock({
         role="toolbar"
         style={{ height: panelHeight }}
       >
-        <DockProvider value={{ mouseX, spring, distance, magnification }}>{children}</DockProvider>
+        <DockProvider value={{ mouseX, spring, distance, magnification }}>
+          {children}
+        </DockProvider>
       </motion.div>
     </motion.div>
   )
 }
 
-function DockItem({ children, className }: DockItemProps) {
+function DockItem({ children, className, onClick, active }: DockItemProps) {
   const ref = useRef<HTMLDivElement>(null)
 
   const { distance, magnification, mouseX, spring } = useDock()
 
   const isHovered = useMotionValue(0)
 
-  const mouseDistance = useTransform(mouseX, val => {
+  const mouseDistance = useTransform(mouseX, (val) => {
     const domRect = ref.current?.getBoundingClientRect() ?? { x: 0, width: 0 }
     return val - domRect.x - domRect.width / 2
   })
@@ -136,7 +140,7 @@ function DockItem({ children, className }: DockItemProps) {
   const widthTransform = useTransform(
     mouseDistance,
     [-distance, 0, distance],
-    [40, magnification, 40],
+    [40, magnification, 40]
   )
 
   const width = useSpring(widthTransform, spring)
@@ -144,18 +148,29 @@ function DockItem({ children, className }: DockItemProps) {
   return (
     <motion.div
       aria-haspopup="true"
-      className={cn("relative inline-flex items-center justify-center", className)}
+      className={cn(
+        "relative inline-flex items-center justify-center",
+        className
+      )}
       onBlur={() => isHovered.set(0)}
       onFocus={() => isHovered.set(1)}
       onHoverEnd={() => isHovered.set(0)}
       onHoverStart={() => isHovered.set(1)}
+      onClick={onClick}
       ref={ref}
       role="button"
       style={{ width }}
       tabIndex={0}
     >
-      {Children.map(children, child =>
-        cloneElement(child as React.ReactElement<any>, { width, isHovered }),
+      {Children.map(children, (child) =>
+        cloneElement(
+          child as React.ReactElement<{
+            width?: MotionValue<number>
+            isHovered?: MotionValue<number>
+            active?: boolean
+          }>,
+          { width, isHovered, active }
+        )
       )}
     </motion.div>
   )
@@ -167,7 +182,7 @@ function DockLabel({ children, className, ...rest }: DockLabelProps) {
   const [isVisible, setIsVisible] = useState(false)
 
   useEffect(() => {
-    const unsubscribe = isHovered.on("change", latest => {
+    const unsubscribe = isHovered.on("change", (latest) => {
       setIsVisible(latest === 1)
     })
 
@@ -180,8 +195,8 @@ function DockLabel({ children, className, ...rest }: DockLabelProps) {
         <motion.div
           animate={{ opacity: 1, y: -10 }}
           className={cn(
-            "absolute -top-6 left-1/2 w-fit whitespace-pre rounded-md border border-gray-200 bg-gray-100 px-2 py-0.5 text-xs text-neutral-700 dark:border-neutral-900 dark:bg-neutral-800 dark:text-white",
-            className,
+            "absolute -top-6 left-1/2 w-fit rounded-md border border-gray-200 bg-gray-100 px-2 py-0.5 text-xs whitespace-pre text-neutral-700 dark:border-neutral-900 dark:bg-neutral-800 dark:text-white",
+            className
           )}
           exit={{ opacity: 0, y: 0 }}
           initial={{ opacity: 0, y: 0 }}
@@ -200,7 +215,7 @@ function DockIcon({ children, className, ...rest }: DockIconProps) {
   const restProps = rest as Record<string, unknown>
   const width = restProps.width as MotionValue<number>
 
-  const widthTransform = useTransform(width, val => val / 2)
+  const widthTransform = useTransform(width, (val) => val / 2)
 
   return (
     <motion.div

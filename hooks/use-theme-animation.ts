@@ -1,17 +1,16 @@
 "use client"
 
-import { useTheme } from "next-themes"
-import { flushSync } from "react-dom"
+import { useThemeContext } from "@/components/theme-provider"
 
 export function useThemeAnimation() {
-  const { resolvedTheme, setTheme } = useTheme()
+  const { isDarkMode, set } = useThemeContext()
 
   function toggleTheme(event?: React.MouseEvent | MouseEvent) {
-    const newTheme = resolvedTheme === "dark" ? "light" : "dark"
+    const newTheme = isDarkMode ? "light" : "dark"
 
     // Fallback: browser doesn't support View Transitions API
     if (!document.startViewTransition) {
-      setTheme(newTheme)
+      set(newTheme === "dark")
       return
     }
 
@@ -27,8 +26,13 @@ export function useThemeAnimation() {
 
     // Start the view transition; flushSync ensures React updates the DOM
     // synchronously inside the transition callback so the snapshot is correct
+    // asynchronously. We must apply the class directly to ensure the DOM snapshot is correct.
     const transition = document.startViewTransition(() => {
-      flushSync(() => setTheme(newTheme))
+      document.documentElement.classList.remove("light", "dark")
+      document.documentElement.classList.add(newTheme)
+      document.documentElement.style.colorScheme = newTheme
+      
+      set(newTheme === "dark")
     })
 
     // Once both snapshots are ready, drive the clip-path animation
@@ -52,7 +56,7 @@ export function useThemeAnimation() {
 
   return {
     toggleTheme,
-    isDark: resolvedTheme === "dark",
-    theme: resolvedTheme,
+    isDark: isDarkMode,
+    theme: isDarkMode ? "dark" : "light",
   }
 }
