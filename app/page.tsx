@@ -12,71 +12,80 @@ import {
   SkillCategory,
   type SkillCategoryItem,
 } from "@/components/ui/skill-category"
+import { WorkSection, type WorkItem } from "@/components/section/work-section"
 import { PixelImage } from "@/components/icons/pixel-image"
 import { FadhilSignatureEffect } from "@/components/ui/apple-hello-effect"
 
-const experiences = [
+const experiences: WorkItem[] = [
   {
     company: "TELKOMSIGMA",
     location: "Yogyakarta, Indonesia",
     role: "Full-Stack Engineer",
-    period: "Aug 2025 - Present",
+    start: "Aug 2025",
     description: [
       "Developed and enhanced enterprise web applications within internal platforms, including the Logistic Sourcing Management (LSM) and Whistleblowing System (WBS) modules, supporting secure, structured, and auditable business processes.",
       "Built and maintained responsive user interfaces with robust form validation, multilingual support, and seamless REST API integration to improve usability and reporting accuracy.",
       "Implemented secure authentication, role-based access control, and data handling mechanisms aligned with enterprise security standards.",
       "Collaborated with cross-functional teams under Agile practices to deliver scalable and maintainable solutions.",
     ],
-    logo: "https://placehold.co/100x100/png",
+    logoUrl: "/assets/company-logo/telkomsigma-icon.jpeg",
+    companyUrl: "https://www.telkomsigma.co.id/",
   },
   {
     company: "BEKUP - Baparekraf for Startup",
     location: "Remote",
     role: "Flutter Developer Cohort",
-    period: "Jul 2025 - Oct 2025",
+    start: "Jul 2025",
+    end: "Oct 2025",
     description: [
       "Participated in an intensive national upskilling bootcamp focused on cross-platform mobile application development using Flutter and Dart.",
       "Implemented AI-powered features by integrating Gemini API and Firebase ML to enhance application intelligence.",
       "Applied software engineering best practices including SOLID principles, MVVM architecture, and Git/GitHub workflows.",
       "Led the Capstone Project team, collaborating with mentors and peers to design, develop, and test a functional MVP.",
     ],
-    logo: "https://placehold.co/100x100/png",
+    logoUrl: "/assets/company-logo/dicoding-icon.png",
+    companyUrl: "https://bekup.kemenparekraf.go.id/",
   },
   {
     company: "PT. HORUS TECHNOLOGY",
     location: "Sleman, Yogyakarta",
     role: "Frontend Developer Intern",
-    period: "Feb 2025 - Present",
+    start: "Feb 2025",
     description: [
       "Developed responsive and scalable UI for a SaaS ERP platform (Management, Accounting, Inventory) using Vue, Pinia, and Tailwind CSS.",
       "Integrated frontend features with RESTful APIs and implemented JWT authentication, real-time role updates, and notifications via SSE.",
       "Worked closely with Backend Engineers and System Analysts in an Agile environment to translate business requirements into production-ready features while maintaining clean code standards.",
     ],
-    logo: "https://placehold.co/100x100/png",
+    logoUrl: "/assets/company-logo/horus-icon.png",
+    companyUrl: "https://horus.co.id/",
   },
   {
     company: "TELKOM INDONESIA (MSIB Batch 6)",
     location: "Bandung, Jawa Barat",
     role: "Developer Intern",
-    period: "Feb 2024 - Jun 2024",
+    start: "Feb 2024",
+    end: "Jun 2024",
     description: [
       "Developed the Apilogy Admin Dashboard using React, TypeScript, and Tailwind CSS, focusing on user management and performance optimization.",
       "Integrated Docker for containerized deployment, Zustand for state management, and TanStack Query for efficient data fetching.",
       "Collaborated within an Agile Scrum team to improve system reliability, performance, and maintainability.",
     ],
-    logo: "https://placehold.co/100x100/png",
+    logoUrl: "/assets/company-logo/telkom-icon.png",
+    companyUrl: "https://www.telkom.co.id/",
   },
   {
     company: "ALTERRA ACADEMY (MSIB Batch 5)",
     location: "Remote",
     role: "Front-End Engineer - Studi Independen",
-    period: "Aug 2023 - Dec 2023",
+    start: "Aug 2023",
+    end: "Dec 2023",
     description: [
       "Completed a 4.5-month intensive training program in HTML, CSS, JavaScript, and React.js, resulting in multiple production-ready applications.",
       "Developed the Cuisine Cash cashier application as an individual project and collaborated on the Agriplant project with cross-functional teams.",
       "Strengthened teamwork, communication, and problem-solving skills within a collaborative Agile learning environment.",
     ],
-    logo: "https://placehold.co/100x100/png",
+    logoUrl: "/assets/company-logo/alterra-icon.png",
+    companyUrl: "https://www.alterra.id/",
   },
 ]
 
@@ -257,59 +266,10 @@ export default function Page() {
         <div className="mt-12 grid w-full grid-cols-1 gap-12">
           {/* Experience Section */}
           <section className="flex w-full flex-col gap-6">
-            <h3 className="flex items-center gap-2 text-2xl font-semibold tracking-tight text-foreground">
+            <h3 className="text-2xl font-semibold tracking-tight text-foreground">
               Experience
             </h3>
-            <div className="mt-4 flex flex-col gap-8">
-              {experiences.map((exp, idx) => (
-                <div
-                  key={idx}
-                  className="group flex flex-col gap-4 sm:flex-row"
-                >
-                  <div className="shrink-0 pt-1">
-                    <div className="relative h-16 w-16 overflow-hidden rounded-lg border border-border shadow-sm transition-colors group-hover:border-primary/50">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={exp.logo}
-                        alt={`${exp.company} logo`}
-                        className="h-full w-full object-cover"
-                      />
-                    </div>
-                  </div>
-                  <div className="flex flex-1 flex-col">
-                    <div className="mb-1 flex flex-col gap-y-2 sm:flex-row sm:items-start sm:justify-between">
-                      <div>
-                        <h4 className="text-lg font-semibold text-foreground">
-                          {exp.role}
-                        </h4>
-                        <div className="mt-1 flex flex-wrap items-center gap-2">
-                          <span className="text-sm font-medium text-primary">
-                            {exp.company}
-                          </span>
-                          <span className="hidden text-sm text-muted-foreground sm:inline">
-                            •
-                          </span>
-                          <span className="text-sm text-muted-foreground">
-                            {exp.location}
-                          </span>
-                        </div>
-                      </div>
-                      <span className="rounded-md border border-border bg-muted px-2.5 py-1 text-xs font-medium whitespace-nowrap text-muted-foreground">
-                        {exp.period}
-                      </span>
-                    </div>
-                    <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
-                      {exp.description.map((desc, i) => (
-                        <li key={i} className="flex gap-2">
-                          <span className="mt-1 text-primary/50">•</span>
-                          <span className="leading-relaxed">{desc}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <WorkSection items={experiences} />
           </section>
 
           {/* Education Section */}
