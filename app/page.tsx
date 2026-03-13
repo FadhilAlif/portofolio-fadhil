@@ -5,11 +5,9 @@ import {
   GithubLogoIcon,
   LinkedinLogoIcon,
   MapPinIcon,
-  // PhoneCallIcon,
 } from "@phosphor-icons/react"
 import { SpotlightBackground } from "@/components/ui/spotlight"
-import {
-  SkillCategory,
+import SkillCategory, {
   type SkillCategoryItem,
 } from "@/components/ui/skill-category"
 import { WorkSection, type WorkItem } from "@/components/section/work-section"
@@ -201,12 +199,6 @@ export default function Page() {
                 <span className="flex items-center gap-1.5 transition-colors hover:text-foreground">
                   <MapPinIcon className="h-4 w-4" /> Bantul, Yogyakarta
                 </span>
-                {/*<a
-                  href="tel:+6285727304551"
-                  className="flex items-center gap-1.5 transition-colors hover:text-foreground"
-                >
-                  <PhoneCallIcon className="h-4 w-4" /> +62 85727304551
-                </a>*/}
                 <a
                   href="mailto:fadhil.alifp@gmail.com"
                   className="flex items-center gap-1.5 transition-colors hover:text-foreground"
