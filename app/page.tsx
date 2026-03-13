@@ -5,7 +5,7 @@ import {
   GithubLogoIcon,
   LinkedinLogoIcon,
   MapPinIcon,
-  PhoneCallIcon,
+  // PhoneCallIcon,
 } from "@phosphor-icons/react"
 import { SpotlightBackground } from "@/components/ui/spotlight"
 import {
@@ -32,7 +32,7 @@ const experiences: WorkItem[] = [
     companyUrl: "https://www.telkomsigma.co.id/",
   },
   {
-    company: "BEKUP - Baparekraf for Startup",
+    company: "BEKUP (Baparekraf for Startup)",
     location: "Remote",
     role: "Flutter Developer Cohort",
     start: "Jul 2025",
@@ -60,9 +60,9 @@ const experiences: WorkItem[] = [
     companyUrl: "https://horus.co.id/",
   },
   {
-    company: "TELKOM INDONESIA (MSIB Batch 6)",
+    company: "TELKOM INDONESIA",
     location: "Bandung, Jawa Barat",
-    role: "Developer Intern",
+    role: "Developer Intern - (MSIB Batch 6)",
     start: "Feb 2024",
     end: "Jun 2024",
     description: [
@@ -74,13 +74,13 @@ const experiences: WorkItem[] = [
     companyUrl: "https://www.telkom.co.id/",
   },
   {
-    company: "ALTERRA ACADEMY (MSIB Batch 5)",
+    company: "ALTERRA ACADEMY",
     location: "Remote",
-    role: "Front-End Engineer - Studi Independen",
+    role: "Front-End Engineer - (MSIB Batch 5)",
     start: "Aug 2023",
     end: "Dec 2023",
     description: [
-      "Completed a 4.5-month intensive training program in HTML, CSS, JavaScript, and React.js, resulting in multiple production-ready applications.",
+      "Completed a 4.5-month bootcamp program in HTML, CSS, JavaScript, and React.js, resulting in multiple production-ready applications.",
       "Developed the Cuisine Cash cashier application as an individual project and collaborated on the Agriplant project with cross-functional teams.",
       "Strengthened teamwork, communication, and problem-solving skills within a collaborative Agile learning environment.",
     ],
@@ -185,9 +185,9 @@ export default function Page() {
         </span>
       </header> */}
 
-      <main className="relative z-10 mx-auto flex w-full max-w-5xl flex-1 flex-col px-6">
+      <main className="relative z-10 mx-auto flex w-full max-w-6xl flex-1 flex-col px-6">
         {/* Hero & About Section */}
-        <section className="relative mt-8 mb-8 flex w-full flex-col border-b border-border/50 py-12 md:py-20">
+        <section className="relative mt-4 mb-8 flex w-full flex-col border-b border-border/50 py-12 md:py-20">
           <div className="relative z-10 flex min-h-[40vh] flex-col-reverse justify-center gap-12 md:flex-row md:items-center md:justify-between">
             <div className="flex flex-1 flex-col text-center md:text-left">
               <h1 className="mb-2 text-4xl font-bold tracking-tight text-foreground md:text-5xl lg:text-6xl">
@@ -201,12 +201,12 @@ export default function Page() {
                 <span className="flex items-center gap-1.5 transition-colors hover:text-foreground">
                   <MapPinIcon className="h-4 w-4" /> Bantul, Yogyakarta
                 </span>
-                <a
+                {/*<a
                   href="tel:+6285727304551"
                   className="flex items-center gap-1.5 transition-colors hover:text-foreground"
                 >
                   <PhoneCallIcon className="h-4 w-4" /> +62 85727304551
-                </a>
+                </a>*/}
                 <a
                   href="mailto:fadhil.alifp@gmail.com"
                   className="flex items-center gap-1.5 transition-colors hover:text-foreground"
