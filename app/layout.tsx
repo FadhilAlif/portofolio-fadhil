@@ -7,6 +7,7 @@ import { Suspense } from "react"
 import RootProvider from "@/lib/root-provider"
 import LoadingSpinner from "@/components/ui/loading-spinner"
 import { FloatingDock } from "@/components/navigation/floating-dock"
+import { Analytics } from "@vercel/analytics/next"
 
 const fontSans = Geist({
   subsets: ["latin"],
@@ -50,6 +51,7 @@ export default function RootLayout({
           <RootProvider>
             {children}
             <FloatingDock />
+            <Analytics />
           </RootProvider>
         </Suspense>
       </body>
