@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import { Geist, JetBrains_Mono } from "next/font/google"
+import { Geist, JetBrains_Mono, Caveat } from "next/font/google"
 
 import "./globals.css"
 import { cn } from "@/lib/utils"
@@ -16,6 +16,12 @@ const fontSans = Geist({
 const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
   variable: "--font-mono",
+})
+
+const caveat = Caveat({
+  subsets: ["latin"],
+  weight: ["600"],
+  variable: "--font-signature",
 })
 
 export const metadata: Metadata = {
@@ -35,8 +41,8 @@ export default function RootLayout({
       className={cn(
         "antialiased",
         fontSans.variable,
-        "font-mono",
-        jetbrainsMono.variable
+        jetbrainsMono.variable,
+        caveat.variable
       )}
     >
       <body>

@@ -7,6 +7,8 @@ import * as React from "react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
+// ─── Copy Button ──────────────────────────────────────────────────────────────
+
 interface CopyButtonProps {
   content: string
   size?: "sm" | "default" | "lg"
@@ -46,6 +48,8 @@ function CopyButton({
     </Button>
   )
 }
+
+// ─── Code Editor ──────────────────────────────────────────────────────────────
 
 type CodeEditorProps = Omit<React.ComponentProps<"div">, "onCopy"> & {
   children: string
@@ -108,12 +112,18 @@ function CodeEditor({
   })
   const isInView = !inView || inViewResult
 
+  // ── Syntax highlighting (debounced to prevent race conditions) ──────────
+
+  const highlightRequestRef = React.useRef(0)
+
   React.useEffect(() => {
     if (!(visibleCode.length && isInView)) {
       return
     }
 
-    const loadHighlightedCode = async () => {
+    const requestId = ++highlightRequestRef.current
+
+    const debounceTimer = setTimeout(async () => {
       try {
         const { codeToHtml } = await import("shiki")
 
@@ -126,18 +136,26 @@ function CodeEditor({
           defaultColor: resolvedTheme === "dark" ? "dark" : "light",
         })
 
-        setHighlightedCode(highlighted)
+        // Only apply if this is still the latest request
+        if (requestId === highlightRequestRef.current) {
+          setHighlightedCode(highlighted)
+        }
       } catch (e) {
         console.error(`Language "${lang}" could not be loaded.`, e)
       }
-    }
+    }, 150)
 
-    loadHighlightedCode()
-  }, [lang, themes, writing, isInView, duration, delay, visibleCode, resolvedTheme])
+    return () => clearTimeout(debounceTimer)
+  }, [lang, themes, isInView, visibleCode, resolvedTheme])
+
+  // ── Typing animation ─────────────────────────────────────────────────────
+
+  const indexRef = React.useRef(0)
 
   React.useEffect(() => {
     if (!writing) {
       setVisibleCode(code)
+      setIsDone(true)
       onDone?.()
       return
     }
@@ -146,20 +164,22 @@ function CodeEditor({
       return
     }
 
-    const characters = Array.from(code)
-    let index = 0
+    // Reset index on re-mount
+    indexRef.current = 0
+    setVisibleCode("")
+
     const totalDuration = duration * 1000
-    const interval = totalDuration / characters.length
+    const totalChars = code.length
+    const charInterval = totalDuration / totalChars
     let intervalId: NodeJS.Timeout
 
     const timeout = setTimeout(() => {
       intervalId = setInterval(() => {
-        if (index < characters.length) {
-          setVisibleCode(prev => {
-            const currentIndex = index
-            index += 1
-            return prev + characters[currentIndex]
-          })
+        indexRef.current += 1
+
+        if (indexRef.current <= totalChars) {
+          // Use slice for idempotent state — safe with React StrictMode
+          setVisibleCode(code.slice(0, indexRef.current))
           editorRef.current?.scrollTo({
             top: editorRef.current?.scrollHeight,
             behavior: "smooth",
@@ -169,26 +189,30 @@ function CodeEditor({
           setIsDone(true)
           onDone?.()
         }
-      }, interval)
+      }, charInterval)
     }, delay * 1000)
 
     return () => {
       clearTimeout(timeout)
       clearInterval(intervalId)
     }
-  }, [code, duration, delay, isInView, writing, onDone])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [code, duration, delay, isInView, writing])
+
+  // ── Render ────────────────────────────────────────────────────────────────
 
   return (
     <div
       className={cn(
-        "relative bg-muted/50 w-[600px] h-[400px] border border-border overflow-hidden flex flex-col rounded-xl",
-        className,
+        "relative flex w-full flex-col overflow-hidden rounded-xl border border-border bg-muted/50",
+        className
       )}
       data-slot="code-editor"
       {...(props as React.ComponentProps<"div">)}
     >
+      {/* Header bar */}
       {header ? (
-        <div className="bg-muted border-b border-border/75 dark:border-border/50 relative flex flex-row items-center justify-between gap-y-2 h-10 px-4">
+        <div className="relative flex h-10 flex-row items-center justify-between gap-y-2 border-b border-border/75 bg-muted px-4 dark:border-border/50">
           {dots && (
             <div className="flex flex-row gap-x-2">
               <div className="size-2 rounded-full bg-red-500" />
@@ -201,7 +225,8 @@ function CodeEditor({
             <div
               className={cn(
                 "flex flex-row items-center gap-2",
-                dots && "absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2",
+                dots &&
+                  "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
               )}
             >
               {icon ? (
@@ -211,10 +236,12 @@ function CodeEditor({
                     dangerouslySetInnerHTML={{ __html: icon }}
                   />
                 ) : (
-                  <div className="text-muted-foreground [&_svg]:size-3.5">{icon}</div>
+                  <div className="text-muted-foreground [&_svg]:size-3.5">
+                    {icon}
+                  </div>
                 )
               ) : null}
-              <figcaption className="flex-1 truncate text-muted-foreground text-[13px]">
+              <figcaption className="flex-1 truncate text-[13px] text-muted-foreground">
                 {title}
               </figcaption>
             </div>
@@ -233,7 +260,7 @@ function CodeEditor({
       ) : (
         copyButton && (
           <CopyButton
-            className="absolute right-2 top-2 z-2 backdrop-blur-md bg-transparent hover:bg-black/5 dark:hover:bg-white/10"
+            className="absolute top-2 right-2 z-2 bg-transparent backdrop-blur-md hover:bg-black/5 dark:hover:bg-white/10"
             content={code}
             onCopy={onCopy}
             size="sm"
@@ -241,8 +268,10 @@ function CodeEditor({
           />
         )
       )}
+
+      {/* Code content */}
       <div
-        className="h-[calc(100%-2.75rem)] w-full text-sm p-4 font-mono relative overflow-auto flex-1"
+        className="relative w-full flex-1 overflow-auto p-4 font-mono text-sm"
         ref={editorRef}
       >
         <div
@@ -250,7 +279,7 @@ function CodeEditor({
             "[&>pre,&_code]:bg-transparent! [&>pre,&_code]:[background:transparent_!important] [&>pre,&_code]:border-none [&_code]:text-[13px]!",
             cursor &&
               !isDone &&
-              "[&_.line:last-of-type::after]:content-['|'] [&_.line:last-of-type::after]:animate-pulse [&_.line:last-of-type::after]:inline-block [&_.line:last-of-type::after]:w-[1ch] [&_.line:last-of-type::after]:-translate-px",
+              "[&_.line:last-of-type::after]:content-['|'] [&_.line:last-of-type::after]:animate-pulse [&_.line:last-of-type::after]:inline-block [&_.line:last-of-type::after]:w-[1ch] [&_.line:last-of-type::after]:-translate-px"
           )}
           dangerouslySetInnerHTML={{ __html: highlightedCode }}
         />
@@ -260,23 +289,3 @@ function CodeEditor({
 }
 
 export { CodeEditor, CopyButton, type CodeEditorProps, type CopyButtonProps }
-
-const demoCode = `import { useState } from "react"
-
-export function Counter() {
-  const [count, setCount] = useState(0)
-
-  return (
-    <button onClick={() => setCount(c => c + 1)}>
-      Count: {count}
-    </button>
-  )
-}`
-
-export function CodeEditorDemo() {
-  return (
-    <CodeEditor lang="tsx" title="Counter.tsx" copyButton duration={3}>
-      {demoCode}
-    </CodeEditor>
-  )
-}

@@ -5,16 +5,26 @@ import {
   GithubLogoIcon,
   LinkedinLogoIcon,
   MapPinIcon,
-  PhoneCallIcon,
 } from "@phosphor-icons/react"
 import { SpotlightBackground } from "@/components/ui/spotlight"
-import {
-  SkillCategory,
+import SkillCategory, {
   type SkillCategoryItem,
 } from "@/components/ui/skill-category"
+import {
+  EducationSection,
+  type EducationItem,
+} from "@/components/section/education-section"
 import { WorkSection, type WorkItem } from "@/components/section/work-section"
 import { PixelImage } from "@/components/icons/pixel-image"
 import { FadhilSignatureEffect } from "@/components/ui/apple-hello-effect"
+import { CodeEditor } from "@/components/ui/code-editor"
+import {
+  AnimatedSection,
+  StaggerContainer,
+  StaggerItem,
+} from "@/components/section/animated-section"
+
+// ─── Static Data ────────────────────────────────────────────────────────────
 
 const experiences: WorkItem[] = [
   {
@@ -32,7 +42,7 @@ const experiences: WorkItem[] = [
     companyUrl: "https://www.telkomsigma.co.id/",
   },
   {
-    company: "BEKUP - Baparekraf for Startup",
+    company: "BEKUP (Baparekraf for Startup)",
     location: "Remote",
     role: "Flutter Developer Cohort",
     start: "Jul 2025",
@@ -43,14 +53,15 @@ const experiences: WorkItem[] = [
       "Applied software engineering best practices including SOLID principles, MVVM architecture, and Git/GitHub workflows.",
       "Led the Capstone Project team, collaborating with mentors and peers to design, develop, and test a functional MVP.",
     ],
-    logoUrl: "/assets/company-logo/dicoding-icon.png",
+    logoUrl: "/assets/company-logo/bekup-icon.webp",
     companyUrl: "https://bekup.kemenparekraf.go.id/",
   },
   {
-    company: "PT. HORUS TECHNOLOGY",
+    company: "HORUS TECHNOLOGY",
     location: "Sleman, Yogyakarta",
     role: "Frontend Developer Intern",
     start: "Feb 2025",
+    end: "Jul 2025",
     description: [
       "Developed responsive and scalable UI for a SaaS ERP platform (Management, Accounting, Inventory) using Vue, Pinia, and Tailwind CSS.",
       "Integrated frontend features with RESTful APIs and implemented JWT authentication, real-time role updates, and notifications via SSE.",
@@ -60,9 +71,9 @@ const experiences: WorkItem[] = [
     companyUrl: "https://horus.co.id/",
   },
   {
-    company: "TELKOM INDONESIA (MSIB Batch 6)",
+    company: "TELKOM INDONESIA",
     location: "Bandung, Jawa Barat",
-    role: "Developer Intern",
+    role: "Developer Intern - (MSIB Batch 6)",
     start: "Feb 2024",
     end: "Jun 2024",
     description: [
@@ -74,13 +85,13 @@ const experiences: WorkItem[] = [
     companyUrl: "https://www.telkom.co.id/",
   },
   {
-    company: "ALTERRA ACADEMY (MSIB Batch 5)",
+    company: "ALTERRA ACADEMY",
     location: "Remote",
-    role: "Front-End Engineer - Studi Independen",
+    role: "Front-End Engineer - (MSIB Batch 5)",
     start: "Aug 2023",
     end: "Dec 2023",
     description: [
-      "Completed a 4.5-month intensive training program in HTML, CSS, JavaScript, and React.js, resulting in multiple production-ready applications.",
+      "Completed a 4.5-month bootcamp program in HTML, CSS, JavaScript, and React.js, resulting in multiple production-ready applications.",
       "Developed the Cuisine Cash cashier application as an individual project and collaborated on the Agriplant project with cross-functional teams.",
       "Strengthened teamwork, communication, and problem-solving skills within a collaborative Agile learning environment.",
     ],
@@ -89,18 +100,18 @@ const experiences: WorkItem[] = [
   },
 ]
 
-const educations = [
+const educations: EducationItem[] = [
   {
-    institution: "UNIVERSITAS 'AISYIYAH YOGYAKARTA",
+    institution: "Universitas 'Aisyiyah Yogyakarta",
     location: "Yogyakarta, Indonesia",
-    degree: "Undergraduate Information Technology",
-    period: "Oct 2021 - Oct 2025",
-    gpa: "3.84/4.00 (Cum Laude)",
+    degree: "B.Sc. Information Technology",
+    period: "Oct 2021 – Oct 2025",
+    gpa: "GPA: 3.84 / 4.00 (Cum Laude)",
     description: [
-      "Relevant Coursework : Software Engineering, Web & Mobile Development, Database Systems, Computer Networks, Operating Systems, UI/UX Design, Health Information Systems, Enterprise Architecture and Analysis and Others.",
-      "Final Thesis : Early Detection Expert System for Diabetes Mellitus Using the Certainty Factor (CF) Method Based on Laravel",
+      "Relevant coursework: Software Engineering, Web & Mobile Development, Database Systems, Computer Networks, Operating Systems, UI/UX Design, Health Information Systems, Enterprise Architecture.",
+      "Final Thesis: Early Detection Expert System for Diabetes Mellitus using the Certainty Factor (CF) method built with Laravel.",
     ],
-    logo: "https://placehold.co/100x100/png",
+    logo: "/assets/company-logo/unisa-icon.webp",
   },
 ]
 
@@ -139,10 +150,6 @@ const skillGroups: SkillGroup[] = [
       { label: "Flask", iconId: "flask" },
       { label: "Pinia", iconId: "pinia" },
       { label: "vite", iconId: "vite" },
-      // { label: "RESTful APIs", iconId: null },
-      // { label: "Fiber", iconId: null },
-      // { label: "Zustand", iconId: null },
-      // { label: "TanStack Query", iconId: null },
     ],
   },
   {
@@ -165,11 +172,42 @@ const skillGroups: SkillGroup[] = [
       { label: "Figma", iconId: "figma" },
       { label: "Jenkins", iconId: "jenkins" },
       { label: "Vercel", iconId: "vercel" },
-      // { label: "Trello", iconId: null },
-      // { label: "Canva", iconId: null },
     ],
   },
 ]
+
+// ─── About Code (for CodeEditor) ────────────────────────────────────────────
+
+// const aboutCode = `// about-me.ts — Fadhil Alif Priyatno
+
+// const aboutFadhil = {
+//   name: "Fadhil Alif Priyatno",
+//   role: "Full-Stack Engineer",
+//   location: "Bantul, Yogyakarta",
+//   education: {
+//     degree: "B.Sc. Information Technology",
+//     university: "Universitas 'Aisyiyah Yogyakarta",
+//     gpa: "3.84 / 4.00 (Cum Laude)",
+//   },
+//   currentCompany: "Telkomsigma (Telkom Indonesia Subsidiary)",
+//   skills: {
+//     languages: ["TypeScript", "JavaScript", "Dart", "Go", "PHP"],
+//     frontend: ["React", "Next.js", "Vue", "Nuxt.js", "Tailwind CSS"],
+//     backend: ["Express", "NestJS", "Flask", "Laravel"],
+//     mobile: ["Flutter", "Firebase ML"],
+//     databases: ["PostgreSQL", "MySQL", "MongoDB", "Supabase"],
+//     tools: ["Docker", "Git", "Figma", "Jenkins", "Vercel"],
+//   },
+//   contact: {
+//     email: "fadhil.alifp@gmail.com",
+//     linkedin: "linkedin.com/in/fadhilalifpriyatno",
+//     github: "github.com/fadhilalif",
+//   },
+// }
+
+// export default aboutFadhil`
+
+// ─── Page Component ─────────────────────────────────────────────────────────
 
 export default function Page() {
   return (
@@ -179,17 +217,17 @@ export default function Page() {
         colors={["rgba(120, 119, 198, 0.35)", "rgba(59, 130, 246, 0.25)"]}
         ambient={true}
       />
-      {/* <header className="sticky top-0 z-40 flex items-center justify-between border-b border-border bg-background/80 px-6 py-3 backdrop-blur">
-        <span className="text-xs font-medium tracking-widest text-muted-foreground uppercase">
-          fadhil.dev
-        </span>
-      </header> */}
 
-      <main className="relative z-10 mx-auto flex w-full max-w-5xl flex-1 flex-col px-6">
-        {/* Hero & About Section */}
-        <section className="relative mt-8 mb-8 flex w-full flex-col border-b border-border/50 py-12 md:py-20">
+      <main className="relative z-10 mx-auto flex w-full max-w-6xl flex-1 flex-col px-6">
+        {/* ── Hero & About Section ──────────────────────────────────────── */}
+        <section className="relative mt-4 mb-8 flex w-full flex-col border-b border-border/50 py-12 md:py-20">
           <div className="relative z-10 flex min-h-[40vh] flex-col-reverse justify-center gap-12 md:flex-row md:items-center md:justify-between">
-            <div className="flex flex-1 flex-col text-center md:text-left">
+            {/* Text content — slides in from left */}
+            <AnimatedSection
+              variant="fade-left"
+              duration={0.7}
+              className="flex flex-1 flex-col text-center md:text-left"
+            >
               <h1 className="mb-2 text-4xl font-bold tracking-tight text-foreground md:text-5xl lg:text-6xl">
                 FADHIL ALIF PRIYATNO
               </h1>
@@ -197,54 +235,68 @@ export default function Page() {
                 Full-Stack Engineer
               </h2>
 
-              <div className="mb-8 flex flex-wrap justify-center gap-4 text-sm font-medium text-muted-foreground md:justify-start lg:text-base">
-                <span className="flex items-center gap-1.5 transition-colors hover:text-foreground">
-                  <MapPinIcon className="h-4 w-4" /> Bantul, Yogyakarta
-                </span>
-                <a
-                  href="tel:+6285727304551"
-                  className="flex items-center gap-1.5 transition-colors hover:text-foreground"
-                >
-                  <PhoneCallIcon className="h-4 w-4" /> +62 85727304551
-                </a>
-                <a
-                  href="mailto:fadhil.alifp@gmail.com"
-                  className="flex items-center gap-1.5 transition-colors hover:text-foreground"
-                >
-                  <EnvelopeIcon className="h-4 w-4" /> fadhil.alifp@gmail.com
-                </a>
-                <a
-                  href="https://www.linkedin.com/in/fadhilalifpriyatno"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-1.5 transition-colors hover:text-foreground"
-                >
-                  <LinkedinLogoIcon className="h-4 w-4" /> LinkedIn
-                </a>
-                <a
-                  href="https://github.com/fadhilalif"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-1.5 transition-colors hover:text-foreground"
-                >
-                  <GithubLogoIcon className="h-4 w-4" /> Github
-                </a>
-              </div>
+              <StaggerContainer
+                className="mb-8 flex flex-wrap justify-center gap-4 text-sm font-medium text-muted-foreground md:justify-start lg:text-base"
+                staggerDelay={0.08}
+                delayChildren={0.3}
+              >
+                <StaggerItem variant="fade-up">
+                  <span className="flex items-center gap-1.5 transition-colors hover:text-foreground">
+                    <MapPinIcon className="h-4 w-4" /> Bantul, Yogyakarta
+                  </span>
+                </StaggerItem>
+                <StaggerItem variant="fade-up">
+                  <a
+                    href="mailto:fadhil.alifp@gmail.com"
+                    className="flex items-center gap-1.5 transition-colors hover:text-foreground"
+                  >
+                    <EnvelopeIcon className="h-4 w-4" /> fadhil.alifp@gmail.com
+                  </a>
+                </StaggerItem>
+                <StaggerItem variant="fade-up">
+                  <a
+                    href="https://www.linkedin.com/in/fadhilalifpriyatno"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1.5 transition-colors hover:text-foreground"
+                  >
+                    <LinkedinLogoIcon className="h-4 w-4" /> LinkedIn
+                  </a>
+                </StaggerItem>
+                <StaggerItem variant="fade-up">
+                  <a
+                    href="https://github.com/fadhilalif"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1.5 transition-colors hover:text-foreground"
+                  >
+                    <GithubLogoIcon className="h-4 w-4" /> Github
+                  </a>
+                </StaggerItem>
+              </StaggerContainer>
 
-              <div className="prose dark:prose-invert mx-auto max-w-2xl leading-relaxed text-muted-foreground md:mx-0 lg:text-lg">
-                <p>
-                  Fresh Graduate in Information Technology currently working as
-                  a Full-Stack Engineer at Telkomsigma, a subsidiary of PT
-                  Telkom Indonesia. Experienced in building enterprise systems
-                  and scalable web and mobile applications using modern frontend
-                  and backend technologies. Strong in Agile collaboration,
-                  cross-functional teamwork, and delivering secure, reliable,
-                  and user-focused digital solutions.
-                </p>
-              </div>
-            </div>
+              <AnimatedSection variant="fade-up" delay={0.4} duration={0.7}>
+                <div className="prose dark:prose-invert mx-auto max-w-2xl leading-relaxed text-muted-foreground md:mx-0 lg:text-lg">
+                  <p>
+                    Fresh Graduate in Information Technology currently working
+                    as a Full-Stack Engineer at Telkomsigma, a subsidiary of PT
+                    Telkom Indonesia. Experienced in building enterprise systems
+                    and scalable web and mobile applications using modern
+                    frontend and backend technologies. Strong in Agile
+                    collaboration, cross-functional teamwork, and delivering
+                    secure, reliable, and user-focused digital solutions.
+                  </p>
+                </div>
+              </AnimatedSection>
+            </AnimatedSection>
 
-            <div className="flex shrink-0 flex-col items-center justify-center gap-6">
+            {/* Profile image — slides in from right */}
+            <AnimatedSection
+              variant="fade-right"
+              delay={0.2}
+              duration={0.8}
+              className="flex shrink-0 flex-col items-center justify-center gap-6"
+            >
               <div className="relative flex h-72 w-56 rotate-2 transform items-center justify-center overflow-hidden rounded-[2rem] border-[6px] border-background bg-background shadow-xl ring-1 ring-border/50 transition-transform duration-300 hover:rotate-0 md:h-80 md:w-64 lg:h-90 lg:w-70">
                 <PixelImage
                   src="/assets/fadhil-photo-profie.png"
@@ -258,82 +310,70 @@ export default function Page() {
                 className="h-20 pb-4 text-foreground/80 md:h-24"
                 speed={1.2}
               />
-            </div>
+            </AnimatedSection>
           </div>
         </section>
 
-        {/* Dynamic Content Columns */}
+        {/* ── Code Editor Section ──────────────────────────────────────── */}
+        {/* <AnimatedSection
+          variant="scale-in"
+          delay={0.1}
+          duration={0.8}
+          as="section"
+          className="mb-12"
+        >
+          <CodeEditor
+            lang="typescript"
+            title="about-me.ts"
+            copyButton
+            cursor
+            writing
+            inView
+            duration={8}
+            delay={0.3}
+            className="h-[350px] shadow-lg shadow-border/20 sm:h-[400px] md:h-[450px] lg:h-[500px]"
+          >
+            {aboutCode}
+          </CodeEditor>
+        </AnimatedSection> */}
+
+        {/* ── Dynamic Content Columns ──────────────────────────────────── */}
         <div className="mt-12 grid w-full grid-cols-1 gap-12">
           {/* Experience Section */}
-          <section className="flex w-full flex-col gap-6">
+          <AnimatedSection
+            variant="fade-up"
+            duration={0.6}
+            as="section"
+            className="flex w-full flex-col gap-6"
+          >
             <h3 className="text-2xl font-semibold tracking-tight text-foreground">
               Experience
             </h3>
             <WorkSection items={experiences} />
-          </section>
+          </AnimatedSection>
 
           {/* Education Section */}
-          <section className="flex w-full flex-col gap-6 border-t border-border pt-12">
-            <h3 className="flex items-center gap-2 text-2xl font-semibold tracking-tight text-foreground">
+          <AnimatedSection
+            variant="fade-up"
+            delay={0.1}
+            duration={0.6}
+            as="section"
+            className="flex w-full flex-col gap-6 border-t border-border pt-12"
+          >
+            <h3 className="text-2xl font-semibold tracking-tight text-foreground">
               Education
             </h3>
-            <div className="mt-4 flex flex-col gap-8">
-              {educations.map((edu, idx) => (
-                <div
-                  key={idx}
-                  className="group flex flex-col gap-4 sm:flex-row"
-                >
-                  <div className="shrink-0 pt-1">
-                    <div className="relative h-16 w-16 overflow-hidden rounded-lg border border-border shadow-sm transition-colors group-hover:border-primary/50">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={edu.logo}
-                        alt={`${edu.institution} logo`}
-                        className="h-full w-full object-cover"
-                      />
-                    </div>
-                  </div>
-                  <div className="flex flex-1 flex-col">
-                    <div className="mb-1 flex flex-col gap-y-2 sm:flex-row sm:items-start sm:justify-between">
-                      <div>
-                        <h4 className="text-lg font-semibold text-foreground">
-                          {edu.institution}
-                        </h4>
-                        <div className="mt-1 flex flex-wrap items-center gap-2">
-                          <span className="text-sm font-medium text-primary">
-                            {edu.degree}
-                          </span>
-                          <span className="hidden text-sm text-muted-foreground sm:inline">
-                            •
-                          </span>
-                          <span className="text-sm text-muted-foreground">
-                            {edu.location}
-                          </span>
-                        </div>
-                      </div>
-                      <span className="rounded-md border border-border bg-muted px-2.5 py-1 text-xs font-medium whitespace-nowrap text-muted-foreground">
-                        {edu.period}
-                      </span>
-                    </div>
-                    <div className="mt-2 text-sm font-bold text-foreground">
-                      {edu.gpa}
-                    </div>
-                    <ul className="mt-2 space-y-2 text-sm text-muted-foreground">
-                      {edu.description.map((desc, i) => (
-                        <li key={i} className="flex gap-2">
-                          <span className="mt-1 text-primary/50">•</span>
-                          <span className="leading-relaxed">{desc}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
+            <EducationSection items={educations} />
+          </AnimatedSection>
 
           {/* Skills Section */}
-          <section className="flex w-full flex-col gap-6 border-t border-border pt-12">
+          <AnimatedSection
+            variant="fade-up"
+            delay={0.1}
+            duration={0.6}
+            as="section"
+            className="flex w-full flex-col gap-6 border-t border-border pt-12"
+          >
             <div>
               <h3 className="text-2xl font-semibold tracking-tight text-foreground">
                 Skills
@@ -343,18 +383,27 @@ export default function Page() {
                 digital solutions.
               </p>
             </div>
-            <div className="mt-2 flex flex-col divide-y divide-border/50">
+
+            <StaggerContainer
+              className="mt-2 flex flex-col divide-y divide-border/50"
+              staggerDelay={0.12}
+              delayChildren={0.1}
+            >
               {skillGroups.map((group) => (
-                <SkillCategory
+                <StaggerItem
                   key={group.title}
-                  title={group.title}
-                  skills={group.skills}
-                  perLine={12}
-                  className="py-6 first:pt-0 last:pb-0"
-                />
+                  variant="fade-up"
+                  className="py-3 first:pt-0 last:pb-0"
+                >
+                  <SkillCategory
+                    title={group.title}
+                    skills={group.skills}
+                    perLine={12}
+                  />
+                </StaggerItem>
               ))}
-            </div>
-          </section>
+            </StaggerContainer>
+          </AnimatedSection>
         </div>
       </main>
     </div>

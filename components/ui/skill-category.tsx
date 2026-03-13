@@ -1,6 +1,7 @@
 "use client"
 
-import * as React from "react"
+import React, { useMemo } from "react"
+import Image from "next/image"
 import { useTheme } from "next-themes"
 import { cn } from "@/lib/utils"
 
@@ -19,32 +20,35 @@ export type SkillCategoryProps = {
 function buildSkillIconsUrl(
   iconIds: string[],
   theme: "light" | "dark",
-  perLine: number,
-): string {
-  const icons = iconIds.join(",")
-  return `https://skillicons.dev/icons?i=${icons}&theme=${theme}&perline=${perLine}`
+  perLine: number
+) {
+  return `https://skillicons.dev/icons?i=${iconIds.join(",")}&theme=${theme}&perline=${perLine}`
 }
 
-export function SkillCategory({
+function SkillCategory({
   title,
   skills,
   perLine = 12,
   className,
 }: SkillCategoryProps) {
   const { resolvedTheme } = useTheme()
-  const [mounted, setMounted] = React.useState(false)
-
-  React.useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  const iconIds = skills
-    .map((s) => s.iconId)
-    .filter((id): id is string => id !== null)
-
-  const skillsWithoutIcon = skills.filter((s) => s.iconId === null)
 
   const theme = resolvedTheme === "light" ? "light" : "dark"
+
+  const iconIds = useMemo(
+    () => skills.map((s) => s.iconId).filter((id): id is string => id !== null),
+    [skills]
+  )
+
+  const skillsWithoutIcon = useMemo(
+    () => skills.filter((s) => s.iconId === null),
+    [skills]
+  )
+
+  const iconUrl = useMemo(
+    () => buildSkillIconsUrl(iconIds, theme, perLine),
+    [iconIds, theme, perLine]
+  )
 
   return (
     <div className={cn("flex flex-col gap-3", className)}>
@@ -53,20 +57,15 @@ export function SkillCategory({
       </h4>
 
       <div className="flex flex-col gap-3">
-        {mounted && iconIds.length > 0 && (
-          /* eslint-disable-next-line @next/next/no-img-element */
-          <img
-            src={buildSkillIconsUrl(iconIds, theme, perLine)}
+        {iconIds.length > 0 && (
+          <Image
+            src={iconUrl}
             alt={`${title} skill icons`}
-            className="w-fit"
+            width={600}
+            height={60}
             loading="lazy"
-          />
-        )}
-
-        {!mounted && iconIds.length > 0 && (
-          <div
-            className="h-12 animate-pulse rounded-md bg-muted"
-            aria-hidden="true"
+            unoptimized
+            className="w-fit"
           />
         )}
 
@@ -87,4 +86,4 @@ export function SkillCategory({
   )
 }
 
-export default SkillCategory
+export default React.memo(SkillCategory)
