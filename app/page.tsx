@@ -10,6 +10,10 @@ import { SpotlightBackground } from "@/components/ui/spotlight"
 import SkillCategory, {
   type SkillCategoryItem,
 } from "@/components/ui/skill-category"
+import {
+  EducationSection,
+  type EducationItem,
+} from "@/components/section/education-section"
 import { WorkSection, type WorkItem } from "@/components/section/work-section"
 import { PixelImage } from "@/components/icons/pixel-image"
 import { FadhilSignatureEffect } from "@/components/ui/apple-hello-effect"
@@ -41,14 +45,15 @@ const experiences: WorkItem[] = [
       "Applied software engineering best practices including SOLID principles, MVVM architecture, and Git/GitHub workflows.",
       "Led the Capstone Project team, collaborating with mentors and peers to design, develop, and test a functional MVP.",
     ],
-    logoUrl: "/assets/company-logo/dicoding-icon.png",
+    logoUrl: "/assets/company-logo/bekup-icon.webp",
     companyUrl: "https://bekup.kemenparekraf.go.id/",
   },
   {
-    company: "PT. HORUS TECHNOLOGY",
+    company: "HORUS TECHNOLOGY",
     location: "Sleman, Yogyakarta",
     role: "Frontend Developer Intern",
     start: "Feb 2025",
+    end: "Jul 2025",
     description: [
       "Developed responsive and scalable UI for a SaaS ERP platform (Management, Accounting, Inventory) using Vue, Pinia, and Tailwind CSS.",
       "Integrated frontend features with RESTful APIs and implemented JWT authentication, real-time role updates, and notifications via SSE.",
@@ -87,18 +92,18 @@ const experiences: WorkItem[] = [
   },
 ]
 
-const educations = [
+const educations: EducationItem[] = [
   {
-    institution: "UNIVERSITAS 'AISYIYAH YOGYAKARTA",
+    institution: "Universitas 'Aisyiyah Yogyakarta",
     location: "Yogyakarta, Indonesia",
-    degree: "Undergraduate Information Technology",
-    period: "Oct 2021 - Oct 2025",
-    gpa: "3.84/4.00 (Cum Laude)",
+    degree: "B.Sc. Information Technology",
+    period: "Oct 2021 – Oct 2025",
+    gpa: "GPA: 3.84 / 4.00 (Cum Laude)",
     description: [
-      "Relevant Coursework : Software Engineering, Web & Mobile Development, Database Systems, Computer Networks, Operating Systems, UI/UX Design, Health Information Systems, Enterprise Architecture and Analysis and Others.",
-      "Final Thesis : Early Detection Expert System for Diabetes Mellitus Using the Certainty Factor (CF) Method Based on Laravel",
+      "Relevant coursework: Software Engineering, Web & Mobile Development, Database Systems, Computer Networks, Operating Systems, UI/UX Design, Health Information Systems, Enterprise Architecture.",
+      "Final Thesis: Early Detection Expert System for Diabetes Mellitus using the Certainty Factor (CF) method built with Laravel.",
     ],
-    logo: "https://placehold.co/100x100/png",
+    logo: "/assets/company-logo/unisa-icon.webp",
   },
 ]
 
@@ -266,62 +271,11 @@ export default function Page() {
 
           {/* Education Section */}
           <section className="flex w-full flex-col gap-6 border-t border-border pt-12">
-            <h3 className="flex items-center gap-2 text-2xl font-semibold tracking-tight text-foreground">
+            <h3 className="text-2xl font-semibold tracking-tight text-foreground">
               Education
             </h3>
-            <div className="mt-4 flex flex-col gap-8">
-              {educations.map((edu, idx) => (
-                <div
-                  key={idx}
-                  className="group flex flex-col gap-4 sm:flex-row"
-                >
-                  <div className="shrink-0 pt-1">
-                    <div className="relative h-16 w-16 overflow-hidden rounded-lg border border-border shadow-sm transition-colors group-hover:border-primary/50">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={edu.logo}
-                        alt={`${edu.institution} logo`}
-                        className="h-full w-full object-cover"
-                      />
-                    </div>
-                  </div>
-                  <div className="flex flex-1 flex-col">
-                    <div className="mb-1 flex flex-col gap-y-2 sm:flex-row sm:items-start sm:justify-between">
-                      <div>
-                        <h4 className="text-lg font-semibold text-foreground">
-                          {edu.institution}
-                        </h4>
-                        <div className="mt-1 flex flex-wrap items-center gap-2">
-                          <span className="text-sm font-medium text-primary">
-                            {edu.degree}
-                          </span>
-                          <span className="hidden text-sm text-muted-foreground sm:inline">
-                            •
-                          </span>
-                          <span className="text-sm text-muted-foreground">
-                            {edu.location}
-                          </span>
-                        </div>
-                      </div>
-                      <span className="rounded-md border border-border bg-muted px-2.5 py-1 text-xs font-medium whitespace-nowrap text-muted-foreground">
-                        {edu.period}
-                      </span>
-                    </div>
-                    <div className="mt-2 text-sm font-bold text-foreground">
-                      {edu.gpa}
-                    </div>
-                    <ul className="mt-2 space-y-2 text-sm text-muted-foreground">
-                      {edu.description.map((desc, i) => (
-                        <li key={i} className="flex gap-2">
-                          <span className="mt-1 text-primary/50">•</span>
-                          <span className="leading-relaxed">{desc}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-              ))}
-            </div>
+
+            <EducationSection items={educations} />
           </section>
 
           {/* Skills Section */}
