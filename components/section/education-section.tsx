@@ -19,6 +19,19 @@ type EducationSectionProps = {
   items: EducationItem[]
 }
 
+type DateBadgeProps = {
+  start: string
+  end?: string
+}
+
+function DateBadge({ start, end }: DateBadgeProps) {
+  return (
+    <span className="inline-flex flex-none items-center rounded-md border border-border bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground tabular-nums">
+      {start} – {end ?? "Present"}
+    </span>
+  )
+}
+
 export function EducationSection({ items }: EducationSectionProps) {
   return (
     <section id="education" className="flex min-h-0 flex-col gap-y-6">
@@ -58,9 +71,10 @@ export function EducationSection({ items }: EducationSectionProps) {
                 </div>
               </div>
 
-              <div className="flex flex-none items-center gap-1 text-right text-xs text-muted-foreground tabular-nums">
-                <span>{education.period}</span>
-              </div>
+              <DateBadge
+                start={education.period.split(" – ")[0]}
+                end={education.period.split(" – ")[1]}
+              />
             </>
           )
 
