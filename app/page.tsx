@@ -23,6 +23,7 @@ import {
   StaggerContainer,
   StaggerItem,
 } from "@/components/section/animated-section"
+import { TypingAnimation } from "@/components/ui/typing-animation"
 
 // ─── Static Data ────────────────────────────────────────────────────────────
 
@@ -228,15 +229,26 @@ export default function Page() {
               duration={0.7}
               className="flex flex-1 flex-col text-center md:text-left"
             >
-              <h1 className="mb-2 text-4xl font-bold tracking-tight text-foreground md:text-5xl lg:text-6xl">
+              <h1 className="mb-4 text-4xl font-bold tracking-tight text-foreground md:text-5xl lg:text-6xl">
                 FADHIL ALIF PRIYATNO
               </h1>
-              <h2 className="mb-6 text-xl font-medium text-primary/80 md:text-2xl">
-                Full-Stack Engineer
-              </h2>
+              <TypingAnimation
+                words={[
+                  "Full-Stack Engineer",
+                  "Mobile Developer",
+                  "Frontend Developer",
+                  "Backend Developer",
+                  "UI/UX Designer",
+                ]}
+                className="mb-4 text-xl font-medium text-primary/80 md:text-2xl"
+                typeSpeed={30}
+                deleteSpeed={60}
+                pauseDelay={1000}
+                loop
+              />
 
               <StaggerContainer
-                className="mb-8 flex flex-wrap justify-center gap-4 text-sm font-medium text-muted-foreground md:justify-start lg:text-base"
+                className="mb-6 flex flex-wrap justify-center gap-4 text-sm font-medium text-muted-foreground md:justify-start lg:text-base"
                 staggerDelay={0.08}
                 delayChildren={0.3}
               >
