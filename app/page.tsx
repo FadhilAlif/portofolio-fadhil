@@ -409,11 +409,7 @@ export default function Page() {
                   variant="fade-up"
                   className="py-3 first:pt-0 last:pb-0"
                 >
-                  <SkillCategory
-                    title={group.title}
-                    skills={group.skills}
-                    perLine={12}
-                  />
+                  <SkillCategory title={group.title} skills={group.skills} />
                 </StaggerItem>
               ))}
             </StaggerContainer>
