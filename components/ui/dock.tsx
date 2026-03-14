@@ -149,7 +149,7 @@ function DockItem({ children, className, onClick, active }: DockItemProps) {
     <motion.div
       aria-haspopup="true"
       className={cn(
-        "relative inline-flex items-center justify-center",
+        "relative inline-flex items-center justify-center hover:cursor-pointer",
         className
       )}
       onBlur={() => isHovered.set(0)}

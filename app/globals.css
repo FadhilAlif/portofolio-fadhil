@@ -154,6 +154,15 @@
   }
 }
 
+/* ─── Contact Form Grid Background ─────────────────────────────────────────── */
+.contact-grid-bg {
+  background-image:
+    linear-gradient(to right, currentColor 1px, transparent 1px),
+    linear-gradient(to bottom, currentColor 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+
 /* ─── View Transition: circular theme toggle animation ─────────────────────── */
 ::view-transition-old(root),
 ::view-transition-new(root) {
