@@ -28,13 +28,6 @@ export function useDarkMode(options: DarkModeOptions = {}): DarkModeReturn {
     applyDarkClass = true,
   } = options
 
-  const getOSPreference = () => {
-    if (typeof window !== "undefined" && window.matchMedia) {
-      return window.matchMedia(COLOR_SCHEME_QUERY).matches
-    }
-    return defaultValue
-  }
-
   const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
     if (typeof window === "undefined") {
       return defaultValue
@@ -56,7 +49,9 @@ export function useDarkMode(options: DarkModeOptions = {}): DarkModeReturn {
       )
     }
 
-    return getOSPreference()
+    // No stored preference → use defaultValue (not OS preference)
+    // so first-time visitors always land in the configured default theme
+    return defaultValue
   })
 
   useEffect(() => {

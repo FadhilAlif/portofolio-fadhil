@@ -241,9 +241,10 @@ export default function Page() {
                   "UI/UX Designer",
                 ]}
                 className="mb-4 text-xl font-medium text-primary/80 md:text-2xl"
-                typeSpeed={30}
-                deleteSpeed={60}
-                pauseDelay={1000}
+                typeSpeed={40}
+                deleteSpeed={80}
+                pauseDelay={2000}
+                cursorStyle="underscore"
                 loop
               />
 

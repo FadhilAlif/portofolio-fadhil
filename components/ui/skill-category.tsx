@@ -2,7 +2,7 @@
 
 import React, { useMemo } from "react"
 import Image from "next/image"
-import { useTheme } from "next-themes"
+import { useThemeContext } from "@/components/theme-provider"
 import { cn } from "@/lib/utils"
 
 export type SkillCategoryItem = {
@@ -31,9 +31,9 @@ function SkillCategory({
   perLine = 12,
   className,
 }: SkillCategoryProps) {
-  const { resolvedTheme } = useTheme()
+  const { isDarkMode } = useThemeContext()
 
-  const theme = resolvedTheme === "light" ? "light" : "dark"
+  const theme = isDarkMode ? "dark" : "light"
 
   const iconIds = useMemo(
     () => skills.map((s) => s.iconId).filter((id): id is string => id !== null),
