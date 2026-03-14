@@ -1,143 +1,327 @@
-/* eslint-disable @next/next/no-img-element */
 "use client"
 
-import { Badge } from "@/components/ui/badge"
-import { cn } from "@/lib/utils"
-import { ArrowUpRight } from "lucide-react"
+import { useRef, useState, useCallback, memo } from "react"
+import Image from "next/image"
 import Link from "next/link"
-import { useState } from "react"
-import Markdown from "react-markdown"
+import { ArrowUpRight, ExternalLink, Play, Lock } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
+import { TechIcon } from "@/components/ui/tech-icon"
+import { cn } from "@/lib/utils"
+import type { ProjectLink, ProjectRole } from "@/lib/projects-data"
+import { GithubLogoIcon, LockIcon } from "@phosphor-icons/react"
 
-function ProjectImage({ src, alt }: { src: string; alt: string }) {
-  const [imageError, setImageError] = useState(false)
+// ─── Role Badge Color Map ────────────────────────────────────────────────────
 
-  if (!src || imageError) {
-    return <div className="h-48 w-full bg-muted" />
-  }
+const roleColorMap: Record<string, string> = {
+  "Full-Stack Engineer":
+    "bg-violet-500/15 text-violet-400 border-violet-500/25",
+  "Fullstack Engineer": "bg-violet-500/15 text-violet-400 border-violet-500/25",
+  "Frontend Engineer": "bg-sky-500/15 text-sky-400 border-sky-500/25",
+  "Backend Engineer":
+    "bg-emerald-500/15 text-emerald-400 border-emerald-500/25",
+  "Mobile Developer": "bg-orange-500/15 text-orange-400 border-orange-500/25",
+  "Flutter Developer": "bg-cyan-500/15 text-cyan-400 border-cyan-500/25",
+  "Flutter Developer · Team Lead":
+    "bg-cyan-500/15 text-cyan-400 border-cyan-500/25",
+}
 
+function getRoleColor(role: string): string {
+  return roleColorMap[role] ?? "bg-muted/50 text-muted-foreground border-border"
+}
+
+// ─── Link Icon Resolver ──────────────────────────────────────────────────────
+
+const linkIconMap: Record<string, React.ReactNode> = {
+  github: <GithubLogoIcon className="h-3 w-3" />,
+  external: <ExternalLink className="h-3 w-3" />,
+  demo: <Play className="h-3 w-3" />,
+  "play-store": <ExternalLink className="h-3 w-3" />,
+  "app-store": <ExternalLink className="h-3 w-3" />,
+}
+
+function getLinkIcon(icon?: string): React.ReactNode {
+  return linkIconMap[icon ?? ""] ?? <ExternalLink className="h-3 w-3" />
+}
+
+// ─── Internal Project Ribbon ─────────────────────────────────────────────────
+
+function InternalRibbon() {
   return (
-    <img
-      src={src}
-      alt={alt}
-      className="h-48 w-full object-cover"
-      onError={() => setImageError(true)}
-    />
+    <div
+      className="pointer-events-none absolute top-0 right-0 z-20 overflow-hidden"
+      style={{ width: "88px", height: "88px" }}
+      aria-label="Internal Project"
+    >
+      {/* Diagonal ribbon */}
+      <div
+        className="absolute flex items-center justify-center gap-1 bg-amber-500/90 text-[9px] font-bold tracking-wider text-black uppercase backdrop-blur-sm"
+        style={{
+          width: "120px",
+          right: "-29px",
+          top: "18px",
+          transform: "rotate(45deg)",
+          transformOrigin: "center",
+          padding: "3px 0",
+          boxShadow: "0 1px 4px rgba(0,0,0,0.3)",
+        }}
+      >
+        <Lock className="h-2.5 w-2.5 shrink-0" aria-hidden />
+        Internal
+      </div>
+    </div>
   )
 }
 
-interface Props {
+// ─── Optimized Image with next/image ─────────────────────────────────────────
+
+const ProjectImage = memo(function ProjectImage({
+  src,
+  alt,
+}: {
+  src: string
+  alt: string
+}) {
+  const [hasError, setHasError] = useState(false)
+
+  if (!src || hasError) {
+    return (
+      <div className="flex h-44 w-full items-center justify-center bg-muted">
+        <span className="text-xs text-muted-foreground">No preview</span>
+      </div>
+    )
+  }
+
+  return (
+    <Image
+      src={src}
+      alt={alt}
+      width={800}
+      height={400}
+      className="h-44 w-full object-cover transition-transform duration-500 group-hover/card:scale-[1.03]"
+      onError={() => setHasError(true)}
+      loading="lazy"
+      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+    />
+  )
+})
+
+// ─── Lazy Video (IntersectionObserver) ───────────────────────────────────────
+
+const LazyVideo = memo(function LazyVideo({
+  src,
+  alt,
+}: {
+  src: string
+  alt: string
+}) {
+  const videoRef = useRef<HTMLVideoElement>(null)
+  const [isVisible, setIsVisible] = useState(false)
+
+  const observeRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      if (!node || isVisible) return
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            setIsVisible(true)
+            observer.disconnect()
+          }
+        },
+        { rootMargin: "200px" }
+      )
+      observer.observe(node)
+    },
+    [isVisible]
+  )
+
+  return (
+    <div
+      ref={observeRef}
+      className="relative h-44 w-full overflow-hidden bg-muted"
+    >
+      {isVisible && (
+        <video
+          ref={videoRef}
+          src={src}
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="metadata"
+          className="h-44 w-full object-cover transition-transform duration-500 group-hover/card:scale-[1.03]"
+          aria-label={alt}
+        />
+      )}
+    </div>
+  )
+})
+
+// ─── Media Slot ───────────────────────────────────────────────────────────────
+
+function MediaSlot({
+  title,
+  image,
+  video,
+}: {
   title: string
-  href?: string
-  description: string
-  dates: string
-  tags: readonly string[]
-  link?: string
   image?: string
   video?: string
-  links?: readonly {
-    icon: React.ReactNode
-    type: string
-    href: string
-  }[]
+}) {
+  if (video) return <LazyVideo src={video} alt={title} />
+  if (image) return <ProjectImage src={image} alt={title} />
+  return (
+    <div className="flex h-44 w-full items-center justify-center bg-muted/60">
+      <span className="text-xs text-muted-foreground">No preview</span>
+    </div>
+  )
+}
+
+// ─── Project Card ─────────────────────────────────────────────────────────────
+
+interface ProjectCardProps {
+  title: string
+  description: string
+  dates: string
+  association?: string
+  role: ProjectRole
+  tags: readonly string[]
+  isInternal?: boolean
+  href?: string
+  image?: string
+  video?: string
+  links?: readonly ProjectLink[]
   className?: string
 }
 
-export function ProjectCard({
+export const ProjectCard = memo(function ProjectCard({
   title,
-  href,
   description,
   dates,
+  association,
+  role,
   tags,
-  link,
+  isInternal = false,
+  href,
   image,
   video,
   links,
   className,
-}: Props) {
+}: ProjectCardProps) {
   return (
     <div
       className={cn(
-        "flex h-full cursor-pointer flex-col overflow-hidden rounded-xl border border-border transition-all duration-200 hover:ring-2 hover:ring-muted",
+        "group/card relative flex h-full flex-col overflow-hidden rounded-xl border border-border bg-card/50 backdrop-blur-sm transition-all duration-300",
+        "hover:border-border/80 hover:shadow-lg hover:ring-1 hover:shadow-primary/5 hover:ring-primary/10",
         className
       )}
     >
-      <div className="relative shrink-0">
-        <Link
-          href={href || "#"}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="block"
-        >
-          {video ? (
-            <video
-              src={video}
-              autoPlay
-              loop
-              muted
-              playsInline
-              className="h-48 w-full object-cover"
-            />
-          ) : image ? (
-            <ProjectImage src={image} alt={title} />
-          ) : (
-            <div className="h-48 w-full bg-muted" />
-          )}
-        </Link>
+      {/* ── Internal ribbon ──────────────────────────────────────────────── */}
+      {isInternal && <InternalRibbon />}
+
+      {/* ── Media ────────────────────────────────────────────────────────── */}
+      <div className="relative shrink-0 overflow-hidden">
+        {href ? (
+          <Link
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block"
+            aria-label={`View ${title}`}
+          >
+            <MediaSlot title={title} image={image} video={video} />
+          </Link>
+        ) : (
+          <MediaSlot title={title} image={image} video={video} />
+        )}
+
+        {/* Overlay link badges (GitHub / Demo) */}
         {links && links.length > 0 && (
-          <div className="absolute top-2 right-2 flex flex-wrap gap-2">
+          <div className="absolute right-2.5 bottom-2.5 flex flex-wrap gap-1.5">
             {links.map((link, idx) => (
               <Link
-                href={link.href}
                 key={idx}
+                href={link.href}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
               >
                 <Badge
-                  className="flex items-center gap-1.5 bg-black text-xs text-white hover:bg-black/90"
+                  className="flex items-center gap-1 border-none bg-black/70 px-2 py-1 text-[10px] font-medium text-white backdrop-blur-sm transition-colors hover:bg-black/90"
                   variant="default"
                 >
-                  {link.icon}
+                  {getLinkIcon(link.icon)}
                   {link.type}
                 </Badge>
               </Link>
             ))}
           </div>
         )}
-      </div>
-      <div className="flex flex-1 flex-col gap-3 p-6">
-        <div className="flex items-start justify-between gap-2">
-          <div className="flex flex-col gap-1">
-            <h3 className="font-semibold">{title}</h3>
-            <time className="text-xs text-muted-foreground">{dates}</time>
+
+        {/* Internal lock overlay for no-href projects */}
+        {isInternal && !href && (
+          <div className="absolute inset-0 flex items-end justify-end bg-linear-to-t from-black/30 via-transparent to-transparent">
+            <span className="m-2.5 flex items-center gap-1 rounded-md border border-amber-500/30 bg-amber-500/10 px-2 py-1 text-[10px] font-medium text-amber-400 backdrop-blur-sm">
+              <LockIcon className="h-2.5 w-2.5" />
+              Private
+            </span>
           </div>
-          <Link
-            href={href || "#"}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="rounded-sm text-muted-foreground transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none"
-            aria-label={`Open ${title}`}
+        )}
+      </div>
+
+      {/* ── Content ──────────────────────────────────────────────────────── */}
+      <div className="flex flex-1 flex-col gap-2.5 p-4">
+        {/* Header row */}
+        <div className="flex items-start justify-between gap-2">
+          <div className="flex min-w-0 flex-col gap-0.5">
+            <h3 className="truncate text-sm leading-snug font-semibold text-foreground">
+              {title}
+            </h3>
+            <time className="text-[11px] text-muted-foreground">{dates}</time>
+            {association && (
+              <span className="text-[11px] text-muted-foreground/60 italic">
+                {association}
+              </span>
+            )}
+          </div>
+          {href && (
+            <Link
+              href={href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="shrink-0 rounded p-0.5 text-muted-foreground transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none"
+              aria-label={`Open ${title}`}
+            >
+              <ArrowUpRight className="h-3.5 w-3.5" aria-hidden />
+            </Link>
+          )}
+        </div>
+
+        {/* Role badge */}
+        <div>
+          <span
+            className={cn(
+              "inline-flex items-center rounded border px-1.5 py-0.5 text-[10px] font-medium",
+              getRoleColor(role)
+            )}
           >
-            <ArrowUpRight className="h-4 w-4" aria-hidden />
-          </Link>
+            {role}
+          </span>
         </div>
-        <div className="prose dark:prose-invert max-w-full flex-1 font-sans text-xs leading-relaxed text-pretty text-muted-foreground">
-          <Markdown>{description}</Markdown>
-        </div>
-        {tags && tags.length > 0 && (
-          <div className="mt-auto flex flex-wrap gap-1">
+
+        {/* Description */}
+        <p className="flex-1 text-[11px] leading-relaxed text-pretty text-muted-foreground">
+          {description}
+        </p>
+
+        {/* Tech icons — skillicons.dev with text-badge fallback */}
+        {tags.length > 0 && (
+          <div className="mt-auto flex flex-wrap items-center gap-1.5 pt-1">
             {tags.map((tag) => (
-              <Badge
-                key={tag}
-                className="h-6 w-fit border border-border px-2 text-[11px] font-medium"
-                variant="outline"
-              >
-                {tag}
-              </Badge>
+              <TechIcon key={tag} tag={tag} size={30} />
             ))}
           </div>
         )}
       </div>
     </div>
   )
-}
+})

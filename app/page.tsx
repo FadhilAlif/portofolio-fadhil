@@ -17,13 +17,14 @@ import {
 import { WorkSection, type WorkItem } from "@/components/section/work-section"
 import { PixelImage } from "@/components/icons/pixel-image"
 import { FadhilSignatureEffect } from "@/components/ui/apple-hello-effect"
-import { CodeEditor } from "@/components/ui/code-editor"
+// import { CodeEditor } from "@/components/ui/code-editor"
 import {
   AnimatedSection,
   StaggerContainer,
   StaggerItem,
 } from "@/components/section/animated-section"
 import { TypingAnimation } from "@/components/ui/typing-animation"
+import { Footer } from "@/components/section/footer"
 
 // ─── Static Data ────────────────────────────────────────────────────────────
 
@@ -212,14 +213,14 @@ const skillGroups: SkillGroup[] = [
 
 export default function Page() {
   return (
-    <div className="relative flex min-h-svh flex-col bg-background pb-32 text-foreground">
+    <div className="relative flex min-h-svh flex-col bg-background text-foreground">
       <SpotlightBackground
         className="fixed inset-0 z-0 bg-background"
         colors={["rgba(120, 119, 198, 0.35)", "rgba(59, 130, 246, 0.25)"]}
         ambient={true}
       />
 
-      <main className="relative z-10 mx-auto flex w-full max-w-6xl flex-1 flex-col px-6">
+      <main className="relative z-10 mx-auto flex w-full max-w-6xl flex-1 flex-col px-6 pb-8">
         {/* ── Hero & About Section ──────────────────────────────────────── */}
         <section className="relative mt-4 mb-8 flex w-full flex-col border-b border-border/50 py-12 md:py-20">
           <div className="relative z-10 flex min-h-[40vh] flex-col-reverse justify-center gap-12 md:flex-row md:items-center md:justify-between">
@@ -408,17 +409,15 @@ export default function Page() {
                   variant="fade-up"
                   className="py-3 first:pt-0 last:pb-0"
                 >
-                  <SkillCategory
-                    title={group.title}
-                    skills={group.skills}
-                    perLine={12}
-                  />
+                  <SkillCategory title={group.title} skills={group.skills} />
                 </StaggerItem>
               ))}
             </StaggerContainer>
           </AnimatedSection>
         </div>
       </main>
+
+      <Footer className="relative z-10" />
     </div>
   )
 }
