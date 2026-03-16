@@ -50,7 +50,11 @@ export function ContactEmailTemplate({
               color: "#0a0a0a",
             }}
           >
-            F
+            <img
+              src="/favicon.ico"
+              alt="FADHIL.DEV"
+              style={{ width: "100%", height: "auto" }}
+            />
           </div>
           <span
             style={{ fontSize: "18px", fontWeight: "600", color: "#e5e5e5" }}
@@ -95,11 +99,7 @@ export function ContactEmailTemplate({
           }}
         >
           <InfoRow label="From" value={name} />
-          <InfoRow
-            label="Email"
-            value={email}
-            isLink={`mailto:${email}`}
-          />
+          <InfoRow label="Email" value={email} isLink={`mailto:${email}`} />
           <InfoRow label="Sent At" value={sentAt} />
         </div>
 

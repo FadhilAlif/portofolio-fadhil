@@ -75,7 +75,7 @@ export const projects: ProjectItem[] = [
     role: "Mobile Developer",
     description:
       "A smart, modern finance app built with Flutter to make expense tracking effortless. Features receipt scanning, AI auto-categorization, seamless Supabase sync, and WhatsApp Bot integration.",
-    tags: ["Flutter", "Riverpod", "Supabase", "Gemini"],
+    tags: ["Flutter", "Dart", "Supabase"],
     image: `${R2_URL}/duwitku-banner.png`,
     href: "https://duwitku-landing.vercel.app/",
     links: [
@@ -92,16 +92,28 @@ export const projects: ProjectItem[] = [
     ],
   },
   {
-    title: "WBS — Whistleblowing System",
+    title: "WBS Public — Whistleblowing System",
     dates: "Dec 2025 – Present",
     association: "Telkomsigma",
     category: "private",
     role: "Frontend Engineer",
     isInternal: true,
     description:
-      "A secure, fast whistleblowing platform built with Next.js and TypeScript. Supports anonymous & confidential reporting, admin report management, and real-time notifications via WebSocket/SSE.",
-    tags: ["Next.js", "TypeScript", "TanStack Query", "Tailwind CSS"],
-    image: `${R2_URL}/wbs-preview.png`,
+      "A secure, fast whistleblowing platform built with Next.js and TypeScript. Supports anonymous & confidential reporting, admin report management.",
+    tags: ["Next.js", "TypeScript", "Tailwind CSS", "Django"],
+    image: `${R2_URL}/wbs-public-preview.png`,
+  },
+  {
+    title: "WBS Internal — Whistleblowing System",
+    dates: "Dec 2025 – Present",
+    association: "Telkomsigma",
+    category: "private",
+    role: "Frontend Engineer",
+    isInternal: true,
+    description:
+      "A secure, fast whistleblowing platform built with Next.js and TypeScript. Supports anonymous & confidential reporting, admin report management.",
+    tags: ["Next.js", "TypeScript", "Tailwind CSS", "Django"],
+    image: `${R2_URL}/wbs-internal-preview.png`,
   },
   {
     title: "PLUSTIX — Pertamina",
@@ -116,7 +128,7 @@ export const projects: ProjectItem[] = [
     image: `${R2_URL}/plustix-preview.png`,
   },
   {
-    title: "LSM Invoice Receipt",
+    title: "LSM - Invoice Receipt Module",
     dates: "Sep 2025 – Nov 2025",
     association: "Telkomsigma",
     category: "private",
@@ -135,7 +147,7 @@ export const projects: ProjectItem[] = [
     role: "Flutter Developer · Team Lead",
     description:
       "A mobile app that preserves Indonesia's traditional culinary heritage through AI-powered image recognition using Gemini API to identify traditional dishes from camera.",
-    tags: ["Flutter", "Firebase", "Gemini", "Provider", "Dart"],
+    tags: ["Flutter", "Dart", "Firebase"],
     image: `${R2_URL}/dishcovery-banner.jpg`,
     href: "https://github.com/Dishcovery-Dev",
     links: [
@@ -167,7 +179,7 @@ export const projects: ProjectItem[] = [
     description:
       "Contributed to an in-house ERP platform covering Management, Accounting, and Inventory modules. Built responsive UI with Vue 3, Pinia, and Tailwind CSS with microservice-based API integration.",
     tags: ["Vue.js", "Pinia", "JavaScript", "Tailwind CSS"],
-    image: `${R2_URL}/tingid-landing.png`,
+    image: `${R2_URL}/ting-preview.png`,
   },
 
   // ── 2024 ──────────────────────────────────────────────────────────────────
@@ -213,13 +225,13 @@ export const projects: ProjectItem[] = [
   },
   {
     title: "JSON Polish",
-    dates: "2024",
+    dates: "2026",
     category: "web",
     role: "Full-Stack Engineer",
     description:
       "A modern JSON formatting & validation tool with syntax highlighting, diff comparison, auto-fix (quotes, trailing commas, brackets), tabbed editing, file upload/download, and dark/light theme.",
     tags: ["React", "TypeScript", "Vite", "shadcn/ui", "Tailwind CSS"],
-    image: `${R2_URL}/jsonpolish-preview.png`,
+    image: `${R2_URL}/json-polish-preview.png`,
     href: "https://json-polish.vercel.app/",
     links: [
       {

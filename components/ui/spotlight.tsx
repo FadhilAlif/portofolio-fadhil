@@ -160,7 +160,7 @@ export function SpotlightBackground({
   return (
     <div
       ref={containerRef}
-      className={cn("fixed inset-0 overflow-hidden bg-neutral-950", className)}
+      className={cn("fixed inset-0 overflow-hidden bg-background", className)}
       onMouseMove={handleMouseMove}
       onTouchMove={handleTouchMove}
     >
@@ -180,22 +180,10 @@ export function SpotlightBackground({
       ))}
 
       {/* Subtle base gradient */}
-      <div
-        className="pointer-events-none absolute inset-0 opacity-50"
-        style={{
-          background:
-            "radial-gradient(ellipse at 50% 50%, rgba(30, 30, 50, 0.3) 0%, transparent 70%)",
-        }}
-      />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_50%_50%,rgba(120,119,198,0.1)_0%,transparent_70%)] opacity-30 dark:bg-[radial-gradient(ellipse_at_50%_50%,rgba(30,30,50,0.3)_0%,transparent_70%)] dark:opacity-50" />
 
       {/* Vignette */}
-      <div
-        className="pointer-events-none absolute inset-0"
-        style={{
-          background:
-            "radial-gradient(ellipse at center, transparent 0%, transparent 40%, rgba(10,10,10,0.8) 100%)",
-        }}
-      />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,transparent_50%,rgba(255,255,255,0.6)_100%)] dark:bg-[radial-gradient(ellipse_at_center,transparent_0%,transparent_40%,rgba(10,10,10,0.8)_100%)]" />
 
       {/* Content layer */}
       {children && (
