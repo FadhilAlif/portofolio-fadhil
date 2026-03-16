@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from "motion/react"
 import { cn } from "@/lib/utils"
 import { Send, Loader2, CheckCircle, AlertCircle } from "lucide-react"
 import { contactSchema, type ContactFormValues } from "@/lib/contact-schema"
+import { Button } from "../ui/button"
 
 // ─── Input Field Component ────────────────────────────────────────────────────
 
@@ -403,13 +404,14 @@ export function ContactForm({ className }: ContactFormProps) {
               </AnimatePresence>
 
               {/* ── Submit button ──────────────────────────────────── */}
-              <button
+              <Button
                 type="submit"
                 disabled={isSubmitting}
+                size="lg"
                 className={cn(
-                  "group relative mt-1 flex items-center justify-center gap-2 overflow-hidden rounded-lg px-6 py-3 text-sm font-medium transition-all duration-300",
+                  "group relative mt-1 flex items-center justify-center gap-2 overflow-hidden rounded-lg px-6 py-5 text-sm font-medium transition-all duration-300",
                   "bg-foreground text-background",
-                  "hover:bg-foreground/90 active:scale-[0.98]",
+                  "hover:cursor-pointer hover:bg-foreground/90 active:scale-[0.98]",
                   "disabled:cursor-not-allowed disabled:opacity-70"
                 )}
               >
@@ -427,7 +429,7 @@ export function ContactForm({ className }: ContactFormProps) {
                     Send Message
                   </>
                 )}
-              </button>
+              </Button>
             </motion.form>
           )}
         </AnimatePresence>

@@ -75,6 +75,7 @@ function EmptyState() {
 
 export default function ProjectsPage() {
   const [activeFilter, setActiveFilter] = useState<FilterId>("all")
+  const [visibleCount, setVisibleCount] = useState(9)
 
   // Compute per-filter counts
   const filterCounts = useMemo(() => {
@@ -167,7 +168,7 @@ export default function ProjectsPage() {
             {filtered.length === 0 ? (
               <EmptyState />
             ) : (
-              filtered.map((project, i) => (
+              filtered.slice(0, visibleCount).map((project, i) => (
                 <motion.div
                   key={project.title}
                   layout
@@ -199,6 +200,21 @@ export default function ProjectsPage() {
             )}
           </AnimatePresence>
         </div>
+
+        {visibleCount < filtered.length && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="mt-12 flex justify-center pb-8"
+          >
+            <button
+              onClick={() => setVisibleCount((prev) => prev + 9)}
+              className="inline-flex cursor-pointer items-center justify-center rounded-full bg-primary/10 px-6 py-3 text-sm font-semibold text-primary transition-colors hover:bg-primary/20 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none"
+            >
+              Load More Projects
+            </button>
+          </motion.div>
+        )}
       </main>
 
       {/* Footer */}

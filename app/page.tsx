@@ -1,23 +1,19 @@
 "use client"
 
 import {
+  DownloadIcon,
   EnvelopeIcon,
   GithubLogoIcon,
   LinkedinLogoIcon,
   MapPinIcon,
 } from "@phosphor-icons/react"
 import { SpotlightBackground } from "@/components/ui/spotlight"
-import SkillCategory, {
-  type SkillCategoryItem,
-} from "@/components/ui/skill-category"
-import {
-  EducationSection,
-  type EducationItem,
-} from "@/components/section/education-section"
-import { WorkSection, type WorkItem } from "@/components/section/work-section"
+import SkillCategory from "@/components/ui/skill-category"
+import { EducationSection } from "@/components/section/education-section"
+import { WorkSection } from "@/components/section/work-section"
 import { PixelImage } from "@/components/icons/pixel-image"
 import { FadhilSignatureEffect } from "@/components/ui/apple-hello-effect"
-// import { CodeEditor } from "@/components/ui/code-editor"
+import { CodeEditor } from "@/components/ui/code-editor"
 import {
   AnimatedSection,
   StaggerContainer,
@@ -25,198 +21,28 @@ import {
 } from "@/components/section/animated-section"
 import { TypingAnimation } from "@/components/ui/typing-animation"
 import { Footer } from "@/components/section/footer"
-
-// ─── Static Data ────────────────────────────────────────────────────────────
-
-const experiences: WorkItem[] = [
-  {
-    company: "TELKOMSIGMA",
-    location: "Yogyakarta, Indonesia",
-    role: "Full-Stack Engineer",
-    start: "Aug 2025",
-    description: [
-      "Developed and enhanced enterprise web applications within internal platforms, including the Logistic Sourcing Management (LSM) and Whistleblowing System (WBS) modules, supporting secure, structured, and auditable business processes.",
-      "Built and maintained responsive user interfaces with robust form validation, multilingual support, and seamless REST API integration to improve usability and reporting accuracy.",
-      "Implemented secure authentication, role-based access control, and data handling mechanisms aligned with enterprise security standards.",
-      "Collaborated with cross-functional teams under Agile practices to deliver scalable and maintainable solutions.",
-    ],
-    logoUrl: "/assets/company-logo/telkomsigma-icon.jpeg",
-    companyUrl: "https://www.telkomsigma.co.id/",
-  },
-  {
-    company: "BEKUP (Baparekraf for Startup)",
-    location: "Remote",
-    role: "Flutter Developer Cohort",
-    start: "Jul 2025",
-    end: "Oct 2025",
-    description: [
-      "Participated in an intensive national upskilling bootcamp focused on cross-platform mobile application development using Flutter and Dart.",
-      "Implemented AI-powered features by integrating Gemini API and Firebase ML to enhance application intelligence.",
-      "Applied software engineering best practices including SOLID principles, MVVM architecture, and Git/GitHub workflows.",
-      "Led the Capstone Project team, collaborating with mentors and peers to design, develop, and test a functional MVP.",
-    ],
-    logoUrl: "/assets/company-logo/bekup-icon.webp",
-    companyUrl: "https://bekup.kemenparekraf.go.id/",
-  },
-  {
-    company: "HORUS TECHNOLOGY",
-    location: "Sleman, Yogyakarta",
-    role: "Frontend Developer Intern",
-    start: "Feb 2025",
-    end: "Jul 2025",
-    description: [
-      "Developed responsive and scalable UI for a SaaS ERP platform (Management, Accounting, Inventory) using Vue, Pinia, and Tailwind CSS.",
-      "Integrated frontend features with RESTful APIs and implemented JWT authentication, real-time role updates, and notifications via SSE.",
-      "Worked closely with Backend Engineers and System Analysts in an Agile environment to translate business requirements into production-ready features while maintaining clean code standards.",
-    ],
-    logoUrl: "/assets/company-logo/horus-icon.png",
-    companyUrl: "https://horus.co.id/",
-  },
-  {
-    company: "TELKOM INDONESIA",
-    location: "Bandung, Jawa Barat",
-    role: "Developer Intern - (MSIB Batch 6)",
-    start: "Feb 2024",
-    end: "Jun 2024",
-    description: [
-      "Developed the Apilogy Admin Dashboard using React, TypeScript, and Tailwind CSS, focusing on user management and performance optimization.",
-      "Integrated Docker for containerized deployment, Zustand for state management, and TanStack Query for efficient data fetching.",
-      "Collaborated within an Agile Scrum team to improve system reliability, performance, and maintainability.",
-    ],
-    logoUrl: "/assets/company-logo/telkom-icon.png",
-    companyUrl: "https://www.telkom.co.id/",
-  },
-  {
-    company: "ALTERRA ACADEMY",
-    location: "Remote",
-    role: "Front-End Engineer - (MSIB Batch 5)",
-    start: "Aug 2023",
-    end: "Dec 2023",
-    description: [
-      "Completed a 4.5-month bootcamp program in HTML, CSS, JavaScript, and React.js, resulting in multiple production-ready applications.",
-      "Developed the Cuisine Cash cashier application as an individual project and collaborated on the Agriplant project with cross-functional teams.",
-      "Strengthened teamwork, communication, and problem-solving skills within a collaborative Agile learning environment.",
-    ],
-    logoUrl: "/assets/company-logo/alterra-icon.png",
-    companyUrl: "https://www.alterra.id/",
-  },
-]
-
-const educations: EducationItem[] = [
-  {
-    institution: "Universitas 'Aisyiyah Yogyakarta",
-    location: "Yogyakarta, Indonesia",
-    degree: "B.Sc. Information Technology",
-    period: "Oct 2021 – Oct 2025",
-    gpa: "GPA: 3.84 / 4.00 (Cum Laude)",
-    description: [
-      "Relevant coursework: Software Engineering, Web & Mobile Development, Database Systems, Computer Networks, Operating Systems, UI/UX Design, Health Information Systems, Enterprise Architecture.",
-      "Final Thesis: Early Detection Expert System for Diabetes Mellitus using the Certainty Factor (CF) method built with Laravel.",
-    ],
-    logo: "/assets/company-logo/unisa-icon.webp",
-  },
-]
-
-type SkillGroup = {
-  title: string
-  skills: SkillCategoryItem[]
-}
-
-const skillGroups: SkillGroup[] = [
-  {
-    title: "Programming Languages",
-    skills: [
-      { label: "JavaScript", iconId: "js" },
-      { label: "TypeScript", iconId: "ts" },
-      { label: "Dart", iconId: "dart" },
-      { label: "Golang", iconId: "go" },
-      { label: "Java", iconId: "java" },
-      { label: "PHP", iconId: "php" },
-      { label: "C", iconId: "c" },
-    ],
-  },
-  {
-    title: "Frameworks & Libraries",
-    skills: [
-      { label: "React", iconId: "react" },
-      { label: "Next.js", iconId: "nextjs" },
-      { label: "Vue", iconId: "vue" },
-      { label: "Nuxt.js", iconId: "nuxtjs" },
-      { label: "Flutter", iconId: "flutter" },
-      { label: "HTML", iconId: "html" },
-      { label: "CSS", iconId: "css" },
-      { label: "Tailwind CSS", iconId: "tailwind" },
-      { label: "Bootstrap", iconId: "bootstrap" },
-      { label: "Express", iconId: "express" },
-      { label: "NestJS", iconId: "nestjs" },
-      { label: "Flask", iconId: "flask" },
-      { label: "Pinia", iconId: "pinia" },
-      { label: "vite", iconId: "vite" },
-    ],
-  },
-  {
-    title: "Databases",
-    skills: [
-      { label: "PostgreSQL", iconId: "postgres" },
-      { label: "MySQL", iconId: "mysql" },
-      { label: "MongoDB", iconId: "mongodb" },
-      { label: "Firebase", iconId: "firebase" },
-      { label: "Supabase", iconId: "supabase" },
-    ],
-  },
-  {
-    title: "Tools & Platforms",
-    skills: [
-      { label: "Git", iconId: "git" },
-      { label: "GitHub", iconId: "github" },
-      { label: "Docker", iconId: "docker" },
-      { label: "Postman", iconId: "postman" },
-      { label: "Figma", iconId: "figma" },
-      { label: "Jenkins", iconId: "jenkins" },
-      { label: "Vercel", iconId: "vercel" },
-    ],
-  },
-]
-
-// ─── About Code (for CodeEditor) ────────────────────────────────────────────
-
-// const aboutCode = `// about-me.ts — Fadhil Alif Priyatno
-
-// const aboutFadhil = {
-//   name: "Fadhil Alif Priyatno",
-//   role: "Full-Stack Engineer",
-//   location: "Bantul, Yogyakarta",
-//   education: {
-//     degree: "B.Sc. Information Technology",
-//     university: "Universitas 'Aisyiyah Yogyakarta",
-//     gpa: "3.84 / 4.00 (Cum Laude)",
-//   },
-//   currentCompany: "Telkomsigma (Telkom Indonesia Subsidiary)",
-//   skills: {
-//     languages: ["TypeScript", "JavaScript", "Dart", "Go", "PHP"],
-//     frontend: ["React", "Next.js", "Vue", "Nuxt.js", "Tailwind CSS"],
-//     backend: ["Express", "NestJS", "Flask", "Laravel"],
-//     mobile: ["Flutter", "Firebase ML"],
-//     databases: ["PostgreSQL", "MySQL", "MongoDB", "Supabase"],
-//     tools: ["Docker", "Git", "Figma", "Jenkins", "Vercel"],
-//   },
-//   contact: {
-//     email: "fadhil.alifp@gmail.com",
-//     linkedin: "linkedin.com/in/fadhilalifpriyatno",
-//     github: "github.com/fadhilalif",
-//   },
-// }
-
-// export default aboutFadhil`
+import { HoverBorderGradient } from "@/components/ui/hover-border-gradient"
+import { Button } from "@/components/ui/button"
+import Link from "next/link"
+import { useTheme } from "next-themes"
+import { experiences, educations, skillGroups } from "@/lib/about-data"
 
 // ─── Page Component ─────────────────────────────────────────────────────────
 
 export default function Page() {
+  const { resolvedTheme } = useTheme()
+
+  // Use much lighter spotlight colors in light mode to prevent text blend/legibility issues
+  const spotlightColors =
+    resolvedTheme === "light"
+      ? ["rgba(120, 119, 198, 0.12)", "rgba(59, 130, 246, 0.08)"]
+      : ["rgba(120, 119, 198, 0.35)", "rgba(59, 130, 246, 0.25)"]
+
   return (
     <div className="relative flex min-h-svh flex-col bg-background text-foreground">
       <SpotlightBackground
         className="fixed inset-0 z-0 bg-background"
-        colors={["rgba(120, 119, 198, 0.35)", "rgba(59, 130, 246, 0.25)"]}
+        colors={spotlightColors}
         ambient={true}
       />
 
@@ -302,6 +128,34 @@ export default function Page() {
                   </p>
                 </div>
               </AnimatedSection>
+
+              <AnimatedSection variant="fade-up" delay={0.5} duration={0.7}>
+                <div className="mt-8 flex flex-wrap items-center justify-center gap-4 md:justify-start">
+                  <Link href="/contact" passHref>
+                    <Button
+                      variant="outline"
+                      className="h-11 rounded-full border-border bg-transparent px-6 text-foreground hover:cursor-pointer hover:bg-muted"
+                    >
+                      <span className="text-sm">Contact Me</span>
+                    </Button>
+                  </Link>
+
+                  <a
+                    href="https://cdn.fadhildev.my.id/personal/CV-Fadhil%20Alif%20Priyatno-2026.pdf"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <HoverBorderGradient
+                      containerClassName="rounded-full"
+                      as="div"
+                      className="flex h-11 items-center space-x-2 bg-white text-black dark:bg-black dark:text-white"
+                    >
+                      <span className="pr-1 text-sm">Download CV</span>
+                      <DownloadIcon className="h-4 w-4" />
+                    </HoverBorderGradient>
+                  </a>
+                </div>
+              </AnimatedSection>
             </AnimatedSection>
 
             {/* Profile image — slides in from right */}
@@ -329,7 +183,7 @@ export default function Page() {
         </section>
 
         {/* ── Code Editor Section ──────────────────────────────────────── */}
-        {/* <AnimatedSection
+        {/*<AnimatedSection
           variant="scale-in"
           delay={0.1}
           duration={0.8}
@@ -345,11 +199,11 @@ export default function Page() {
             inView
             duration={8}
             delay={0.3}
-            className="h-[350px] shadow-lg shadow-border/20 sm:h-[400px] md:h-[450px] lg:h-[500px]"
+            className="h-85 shadow-lg shadow-border/20 sm:h-100 md:h-112 lg:h-125"
           >
             {aboutCode}
           </CodeEditor>
-        </AnimatedSection> */}
+        </AnimatedSection>*/}
 
         {/* ── Dynamic Content Columns ──────────────────────────────────── */}
         <div className="mt-12 grid w-full grid-cols-1 gap-12">
