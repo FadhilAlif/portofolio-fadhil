@@ -13,7 +13,7 @@ import { EducationSection } from "@/components/section/education-section"
 import { WorkSection } from "@/components/section/work-section"
 import { PixelImage } from "@/components/icons/pixel-image"
 import { FadhilSignatureEffect } from "@/components/ui/apple-hello-effect"
-// import { CodeEditor } from "@/components/ui/code-editor"
+import { CodeEditor } from "@/components/ui/code-editor"
 import {
   AnimatedSection,
   StaggerContainer,
@@ -26,7 +26,6 @@ import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { useTheme } from "next-themes"
 import { experiences, educations, skillGroups } from "@/lib/about-data"
-
 
 // ─── Page Component ─────────────────────────────────────────────────────────
 
@@ -184,7 +183,7 @@ export default function Page() {
         </section>
 
         {/* ── Code Editor Section ──────────────────────────────────────── */}
-        {/* <AnimatedSection
+        {/*<AnimatedSection
           variant="scale-in"
           delay={0.1}
           duration={0.8}
@@ -200,11 +199,11 @@ export default function Page() {
             inView
             duration={8}
             delay={0.3}
-            className="h-[350px] shadow-lg shadow-border/20 sm:h-[400px] md:h-[450px] lg:h-[500px]"
+            className="h-85 shadow-lg shadow-border/20 sm:h-100 md:h-112 lg:h-125"
           >
             {aboutCode}
           </CodeEditor>
-        </AnimatedSection> */}
+        </AnimatedSection>*/}
 
         {/* ── Dynamic Content Columns ──────────────────────────────────── */}
         <div className="mt-12 grid w-full grid-cols-1 gap-12">

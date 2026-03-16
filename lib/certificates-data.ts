@@ -119,7 +119,12 @@ export const certificates: CertificateItem[] = [
     issuedDate: "Nov 2025",
     credentialId: "BC25/GRAD/XXV-11/BC25B053",
     image: `${R2_URL}/BEKUP_Create_Sertifikat.png`,
-    skills: ["Flutter", "Dart", "Mobile Application Development", "Project Management"],
+    skills: [
+      "Flutter",
+      "Dart",
+      "Mobile Application Development",
+      "Project Management",
+    ],
     category: "mobile",
   },
   {
@@ -265,7 +270,12 @@ export const certificates: CertificateItem[] = [
     issuer: "Telkom Indonesia",
     issuedDate: "Jul 2024",
     image: `${R2_URL}/SERTIF_TELKOM_INDONESIA_MSIB6.png`,
-    skills: ["Public Speaking", "Agile", "Project Management", "Problem Solving"],
+    skills: [
+      "Public Speaking",
+      "Agile",
+      "Project Management",
+      "Problem Solving",
+    ],
     category: "others",
   },
   {
@@ -306,7 +316,16 @@ export const certificates: CertificateItem[] = [
     credentialId: "243/SER/B2G-MKP/I/2024",
     image: `${R2_URL}/Sertifikat_243_SER_B2G-MKP_I_2024_PNG.png`, // User provided pdf earlier, expected to convert to PNG
     credentialUrl: `${R2_URL}/Sertifikat%20243_SER_B2G-MKP_I_2024%20-%20Fadhil%20Alif%20Priyatno.pdf`,
-    skills: ["React", "HTML", "CSS", "JavaScript", "Tailwind CSS", "Redux", "Figma", "REST APIs"],
+    skills: [
+      "React",
+      "HTML",
+      "CSS",
+      "JavaScript",
+      "Tailwind CSS",
+      "Redux",
+      "Figma",
+      "REST APIs",
+    ],
     category: "web",
   },
   {
@@ -324,8 +343,8 @@ export const certificates: CertificateItem[] = [
     issuer: "Coding Studio",
     issuedDate: "Dec 2023",
     credentialId: "19731",
-    image: `${R2_URL}/Certificate_Fundamental-Front-End-Web-Development-II.png`,
-    skills: ["Bootstrap", "HTML", "jQuery", "CSS", "JavaScript"],
+    credentialUrl: `${R2_URL}/CodingStudio_Fundamental-Front-End-Web-Development%20(2).jpg`,
+    image: `${R2_URL}/CodingStudio_Fundamental-Front-End-Web-Development%20(2).jpg`,
     category: "web",
   },
   {
@@ -335,7 +354,6 @@ export const certificates: CertificateItem[] = [
     issuedDate: "Dec 2023",
     credentialId: "19731",
     image: `${R2_URL}/Certificate_Fundamental-Front-End-Web-Development-I.png`,
-    skills: ["Bootstrap", "HTML", "jQuery", "CSS", "Git", "JavaScript"],
     category: "web",
-  }
+  },
 ]
