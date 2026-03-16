@@ -2,12 +2,13 @@
 
 import Link from "next/link"
 import {
-  GithubLogo,
-  LinkedinLogo,
-  TwitterLogo,
-  EnvelopeSimple,
+  GithubLogoIcon,
+  LinkedinLogoIcon,
+  EnvelopeIcon,
+  InstagramLogoIcon,
 } from "@phosphor-icons/react"
 import { cn } from "@/lib/utils"
+import Image from "next/image"
 
 // ─── Nav Links ───────────────────────────────────────────────────────────────
 
@@ -24,22 +25,22 @@ const socialLinks = [
   {
     label: "GitHub",
     href: "https://github.com/fadhilalif",
-    icon: GithubLogo,
+    icon: GithubLogoIcon,
   },
   {
     label: "LinkedIn",
     href: "https://www.linkedin.com/in/fadhilalifpriyatno",
-    icon: LinkedinLogo,
+    icon: LinkedinLogoIcon,
   },
   {
-    label: "Twitter",
-    href: "https://twitter.com/",
-    icon: TwitterLogo,
+    label: "Instagram",
+    href: "https://www.instagram.com/",
+    icon: InstagramLogoIcon,
   },
   {
     label: "Email",
     href: "mailto:fadhil.alifp@gmail.com",
-    icon: EnvelopeSimple,
+    icon: EnvelopeIcon,
   },
 ]
 
@@ -49,10 +50,8 @@ function LogoMark() {
   return (
     <div className="flex items-center gap-2.5">
       {/* Icon box */}
-      <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-foreground">
-        <span className="font-mono text-sm leading-none font-bold text-background">
-          F
-        </span>
+      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-white">
+        <Image src="/favicon.ico" alt="FadhilDev Logo" width={32} height={32} />
       </div>
       <span className="text-base font-semibold tracking-tight text-foreground">
         FADHIL<span className="text-primary">.DEV</span>

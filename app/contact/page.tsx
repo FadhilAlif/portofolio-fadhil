@@ -4,8 +4,8 @@ import {
   EnvelopeIcon,
   GithubLogoIcon,
   LinkedinLogoIcon,
-  TwitterLogoIcon,
   MapPinIcon,
+  InstagramLogoIcon,
 } from "@phosphor-icons/react"
 import { ContactForm } from "@/components/section/contact-form"
 import { Footer } from "@/components/section/footer"
@@ -41,9 +41,9 @@ const socialLinks = [
     icon: LinkedinLogoIcon,
   },
   {
-    label: "Twitter",
-    href: "https://twitter.com/",
-    icon: TwitterLogoIcon,
+    label: "Instagram",
+    href: "https://www.instagram.com/fdhlalf_",
+    icon: InstagramLogoIcon,
   },
 ]
 
@@ -60,7 +60,7 @@ export default function ContactPage() {
       />
 
       {/* Breadcrumb header */}
-      <header className="sticky top-0 z-20 flex items-center justify-between border-b border-border px-6 py-3 backdrop-blur bg-background/70">
+      <header className="sticky top-0 z-20 flex items-center justify-between border-b border-border bg-background/70 px-6 py-3 backdrop-blur">
         <span className="text-xs font-medium tracking-widest text-muted-foreground uppercase">
           fadhil.dev / contact
         </span>
@@ -74,7 +74,7 @@ export default function ContactPage() {
           className="flex flex-col pt-16 pb-4"
         >
           {/* Mail icon badge */}
-          <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-xl border border-border/60 bg-card/60 backdrop-blur-sm shadow-sm">
+          <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-xl border border-border/60 bg-card/60 shadow-sm backdrop-blur-sm">
             <EnvelopeIcon className="h-6 w-6 text-primary" weight="duotone" />
           </div>
 
@@ -100,7 +100,7 @@ export default function ContactPage() {
             <div className="flex flex-col gap-6">
               {contactInfo.map((item) => (
                 <div key={item.label} className="flex flex-col gap-1">
-                  <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                  <span className="text-xs font-medium tracking-wider text-muted-foreground uppercase">
                     {item.label}
                   </span>
                   {item.href ? (
@@ -126,7 +126,7 @@ export default function ContactPage() {
 
             {/* Socials */}
             <div className="flex flex-col gap-3">
-              <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+              <span className="text-xs font-medium tracking-wider text-muted-foreground uppercase">
                 Socials
               </span>
               <div className="flex gap-3">
@@ -159,11 +159,7 @@ export default function ContactPage() {
           </AnimatedSection>
 
           {/* Right — form */}
-          <AnimatedSection
-            variant="fade-right"
-            delay={0.2}
-            duration={0.7}
-          >
+          <AnimatedSection variant="fade-right" delay={0.2} duration={0.7}>
             <ContactForm />
           </AnimatedSection>
         </div>
