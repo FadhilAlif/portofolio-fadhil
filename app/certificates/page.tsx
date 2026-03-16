@@ -1,48 +1,142 @@
+"use client"
 
+import { useState, useMemo } from "react"
+import { SpotlightBackground } from "@/components/ui/spotlight"
+import ExpandableCertificateGrid from "@/components/expandable-card-demo-grid"
+import { Footer } from "@/components/section/footer"
+import { AnimatedSection } from "@/components/section/animated-section"
+import { certificates, CERTIFICATE_FILTERS, type FilterId } from "@/lib/certificates-data"
+import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
+
+// ─── Filter Tab Component ─────────────────────────────────────────────────────
+
+function FilterTab({
+  label,
+  count,
+  active,
+  onClick,
+}: {
+  label: string
+  count: number
+  active: boolean
+  onClick: () => void
+}) {
+  return (
+    <Button
+      type="button"
+      onClick={onClick}
+      aria-pressed={active}
+      variant="ghost"
+      className={cn(
+        "relative flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-medium transition-all",
+        active
+          ? "bg-foreground text-background shadow-sm"
+          : "text-muted-foreground hover:bg-muted/60 hover:text-foreground"
+      )}
+    >
+      {label}
+      <span
+        className={cn(
+          "flex h-4 min-w-4 items-center justify-center rounded px-1 text-[10px] font-semibold tabular-nums",
+          active
+            ? "bg-background/20 text-background"
+            : "bg-muted text-muted-foreground"
+        )}
+      >
+        {count}
+      </span>
+    </Button>
+  )
+}
 
 export default function CertificatesPage() {
+  const [activeFilter, setActiveFilter] = useState<FilterId>("all")
+
+  // Compute per-filter counts
+  const filterCounts = useMemo(() => {
+    const counts: Record<FilterId, number> = {
+      all: certificates.length,
+      web: 0,
+      mobile: 0,
+      ai: 0,
+      design: 0,
+      others: 0,
+    }
+    for (const cert of certificates) {
+      if (counts[cert.category] !== undefined) {
+        counts[cert.category]++
+      }
+    }
+    return counts
+  }, [])
+
+  // Filtered certificates
+  const filtered = useMemo(
+    () =>
+      activeFilter === "all"
+        ? certificates
+        : certificates.filter((c) => c.category === activeFilter),
+    [activeFilter]
+  )
   return (
-    <div className="relative flex min-h-svh flex-col bg-background text-foreground pb-32">
-      <header className="flex items-center justify-between border-b border-border px-6 py-3 sticky top-0 bg-background/80 backdrop-blur z-40">
+    <div className="relative flex min-h-svh flex-col bg-background text-foreground">
+      {/* Spotlight background */}
+      <SpotlightBackground
+        className="fixed inset-0 z-0 bg-background"
+        colors={["rgba(120, 119, 198, 0.25)", "rgba(59, 130, 246, 0.15)"]}
+        ambient={true}
+      />
+
+      {/* Breadcrumb header */}
+      <header className="sticky top-0 z-20 flex items-center justify-between border-b border-border bg-background/70 px-6 py-3 backdrop-blur">
         <span className="text-xs font-medium tracking-widest text-muted-foreground uppercase">
           fadhil.dev / certificates
         </span>
       </header>
 
-      <main className="flex flex-1 flex-col w-full max-w-5xl mx-auto px-6">
-        <section className="flex flex-col pt-20 pb-10 min-h-[70vh]">
-          <h1 className="text-4xl md:text-5xl font-medium tracking-tight mb-4">Certificates</h1>
-          <p className="text-lg text-muted-foreground mb-12 max-w-2xl">
-            My professional certifications and awards.
+      <main className="relative z-10 mx-auto flex w-full max-w-6xl flex-1 flex-col px-6 pb-8">
+        {/* ── Section Header ───────────────────────────────────────────── */}
+        <AnimatedSection
+          variant="fade-up"
+          duration={0.6}
+          className="flex flex-col items-center pt-16 pb-12 text-center"
+        >
+          <h1 className="mb-3 text-3xl font-bold tracking-tight sm:text-4xl">
+            Certifications & Achievements
+          </h1>
+          <p className="max-w-xl text-balance text-muted-foreground md:text-lg">
+            A continuous journey of learning and professional growth.
           </p>
+        </AnimatedSection>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
-            <div className="p-6 bg-card rounded-xl border border-border hover:border-primary/50 transition-colors flex flex-col gap-2">
-              <h3 className="font-medium">Frontend Developer Certification</h3>
-              <p className="text-sm text-muted-foreground">FreeCodeCamp</p>
-              <div className="pt-4 border-t border-border mt-auto">
-                <span className="text-xs text-muted-foreground">Issued: 2022</span>
-              </div>
-            </div>
-
-            <div className="p-6 bg-card rounded-xl border border-border hover:border-primary/50 transition-colors flex flex-col gap-2">
-              <h3 className="font-medium">AWS Certified Cloud Practitioner</h3>
-              <p className="text-sm text-muted-foreground">Amazon Web Services</p>
-              <div className="pt-4 border-t border-border mt-auto">
-                <span className="text-xs text-muted-foreground">Issued: 2023</span>
-              </div>
-            </div>
-
-            <div className="p-6 bg-card rounded-xl border border-border hover:border-primary/50 transition-colors flex flex-col gap-2">
-              <h3 className="font-medium">React Advanced Patterns</h3>
-              <p className="text-sm text-muted-foreground">Frontend Masters</p>
-              <div className="pt-4 border-t border-border mt-auto">
-                <span className="text-xs text-muted-foreground">Issued: 2024</span>
-              </div>
-            </div>
+        {/* ── Filter Bar ───────────────────────────────────────────────── */}
+        <AnimatedSection
+          variant="fade-up"
+          duration={0.4}
+          className="mb-8 flex flex-wrap justify-center"
+        >
+          <div className="inline-flex flex-wrap items-center justify-center gap-1 rounded-xl border border-border/60 bg-card/50 p-1.5 backdrop-blur-sm">
+            {CERTIFICATE_FILTERS.map((f) => (
+              <FilterTab
+                key={f.id}
+                label={f.label}
+                count={filterCounts[f.id]}
+                active={activeFilter === f.id}
+                onClick={() => setActiveFilter(f.id)}
+              />
+            ))}
           </div>
-        </section>
+        </AnimatedSection>
+
+        {/* ── Certificate Grid ──────────────────────────────────────────── */}
+        <AnimatedSection variant="fade-up" delay={0.2} duration={0.6}>
+          <ExpandableCertificateGrid certificates={filtered} />
+        </AnimatedSection>
       </main>
+
+      {/* Footer */}
+      <Footer className="relative z-10 mt-16" />
     </div>
   )
 }
