@@ -3,12 +3,19 @@
 import { useRef, useState, useCallback, memo } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { ArrowUpRight, ExternalLink, Play, Lock } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { TechIcon } from "@/components/ui/tech-icon"
 import { cn } from "@/lib/utils"
 import type { ProjectLink, ProjectRole } from "@/lib/projects-data"
-import { GithubLogoIcon, LockIcon } from "@phosphor-icons/react"
+import {
+  GithubLogoIcon,
+  LockIcon,
+  DownloadSimpleIcon,
+  ArrowSquareOutIcon,
+  PlayIcon,
+  LockKeyIcon,
+  ArrowUpRightIcon,
+} from "@phosphor-icons/react"
 
 // ─── Role Badge Color Map ────────────────────────────────────────────────────
 
@@ -33,14 +40,15 @@ function getRoleColor(role: string): string {
 
 const linkIconMap: Record<string, React.ReactNode> = {
   github: <GithubLogoIcon className="h-3 w-3" />,
-  external: <ExternalLink className="h-3 w-3" />,
-  demo: <Play className="h-3 w-3" />,
-  "play-store": <ExternalLink className="h-3 w-3" />,
-  "app-store": <ExternalLink className="h-3 w-3" />,
+  external: <ArrowSquareOutIcon className="h-3 w-3" />,
+  demo: <PlayIcon className="h-3 w-3" />,
+  "play-store": <ArrowSquareOutIcon className="h-3 w-3" />,
+  "app-store": <ArrowSquareOutIcon className="h-3 w-3" />,
+  download: <DownloadSimpleIcon className="h-3 w-3" />,
 }
 
 function getLinkIcon(icon?: string): React.ReactNode {
-  return linkIconMap[icon ?? ""] ?? <ExternalLink className="h-3 w-3" />
+  return linkIconMap[icon ?? ""] ?? <ArrowSquareOutIcon className="h-3 w-3" />
 }
 
 // ─── Internal Project Ribbon ─────────────────────────────────────────────────
@@ -65,7 +73,7 @@ function InternalRibbon() {
           boxShadow: "0 1px 4px rgba(0,0,0,0.3)",
         }}
       >
-        <Lock className="h-2.5 w-2.5 shrink-0" aria-hidden />
+        <LockKeyIcon className="h-2.5 w-2.5 shrink-0" aria-hidden />
         Internal
       </div>
     </div>
@@ -85,23 +93,24 @@ const ProjectImage = memo(function ProjectImage({
 
   if (!src || hasError) {
     return (
-      <div className="flex h-44 w-full items-center justify-center bg-muted">
+      <div className="flex aspect-video w-full items-center justify-center bg-muted">
         <span className="text-xs text-muted-foreground">No preview</span>
       </div>
     )
   }
 
   return (
-    <Image
-      src={src}
-      alt={alt}
-      width={800}
-      height={400}
-      className="h-44 w-full object-cover transition-transform duration-500 group-hover/card:scale-[1.03]"
-      onError={() => setHasError(true)}
-      loading="lazy"
-      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-    />
+    <div className="relative aspect-video w-full overflow-hidden">
+      <Image
+        src={src}
+        alt={alt}
+        fill
+        className="object-cover transition-transform duration-500 group-hover/card:scale-[1.03]"
+        onError={() => setHasError(true)}
+        loading="lazy"
+        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+      />
+    </div>
   )
 })
 
@@ -137,7 +146,7 @@ const LazyVideo = memo(function LazyVideo({
   return (
     <div
       ref={observeRef}
-      className="relative h-44 w-full overflow-hidden bg-muted"
+      className="relative aspect-video w-full overflow-hidden bg-muted"
     >
       {isVisible && (
         <video
@@ -148,7 +157,7 @@ const LazyVideo = memo(function LazyVideo({
           muted
           playsInline
           preload="metadata"
-          className="h-44 w-full object-cover transition-transform duration-500 group-hover/card:scale-[1.03]"
+          className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover/card:scale-[1.03]"
           aria-label={alt}
         />
       )}
@@ -170,7 +179,7 @@ function MediaSlot({
   if (video) return <LazyVideo src={video} alt={title} />
   if (image) return <ProjectImage src={image} alt={title} />
   return (
-    <div className="flex h-44 w-full items-center justify-center bg-muted/60">
+    <div className="flex aspect-video w-full items-center justify-center bg-muted/60">
       <span className="text-xs text-muted-foreground">No preview</span>
     </div>
   )
@@ -291,7 +300,7 @@ export const ProjectCard = memo(function ProjectCard({
               className="shrink-0 rounded p-0.5 text-muted-foreground transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none"
               aria-label={`Open ${title}`}
             >
-              <ArrowUpRight className="h-3.5 w-3.5" aria-hidden />
+              <ArrowUpRightIcon className="h-3.5 w-3.5" aria-hidden />
             </Link>
           )}
         </div>
