@@ -6,7 +6,12 @@ import { SpotlightBackground } from "@/components/ui/spotlight"
 import { ProjectCard } from "@/components/ui/project-card"
 import { Footer } from "@/components/section/footer"
 import { AnimatedSection } from "@/components/section/animated-section"
-import { projects, PROJECT_FILTERS, type FilterId } from "@/lib/projects-data"
+import {
+  projects,
+  PROJECT_FILTERS,
+  getCategories,
+  type FilterId,
+} from "@/lib/projects-data"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 
@@ -86,7 +91,9 @@ export default function ProjectsPage() {
       private: 0,
     }
     for (const p of projects) {
-      counts[p.category]++
+      for (const cat of getCategories(p.category)) {
+        counts[cat]++
+      }
     }
     return counts
   }, [])
@@ -96,7 +103,9 @@ export default function ProjectsPage() {
     () =>
       activeFilter === "all"
         ? projects
-        : projects.filter((p) => p.category === activeFilter),
+        : projects.filter((p) =>
+            getCategories(p.category).includes(activeFilter)
+          ),
     [activeFilter]
   )
 
