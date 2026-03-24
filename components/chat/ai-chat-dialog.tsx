@@ -1,6 +1,6 @@
 "use client"
 
-import { Bot, Send, X, Loader2, RotateCcw } from "lucide-react"
+import { Bot, Send, X, Loader2, RotateCcw, Sparkles } from "lucide-react"
 import { useCallback, useEffect, useRef, useState } from "react"
 import { AnimatePresence, motion } from "framer-motion"
 import ReactMarkdown from "react-markdown"
@@ -17,6 +17,13 @@ interface AiChatDialogProps {
 }
 
 const MAX_QUESTIONS = 7
+
+const SUGGESTION_BADGES = [
+  "Who is Fadhil Alif Priyatno?",
+  "What is his tech stack?",
+  "What projects has he built?",
+  "How can I contact him?",
+]
 
 // ── Component ──────────────────────────────────────────────
 export function AiChatDialog({ isOpen, onClose }: AiChatDialogProps) {
@@ -58,12 +65,12 @@ export function AiChatDialog({ isOpen, onClose }: AiChatDialogProps) {
     setInput("")
   }, [])
 
-  // Send message
-  const handleSend = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!input.trim() || isLoading || remaining <= 0 || !sessionId) return
+  // Send message (supports direct text for badge clicks)
+  const handleSend = async (e?: React.FormEvent, directMessage?: string) => {
+    e?.preventDefault()
+    const userMessage = (directMessage ?? input).trim()
+    if (!userMessage || isLoading || remaining <= 0 || !sessionId) return
 
-    const userMessage = input.trim()
     setInput("")
     setError(null)
 
@@ -121,8 +128,10 @@ export function AiChatDialog({ isOpen, onClose }: AiChatDialogProps) {
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 20, scale: 0.95 }}
           transition={{ duration: 0.2 }}
-          className="fixed bottom-32 left-1/2 z-100 flex w-[calc(100vw-2rem)] -translate-x-1/2 flex-col overflow-hidden rounded-2xl border border-border bg-background shadow-xl md:right-auto md:left-12 md:w-87.5 md:translate-x-0"
-          style={{ height: "500px", maxHeight: "calc(100vh - 160px)" }}
+          className="fixed z-100 flex flex-col overflow-hidden rounded-2xl border border-border bg-background shadow-2xl
+            bottom-4 left-2 right-2
+            md:bottom-6 md:right-6 md:left-auto md:w-[380px]"
+          style={{ height: "min(520px, calc(100vh - 100px))" }}
         >
           {/* Header */}
           <div className="flex items-center justify-between border-b border-border bg-muted/50 px-4 py-3">
@@ -154,13 +163,33 @@ export function AiChatDialog({ isOpen, onClose }: AiChatDialogProps) {
 
           {/* Chat Messages */}
           <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
-            {/* Welcome message */}
+            {/* Welcome message + suggestion badges */}
             {messages.length === 0 && (
-              <div className="flex w-full justify-start">
-                <div className="max-w-[85%] rounded-2xl rounded-tl-sm border border-border bg-muted px-4 py-2 text-sm text-foreground">
-                  Hi there! 👋 I&apos;m Fadhil&apos;s AI assistant. Ask me anything about his
-                  skills, experience, projects, or education. You have{" "}
-                  <strong>{MAX_QUESTIONS} questions</strong> per session.
+              <div className="flex flex-col gap-3">
+                <div className="flex w-full justify-start">
+                  <div className="max-w-[85%] rounded-2xl rounded-tl-sm border border-border bg-muted px-4 py-2 text-sm text-foreground">
+                    Hi there! 👋 I&apos;m Fadhil&apos;s AI assistant. Ask me anything about his
+                    skills, experience, projects, or education. You have{" "}
+                    <strong>{MAX_QUESTIONS} questions</strong> per session.
+                  </div>
+                </div>
+
+                {/* Suggestion Badges */}
+                <div className="flex flex-wrap gap-2 px-1">
+                  {SUGGESTION_BADGES.map((suggestion) => (
+                    <motion.button
+                      key={suggestion}
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.25, delay: 0.1 }}
+                      onClick={() => handleSend(undefined, suggestion)}
+                      disabled={isLoading}
+                      className="group flex items-center gap-1.5 rounded-full border border-border bg-background px-3 py-1.5 text-xs font-medium text-muted-foreground transition-all hover:border-primary/40 hover:bg-primary/5 hover:text-primary disabled:pointer-events-none disabled:opacity-50"
+                    >
+                      <Sparkles className="h-3 w-3 text-primary/60 transition-colors group-hover:text-primary" />
+                      {suggestion}
+                    </motion.button>
+                  ))}
                 </div>
               </div>
             )}

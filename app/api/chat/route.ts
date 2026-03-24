@@ -4,7 +4,13 @@ import { FADHIL_KNOWLEDGE_BASE } from "@/lib/knowledge-base"
 
 // ── Constants ──────────────────────────────────────────────
 const MAX_QUESTIONS_PER_SESSION = 7
-const GEMINI_MODEL = "gemini-2.5-flash"
+
+// Fallback chain: try each model in order if the previous one is rate-limited
+const GEMINI_MODELS = [
+  "gemini-2.5-flash",
+  "gemini-2.5-flash-lite",
+  "gemini-1.5-flash",
+] as const
 
 // ── Clients ────────────────────────────────────────────────
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY! })
@@ -96,18 +102,53 @@ export async function POST(request: Request) {
       },
     ]
 
-    // 4. Call Gemini API
-    const response = await ai.models.generateContent({
-      model: GEMINI_MODEL,
-      contents,
-      config: {
-        systemInstruction: FADHIL_KNOWLEDGE_BASE,
-        temperature: 0.7,
-        maxOutputTokens: 1024,
-      },
-    })
+    // 4. Call Gemini API with fallback chain
+    let aiResponse = "Sorry, I could not generate a response."
+    let lastError: unknown = null
 
-    const aiResponse = response.text ?? "Sorry, I could not generate a response."
+    for (const model of GEMINI_MODELS) {
+      try {
+        const response = await ai.models.generateContent({
+          model,
+          contents,
+          config: {
+            systemInstruction: FADHIL_KNOWLEDGE_BASE,
+            temperature: 0.7,
+            maxOutputTokens: 1024,
+          },
+        })
+
+        aiResponse = response.text ?? "Sorry, I could not generate a response."
+        lastError = null
+        console.log(`[Chat] Successfully used model: ${model}`)
+        break // success — stop trying fallback models
+      } catch (err: unknown) {
+        lastError = err
+        const isRateLimit =
+          err instanceof Error &&
+          (err.message?.includes("429") ||
+            err.message?.includes("RESOURCE_EXHAUSTED") ||
+            err.message?.toLowerCase().includes("rate limit") ||
+            err.message?.toLowerCase().includes("quota"))
+
+        if (isRateLimit) {
+          console.warn(`[Chat] Model ${model} rate-limited, trying next fallback...`)
+          continue
+        }
+
+        // Non-rate-limit error — don't try fallback, just throw
+        throw err
+      }
+    }
+
+    if (lastError) {
+      // All models exhausted
+      console.error("All Gemini models rate-limited:", lastError)
+      return Response.json(
+        { error: "All AI models are currently unavailable. Please try again later." },
+        { status: 503 }
+      )
+    }
 
     // 5. Log both messages to Supabase
     const { error: insertError } = await supabaseAdmin
