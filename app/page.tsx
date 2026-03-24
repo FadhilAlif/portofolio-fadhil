@@ -6,14 +6,15 @@ import {
   GithubLogoIcon,
   LinkedinLogoIcon,
   MapPinIcon,
+  ArrowRightIcon,
 } from "@phosphor-icons/react"
+import Image from "next/image"
 import { SpotlightBackground } from "@/components/ui/spotlight"
 import SkillCategory from "@/components/ui/skill-category"
 import { EducationSection } from "@/components/section/education-section"
 import { WorkSection } from "@/components/section/work-section"
 import { PixelImage } from "@/components/icons/pixel-image"
 import { FadhilSignatureEffect } from "@/components/ui/apple-hello-effect"
-import { CodeEditor } from "@/components/ui/code-editor"
 import {
   AnimatedSection,
   StaggerContainer,
@@ -22,10 +23,14 @@ import {
 import { TypingAnimation } from "@/components/ui/typing-animation"
 import { Footer } from "@/components/section/footer"
 import { HoverBorderGradient } from "@/components/ui/hover-border-gradient"
+import { MagicCard } from "@/components/ui/magic-card"
 import { Button } from "@/components/ui/button"
+import { ProjectCard } from "@/components/ui/project-card"
 import Link from "next/link"
 import { useTheme } from "next-themes"
 import { experiences, educations, skillGroups } from "@/lib/about-data"
+import { projects } from "@/lib/projects-data"
+import { certificates } from "@/lib/certificates-data"
 
 // ─── Page Component ─────────────────────────────────────────────────────────
 
@@ -269,6 +274,172 @@ export default function Page() {
             </StaggerContainer>
           </AnimatedSection>
         </div>
+
+        {/* ── Featured Projects ─────────────────────────────────────────── */}
+        <AnimatedSection
+          variant="fade-up"
+          delay={0.1}
+          duration={0.6}
+          as="section"
+          className="mt-16 flex w-full flex-col gap-6 border-t border-border pt-12"
+        >
+          <div>
+            <h3 className="text-2xl font-semibold tracking-tight text-foreground">
+              Featured Projects
+            </h3>
+            <p className="mt-1 text-sm text-muted-foreground">
+              A selection of my most impactful work across web and mobile
+              platforms.
+            </p>
+          </div>
+
+          <div className="mt-2 grid w-full auto-rows-fr grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {projects
+              .filter((p) => p.featured)
+              .slice(0, 3)
+              .map((project) => (
+                <ProjectCard
+                  key={project.title}
+                  title={project.title}
+                  description={project.description}
+                  dates={project.dates}
+                  association={project.association}
+                  role={project.role}
+                  tags={project.tags}
+                  isInternal={project.isInternal}
+                  href={project.href}
+                  image={project.image}
+                  video={project.video}
+                  links={project.links}
+                />
+              ))}
+          </div>
+
+          <Link
+            href="/projects"
+            className="group mt-2 inline-flex w-fit items-center gap-2 text-sm font-medium text-primary transition-colors hover:text-primary/80 hover:underline"
+          >
+            See More Projects
+            <ArrowRightIcon className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
+          </Link>
+        </AnimatedSection>
+
+        {/* ── Featured Certificates ────────────────────────────────────── */}
+        <AnimatedSection
+          variant="fade-up"
+          delay={0.1}
+          duration={0.6}
+          as="section"
+          className="mt-16 flex w-full flex-col gap-6 border-t border-border pt-12"
+        >
+          <div>
+            <h3 className="text-2xl font-semibold tracking-tight text-foreground">
+              Certifications &amp; Achievements
+            </h3>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Highlights from my continuous learning journey and professional
+              growth.
+            </p>
+          </div>
+
+          <div className="mt-2 grid w-full grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {certificates
+              .filter((c) => c.featured)
+              .slice(0, 4)
+              .map((cert) => (
+                <div
+                  key={cert.id}
+                  className="group flex flex-col overflow-hidden rounded-xl border border-border bg-card/50 backdrop-blur-sm transition-all duration-300 hover:border-border/80 hover:shadow-lg hover:ring-1 hover:shadow-primary/5 hover:ring-primary/10"
+                >
+                  <div className="relative aspect-4/3 w-full overflow-hidden bg-muted">
+                    <Image
+                      src={cert.image}
+                      alt={cert.title}
+                      fill
+                      className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                      loading="lazy"
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                    />
+                  </div>
+                  <div className="flex flex-1 flex-col gap-1 p-3">
+                    <h4 className="line-clamp-2 text-xs leading-snug font-semibold text-foreground">
+                      {cert.title}
+                    </h4>
+                    <span className="text-[11px] text-muted-foreground">
+                      {cert.issuer}
+                    </span>
+                    <span className="mt-auto text-[10px] text-muted-foreground/60">
+                      {cert.issuedDate}
+                    </span>
+                  </div>
+                </div>
+              ))}
+          </div>
+
+          <Link
+            href="/certificates"
+            className="group mt-2 inline-flex w-fit items-center gap-2 text-sm font-medium text-primary transition-colors hover:text-primary/80 hover:underline"
+          >
+            See More Certificates
+            <ArrowRightIcon className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
+          </Link>
+        </AnimatedSection>
+
+        {/* ── Contact CTA ─────────────────────────────────────────────── */}
+        <AnimatedSection
+          variant="fade-up"
+          delay={0.1}
+          duration={0.6}
+          as="section"
+          className="mt-16 mb-8 flex w-full flex-col items-center gap-6 border-t border-border pt-12"
+        >
+          <div className="w-full max-w-2xl rounded-2xl">
+            <MagicCard
+              mode="orb"
+              glowFrom={resolvedTheme === "dark" ? "#7c3aed" : "#C4B5FD"}
+              glowTo={resolvedTheme === "dark" ? "#3b82f6" : "#BFDBFE"}
+              className="p-0"
+            >
+              <div className="flex flex-col items-center gap-6 p-8 text-center md:p-12">
+                <div className="flex h-14 w-14 items-center justify-center rounded-xl border border-border/60 bg-card/60 shadow-sm backdrop-blur-sm">
+                  <EnvelopeIcon
+                    className="h-7 w-7 text-primary"
+                    weight="duotone"
+                  />
+                </div>
+
+                <h3 className="text-2xl font-semibold tracking-tight text-foreground md:text-3xl">
+                  Let&apos;s Work Together
+                </h3>
+
+                <p className="max-w-md text-sm leading-relaxed text-muted-foreground md:text-base">
+                  I&apos;m always open to discussing new projects, creative
+                  ideas, or opportunities to bring your visions to life.
+                </p>
+
+                {/* Availability badge */}
+                <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/25 bg-emerald-500/10 px-4 py-2 text-xs font-medium text-emerald-600 dark:text-emerald-400">
+                  <span className="relative flex h-2 w-2">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                    <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+                  </span>
+                  Available for new opportunities
+                </div>
+
+                <Link href="/contact">
+                  <HoverBorderGradient
+                    containerClassName="rounded-full"
+                    as="div"
+                    className="flex h-11 items-center space-x-2 bg-white px-8 text-black dark:bg-black dark:text-white"
+                  >
+                    <span className="text-sm font-medium">Get in Touch</span>
+                    <ArrowRightIcon className="h-4 w-4" />
+                  </HoverBorderGradient>
+                </Link>
+              </div>
+            </MagicCard>
+          </div>
+        </AnimatedSection>
       </main>
 
       <Footer className="relative z-10" />

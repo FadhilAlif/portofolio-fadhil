@@ -23,6 +23,8 @@ export interface CertificateItem {
   description?: string
   skills?: string[]
   category: CertificateCategory
+  /** Featured on the About page */
+  featured?: boolean
 }
 
 const R2_URL = "https://cdn.fadhildev.my.id/certificate"
@@ -109,6 +111,7 @@ export const certificates: CertificateItem[] = [
     issuedDate: "Dec 2025",
     credentialId: "SIY6OGYDHQ7R",
     image: `${R2_URL}/Coursera_SIY6OGYDHQ7R_Fadhil_Alif_P.png`,
+    featured: true,
     skills: ["User Experience (UX)"],
     category: "design",
   },
@@ -118,6 +121,7 @@ export const certificates: CertificateItem[] = [
     issuer: "Dicoding Indonesia",
     issuedDate: "Nov 2025",
     credentialId: "BC25/GRAD/XXV-11/BC25B053",
+    featured: true,
     image: `${R2_URL}/BEKUP_Create_Sertifikat.png`,
     skills: [
       "Flutter",
@@ -135,6 +139,7 @@ export const certificates: CertificateItem[] = [
     expirationDate: "Sep 2028",
     credentialId: "62024 3512500000072025",
     image: `${R2_URL}/Sertif_BNSP_Helpdesk_Technician.png`,
+    featured: true,
     skills: ["Help Desk Support", "Technical Support"],
     category: "others",
   },
@@ -315,6 +320,7 @@ export const certificates: CertificateItem[] = [
     issuedDate: "Jan 2024",
     credentialId: "243/SER/B2G-MKP/I/2024",
     image: `${R2_URL}/Sertifikat_243_SER_B2G-MKP_I_2024_PNG.png`, // User provided pdf earlier, expected to convert to PNG
+    featured: true,
     credentialUrl: `${R2_URL}/Sertifikat%20243_SER_B2G-MKP_I_2024%20-%20Fadhil%20Alif%20Priyatno.pdf`,
     skills: [
       "React",

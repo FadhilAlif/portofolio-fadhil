@@ -45,6 +45,8 @@ export interface ProjectItem {
   role: ProjectRole
   /** Mark as internal/private company project — shows ribbon, hides GitHub */
   isInternal?: boolean
+  /** Featured on the About page */
+  featured?: boolean
   /** External link (opens on click) — omit for internal-only projects */
   href?: string
   /** Image URL from Cloudflare R2 */
@@ -86,6 +88,7 @@ export const projects: ProjectItem[] = [
     dates: "Oct 2025 – Present",
     category: "mobile",
     role: "Mobile Developer",
+    featured: true,
     description:
       "A smart, modern finance app built with Flutter to make expense tracking effortless. Features receipt scanning, AI auto-categorization, seamless Supabase sync, and WhatsApp Bot integration.",
     tags: ["Flutter", "Dart", "Supabase"],
@@ -116,6 +119,7 @@ export const projects: ProjectItem[] = [
     association: "Telkomsigma",
     category: ["private", "web"],
     role: "Frontend Engineer",
+    featured: true,
     isInternal: true,
     description:
       "A Public WBS that enables external users to securely submit reports with flexible identity options (full, partial, or anonymous). It ensures structured reporting while allowing users to track the status of their submissions.",
@@ -182,6 +186,7 @@ export const projects: ProjectItem[] = [
     dates: "Sep 2025 – Oct 2025",
     association: "BEKUP — Baparekraf for Startup",
     category: "mobile",
+    featured: true,
     role: "Flutter Developer · Team Lead",
     description:
       "A mobile app that preserves Indonesia's traditional culinary heritage through AI-powered image recognition using Gemini API to identify traditional dishes from camera.",
