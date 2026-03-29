@@ -1,7 +1,7 @@
-/* eslint-disable @next/next/no-img-element */
 "use client"
 
 import { useState } from "react"
+import Image from "next/image"
 import { Accordion as AccordionPrimitive } from "radix-ui"
 import {
   Tooltip,
@@ -40,12 +40,16 @@ function LogoImage({ src, alt }: LogoImageProps) {
   }
 
   return (
-    <img
-      src={src}
-      alt={alt}
-      className="size-10 flex-none overflow-hidden rounded-full border object-contain p-1 shadow ring-2 ring-border"
-      onError={() => setImageError(true)}
-    />
+    <div className="relative size-10 flex-none overflow-hidden rounded-full border bg-muted shadow ring-2 ring-border">
+      <Image
+        src={src}
+        alt={alt}
+        fill
+        sizes="40px"
+        className="object-contain"
+        onError={() => setImageError(true)}
+      />
+    </div>
   )
 }
 
@@ -56,7 +60,7 @@ type DateBadgeProps = {
 
 function DateBadge({ start, end }: DateBadgeProps) {
   return (
-    <span className="inline-flex flex-none items-center rounded-md border border-border bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground tabular-nums">
+    <span className="inline-flex flex-none items-center rounded-md border border-border bg-muted px-2 py-0.5 text-xs font-medium whitespace-nowrap text-muted-foreground tabular-nums">
       {start} – {end ?? "Present"}
     </span>
   )
@@ -113,12 +117,12 @@ export function WorkSection({ items }: WorkSectionProps) {
           >
             {/* Trigger */}
             <AccordionPrimitive.Header className="flex">
-              <AccordionPrimitive.Trigger className="group flex w-full cursor-pointer items-start justify-between gap-x-3 text-left outline-none">
+              <AccordionPrimitive.Trigger className="group flex w-full cursor-pointer flex-col items-start gap-2 text-left outline-none sm:flex-row sm:justify-between sm:gap-x-3">
                 {/* Left: logo + company info */}
                 <div className="flex min-w-0 flex-1 items-center gap-x-3">
                   <LogoImage src={work.logoUrl} alt={`${work.company} logo`} />
                   <div className="flex min-w-0 flex-1 flex-col gap-1">
-                    <div className="flex items-center gap-1.5 leading-none">
+                    <div className="flex flex-wrap items-center gap-1.5 leading-none">
                       <CompanyLink
                         company={work.company}
                         companyUrl={work.companyUrl}
@@ -137,7 +141,9 @@ export function WorkSection({ items }: WorkSectionProps) {
                 </div>
 
                 {/* Right: date badge only */}
-                <DateBadge start={work.start} end={work.end} />
+                <div className="pl-13 sm:pl-0">
+                  <DateBadge start={work.start} end={work.end} />
+                </div>
               </AccordionPrimitive.Trigger>
             </AccordionPrimitive.Header>
 
