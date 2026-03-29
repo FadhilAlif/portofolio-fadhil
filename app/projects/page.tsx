@@ -1,6 +1,7 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useMemo, useState } from "react"
+import Link from "next/link"
 import { motion, AnimatePresence } from "motion/react"
 import { SpotlightBackground } from "@/components/ui/spotlight"
 import { ProjectCard } from "@/components/ui/project-card"
@@ -10,53 +11,29 @@ import {
   projects,
   PROJECT_FILTERS,
   getCategories,
+  type ProjectItem,
   type FilterId,
 } from "@/lib/projects-data"
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
+import useDebounce from "@/hooks/use-debounce"
+import { FilterSearchToolbar } from "@/components/ui/filter-search-toolbar"
 
-// ─── Filter Tab Component ─────────────────────────────────────────────────────
+const SEARCH_DEBOUNCE_MS = 350
 
-function FilterTab({
-  label,
-  count,
-  active,
-  onClick,
-}: {
-  label: string
-  count: number
-  active: boolean
-  onClick: () => void
-}) {
-  return (
-    <Button
-      type="button"
-      onClick={onClick}
-      aria-pressed={active}
-      variant="ghost"
-      className={cn(
-        "relative flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-medium transition-all",
-        active
-          ? "bg-foreground text-background shadow-sm"
-          : "text-muted-foreground hover:bg-muted/60 hover:text-foreground"
-      )}
-    >
-      {label}
-      <span
-        className={cn(
-          "flex h-4 min-w-4 items-center justify-center rounded px-1 text-[10px] font-semibold tabular-nums",
-          active
-            ? "bg-background/20 text-background"
-            : "bg-muted text-muted-foreground"
-        )}
-      >
-        {count}
-      </span>
-    </Button>
-  )
+function matchesProjectSearch(project: ProjectItem, query: string) {
+  if (!query) {
+    return true
+  }
+
+  return [
+    project.title,
+    project.description,
+    project.association,
+    project.role,
+    ...project.tags,
+  ]
+    .filter((value): value is string => Boolean(value))
+    .some((value) => value.toLowerCase().includes(query))
 }
-
-// ─── Empty State ─────────────────────────────────────────────────────────────
 
 function EmptyState() {
   return (
@@ -76,13 +53,17 @@ function EmptyState() {
   )
 }
 
-// ─── Page ─────────────────────────────────────────────────────────────────────
-
 export default function ProjectsPage() {
   const [activeFilter, setActiveFilter] = useState<FilterId>("all")
+  const [searchQuery, setSearchQuery] = useState("")
   const [visibleCount, setVisibleCount] = useState(9)
 
-  // Compute per-filter counts
+  const debouncedQuery = useDebounce(searchQuery, SEARCH_DEBOUNCE_MS)
+  const normalizedQuery = useMemo(
+    () => debouncedQuery.trim().toLowerCase(),
+    [debouncedQuery]
+  )
+
   const filterCounts = useMemo(() => {
     const counts: Record<FilterId, number> = {
       all: projects.length,
@@ -90,94 +71,92 @@ export default function ProjectsPage() {
       mobile: 0,
       private: 0,
     }
-    for (const p of projects) {
-      for (const cat of getCategories(p.category)) {
-        counts[cat]++
+
+    for (const project of projects) {
+      for (const category of getCategories(project.category)) {
+        counts[category]++
       }
     }
+
     return counts
   }, [])
 
-  // Filtered projects
-  const filtered = useMemo(
+  const filteredByCategory = useMemo(
     () =>
       activeFilter === "all"
         ? projects
-        : projects.filter((p) =>
-            getCategories(p.category).includes(activeFilter)
+        : projects.filter((project) =>
+            getCategories(project.category).includes(activeFilter)
           ),
     [activeFilter]
   )
 
+  const filtered = useMemo(
+    () =>
+      filteredByCategory.filter((project) =>
+        matchesProjectSearch(project, normalizedQuery)
+      ),
+    [filteredByCategory, normalizedQuery]
+  )
+
   return (
     <div className="relative flex min-h-svh flex-col bg-background text-foreground">
-      {/* Spotlight background */}
       <SpotlightBackground
         className="fixed inset-0 z-0 bg-background"
         colors={["rgba(120, 119, 198, 0.25)", "rgba(59, 130, 246, 0.15)"]}
         ambient={true}
       />
 
-      {/* Breadcrumb header */}
       <header className="sticky top-0 z-20 flex items-center justify-between border-b border-border bg-background/70 px-6 py-3 backdrop-blur">
-        <span className="text-xs font-medium tracking-widest text-muted-foreground uppercase">
+        <Link
+          href="/"
+          className="text-xs font-medium tracking-widest text-muted-foreground uppercase transition-colors hover:text-foreground"
+        >
           fadhil.dev / projects
-        </span>
+        </Link>
       </header>
 
       <main className="relative z-10 mx-auto flex w-full max-w-6xl flex-1 flex-col px-6 pb-8">
-        {/* ── Section Header ───────────────────────────────────────────── */}
         <AnimatedSection
           variant="fade-up"
           duration={0.6}
           className="flex flex-col items-center pt-16 pb-10 text-center"
         >
-          {/* Decorated divider with badge */}
-          {/* <div className="mb-8 flex w-full items-center">
-            <div className="h-px flex-1 bg-linear-to-r from-transparent via-border to-transparent" />
-            <div className="z-10 rounded-xl border bg-primary px-4 py-1">
-              <span className="text-sm font-medium text-background">
-                My Projects
-              </span>
-            </div>
-            <div className="h-px flex-1 bg-linear-to-l from-transparent via-border to-transparent" />
-          </div> */}
-
           <h1 className="mb-3 text-3xl font-bold tracking-tight sm:text-4xl">
             Check out my latest work
           </h1>
           <p className="max-w-xl text-balance text-muted-foreground md:text-lg">
-            From mobile apps to enterprise web platforms — here are a few
+            From mobile apps to enterprise web platforms - here are a few
             highlights from my work.
           </p>
         </AnimatedSection>
 
-        {/* ── Filter Bar ───────────────────────────────────────────────── */}
-        <AnimatedSection
-          variant="fade-up"
-          duration={0.4}
-          className="mb-8 flex justify-center"
-        >
-          <div className="inline-flex items-center gap-1 rounded-xl border border-border/60 bg-card/50 p-1.5 backdrop-blur-sm">
-            {PROJECT_FILTERS.map((f) => (
-              <FilterTab
-                key={f.id}
-                label={f.label}
-                count={filterCounts[f.id]}
-                active={activeFilter === f.id}
-                onClick={() => setActiveFilter(f.id)}
-              />
-            ))}
-          </div>
+        <AnimatedSection variant="fade-up" duration={0.4} className="mb-8">
+          <FilterSearchToolbar
+            filters={PROJECT_FILTERS}
+            activeFilter={activeFilter}
+            counts={filterCounts}
+            onFilterChange={(filter) => {
+              setActiveFilter(filter)
+              setVisibleCount(9)
+            }}
+            searchValue={searchQuery}
+            onSearchChange={(value) => {
+              setSearchQuery(value)
+              setVisibleCount(9)
+            }}
+            searchInputId="project-search"
+            searchLabel="Search projects"
+            searchPlaceholder="Search by project name, role, tech, or description"
+          />
         </AnimatedSection>
 
-        {/* ── Project Grid ─────────────────────────────────────────────── */}
         <div className="grid w-full auto-rows-fr grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <AnimatePresence mode="popLayout">
             {filtered.length === 0 ? (
               <EmptyState />
             ) : (
-              filtered.slice(0, visibleCount).map((project, i) => (
+              filtered.slice(0, visibleCount).map((project, index) => (
                 <motion.div
                   key={project.title}
                   layout
@@ -186,7 +165,7 @@ export default function ProjectsPage() {
                   exit={{ opacity: 0, scale: 0.95, y: -8 }}
                   transition={{
                     duration: 0.3,
-                    delay: i * 0.05,
+                    delay: index * 0.05,
                     ease: [0.25, 0.46, 0.45, 0.94],
                   }}
                   className="h-full"
@@ -226,7 +205,6 @@ export default function ProjectsPage() {
         )}
       </main>
 
-      {/* Footer */}
       <Footer className="relative z-10 mt-16" />
     </div>
   )

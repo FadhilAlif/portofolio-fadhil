@@ -34,7 +34,7 @@ const socialLinks = [
   },
   {
     label: "Instagram",
-    href: "https://www.instagram.com/",
+    href: "https://www.instagram.com/fdhlalf_",
     icon: InstagramLogoIcon,
   },
   {

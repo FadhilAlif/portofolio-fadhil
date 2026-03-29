@@ -1,57 +1,48 @@
 "use client"
 
 import { useState, useMemo } from "react"
+import Link from "next/link"
 import { SpotlightBackground } from "@/components/ui/spotlight"
 import ExpandableCertificateGrid from "@/components/expandable-card-demo-grid"
 import { Footer } from "@/components/section/footer"
 import { AnimatedSection } from "@/components/section/animated-section"
-import { certificates, CERTIFICATE_FILTERS, type FilterId } from "@/lib/certificates-data"
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
+import {
+  certificates,
+  CERTIFICATE_FILTERS,
+  type CertificateItem,
+  type FilterId,
+} from "@/lib/certificates-data"
+import useDebounce from "@/hooks/use-debounce"
+import { FilterSearchToolbar } from "@/components/ui/filter-search-toolbar"
 
-// ─── Filter Tab Component ─────────────────────────────────────────────────────
+const SEARCH_DEBOUNCE_MS = 350
 
-function FilterTab({
-  label,
-  count,
-  active,
-  onClick,
-}: {
-  label: string
-  count: number
-  active: boolean
-  onClick: () => void
-}) {
-  return (
-    <Button
-      type="button"
-      onClick={onClick}
-      aria-pressed={active}
-      variant="ghost"
-      className={cn(
-        "relative flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-medium transition-all",
-        active
-          ? "bg-foreground text-background shadow-sm"
-          : "text-muted-foreground hover:bg-muted/60 hover:text-foreground"
-      )}
-    >
-      {label}
-      <span
-        className={cn(
-          "flex h-4 min-w-4 items-center justify-center rounded px-1 text-[10px] font-semibold tabular-nums",
-          active
-            ? "bg-background/20 text-background"
-            : "bg-muted text-muted-foreground"
-        )}
-      >
-        {count}
-      </span>
-    </Button>
-  )
+function matchesCertificateSearch(certificate: CertificateItem, query: string) {
+  if (!query) {
+    return true
+  }
+
+  return [
+    certificate.title,
+    certificate.issuer,
+    certificate.description,
+    certificate.credentialId,
+    certificate.issuedDate,
+    certificate.expirationDate,
+    ...(certificate.skills ?? []),
+  ]
+    .filter((value): value is string => Boolean(value))
+    .some((value) => value.toLowerCase().includes(query))
 }
 
 export default function CertificatesPage() {
   const [activeFilter, setActiveFilter] = useState<FilterId>("all")
+  const [searchQuery, setSearchQuery] = useState("")
+  const debouncedQuery = useDebounce(searchQuery, SEARCH_DEBOUNCE_MS)
+  const normalizedQuery = useMemo(
+    () => debouncedQuery.trim().toLowerCase(),
+    [debouncedQuery]
+  )
 
   // Compute per-filter counts
   const filterCounts = useMemo(() => {
@@ -71,14 +62,23 @@ export default function CertificatesPage() {
     return counts
   }, [])
 
-  // Filtered certificates
-  const filtered = useMemo(
+  const filteredByCategory = useMemo(
     () =>
       activeFilter === "all"
         ? certificates
         : certificates.filter((c) => c.category === activeFilter),
     [activeFilter]
   )
+
+  // Final list after category filter + debounced search
+  const filtered = useMemo(
+    () =>
+      filteredByCategory.filter((certificate) =>
+        matchesCertificateSearch(certificate, normalizedQuery)
+      ),
+    [filteredByCategory, normalizedQuery]
+  )
+
   return (
     <div className="relative flex min-h-svh flex-col bg-background text-foreground">
       {/* Spotlight background */}
@@ -90,9 +90,12 @@ export default function CertificatesPage() {
 
       {/* Breadcrumb header */}
       <header className="sticky top-0 z-20 flex items-center justify-between border-b border-border bg-background/70 px-6 py-3 backdrop-blur">
-        <span className="text-xs font-medium tracking-widest text-muted-foreground uppercase">
+        <Link
+          href="/"
+          className="text-xs font-medium tracking-widest text-muted-foreground uppercase transition-colors hover:text-foreground"
+        >
           fadhil.dev / certificates
-        </span>
+        </Link>
       </header>
 
       <main className="relative z-10 mx-auto flex w-full max-w-6xl flex-1 flex-col px-6 pb-8">
@@ -110,29 +113,25 @@ export default function CertificatesPage() {
           </p>
         </AnimatedSection>
 
-        {/* ── Filter Bar ───────────────────────────────────────────────── */}
-        <AnimatedSection
-          variant="fade-up"
-          duration={0.4}
-          className="mb-8 flex flex-wrap justify-center"
-        >
-          <div className="inline-flex flex-wrap items-center justify-center gap-1 rounded-xl border border-border/60 bg-card/50 p-1.5 backdrop-blur-sm">
-            {CERTIFICATE_FILTERS.map((f) => (
-              <FilterTab
-                key={f.id}
-                label={f.label}
-                count={filterCounts[f.id]}
-                active={activeFilter === f.id}
-                onClick={() => setActiveFilter(f.id)}
-              />
-            ))}
-          </div>
+        {/* ── Filter + Search Bar ─────────────────────────────────────── */}
+        <AnimatedSection variant="fade-up" duration={0.4} className="mb-8">
+          <FilterSearchToolbar
+            filters={CERTIFICATE_FILTERS}
+            activeFilter={activeFilter}
+            counts={filterCounts}
+            onFilterChange={setActiveFilter}
+            searchValue={searchQuery}
+            onSearchChange={setSearchQuery}
+            searchInputId="certificate-search"
+            searchLabel="Search certificates"
+            searchPlaceholder="Search by title, issuer, skill, or credential ID"
+          />
         </AnimatedSection>
 
         {/* ── Certificate Grid ──────────────────────────────────────────── */}
-        <AnimatedSection variant="fade-up" delay={0.2} duration={0.6}>
+        <div>
           <ExpandableCertificateGrid certificates={filtered} />
-        </AnimatedSection>
+        </div>
       </main>
 
       {/* Footer */}

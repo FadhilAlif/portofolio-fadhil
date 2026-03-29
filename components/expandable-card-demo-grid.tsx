@@ -6,6 +6,7 @@ import { AnimatePresence, motion } from "framer-motion"
 import { useOutsideClick } from "@/hooks/use-outside-click"
 import Image from "next/image"
 import { CertificateItem } from "@/lib/certificates-data"
+import { Badge } from "@/components/ui/badge"
 
 export default function ExpandableCertificateGrid({
   certificates,
@@ -52,7 +53,10 @@ export default function ExpandableCertificateGrid({
     return () => window.removeEventListener("keydown", onKeyDown)
   }, [active, zoomedImage])
 
-  useOutsideClick(ref, () => setActive(null))
+  useOutsideClick(ref, () => {
+    if (zoomedImage) return
+    setActive(null)
+  })
 
   return (
     <>
@@ -149,13 +153,13 @@ export default function ExpandableCertificateGrid({
                       <div className="mb-4 flex flex-col gap-4 border-b border-border pb-4 sm:flex-row sm:items-start sm:justify-between">
                         <div>
                           <motion.h3
-                            layoutId={`title-${active.title}-${id}`}
+                            layoutId={`title-${active.id}-${id}`}
                             className="text-xl leading-tight font-semibold text-foreground"
                           >
                             {active.title}
                           </motion.h3>
                           <motion.p
-                            layoutId={`issuer-${active.issuer}-${id}`}
+                            layoutId={`issuer-${active.id}-${id}`}
                             className="mt-1 font-medium text-primary"
                           >
                             {active.issuer}
@@ -204,6 +208,20 @@ export default function ExpandableCertificateGrid({
                           <p className="mt-1 leading-relaxed">
                             {active.description}
                           </p>
+                        )}
+
+                        {active.skills && active.skills.length > 0 && (
+                          <div className="flex flex-wrap gap-2 pt-1">
+                            {active.skills.map((skill) => (
+                              <Badge
+                                key={`${active.id}-${skill}`}
+                                variant="outline"
+                                className="rounded-full border-border/60 bg-muted/30 px-2.5 py-1 text-[11px] font-medium text-foreground"
+                              >
+                                {skill}
+                              </Badge>
+                            ))}
+                          </div>
                         )}
                       </motion.div>
                     </div>
@@ -263,14 +281,14 @@ export default function ExpandableCertificateGrid({
                   </motion.div>
                   <div className="flex flex-1 flex-col p-5">
                     <motion.h3
-                      layoutId={`title-${card.title}-${id}`}
+                      layoutId={`title-${card.id}-${id}`}
                       className="line-clamp-2 text-base leading-snug font-semibold text-foreground"
                     >
                       {card.title}
                     </motion.h3>
                     <div className="mt-auto pt-2">
                       <motion.p
-                        layoutId={`issuer-${card.issuer}-${id}`}
+                        layoutId={`issuer-${card.id}-${id}`}
                         className="text-sm font-medium text-muted-foreground"
                       >
                         {card.issuer}
