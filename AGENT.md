@@ -153,7 +153,7 @@ portofolio-fadhil/
 │
 ├── public/
 │   └── assets/
-│       ├── fadhil-photo-profie.png   # Profile photo
+│       ├── fadhil-photo-profile.png   # Profile photo
 │       ├── fadhil-background-bw.png  # Background image
 │       └── company-logo/             # Company logos for experience section
 │

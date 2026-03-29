@@ -34,6 +34,42 @@ import { certificates } from "@/lib/certificates-data"
 
 // ─── Page Component ─────────────────────────────────────────────────────────
 
+const siteUrl = "https://fadhildev.my.id"
+const personStructuredData = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: "Fadhil Alif Priyatno",
+  alternateName: ["Fadhil Dev", "Fadhil Alif"],
+  url: siteUrl,
+  image: `${siteUrl}/assets/fadhil-photo-profile.png`,
+  email: "fadhil.alifp@gmail.com",
+  jobTitle: "Full-Stack Engineer",
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: "Bantul",
+    addressRegion: "Yogyakarta",
+    addressCountry: "ID",
+  },
+  worksFor: {
+    "@type": "Organization",
+    name: "Telkomsigma",
+  },
+  sameAs: [
+    "https://github.com/fadhilalif",
+    "https://www.linkedin.com/in/fadhilalifpriyatno",
+    "https://www.instagram.com/fdhlalf_",
+  ],
+}
+
+const websiteStructuredData = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "Fadhil Dev",
+  alternateName: "Fadhil Alif Priyatno Portfolio",
+  url: siteUrl,
+  inLanguage: ["id-ID", "en-US"],
+}
+
 export default function Page() {
   const { resolvedTheme } = useTheme()
 
@@ -45,6 +81,19 @@ export default function Page() {
 
   return (
     <div className="relative flex min-h-svh flex-col bg-background text-foreground">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(personStructuredData),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(websiteStructuredData),
+        }}
+      />
+
       <SpotlightBackground
         className="fixed inset-0 z-0 bg-background"
         colors={spotlightColors}
@@ -172,7 +221,7 @@ export default function Page() {
             >
               <div className="relative flex h-72 w-56 rotate-2 transform items-center justify-center overflow-hidden rounded-[2rem] border-[6px] border-background bg-background shadow-xl ring-1 ring-border/50 transition-transform duration-300 hover:rotate-0 md:h-80 md:w-64 lg:h-90 lg:w-70">
                 <PixelImage
-                  src="/assets/fadhil-photo-profie.png"
+                  src="/assets/fadhil-photo-profile.png"
                   grid="8x8"
                   className="h-full w-full object-cover grayscale-0"
                   grayscaleAnimation={true}
