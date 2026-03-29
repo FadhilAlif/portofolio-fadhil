@@ -1,11 +1,16 @@
 "use client"
 
 import { useState, useMemo } from "react"
+import Link from "next/link"
 import { SpotlightBackground } from "@/components/ui/spotlight"
 import ExpandableCertificateGrid from "@/components/expandable-card-demo-grid"
 import { Footer } from "@/components/section/footer"
 import { AnimatedSection } from "@/components/section/animated-section"
-import { certificates, CERTIFICATE_FILTERS, type FilterId } from "@/lib/certificates-data"
+import {
+  certificates,
+  CERTIFICATE_FILTERS,
+  type FilterId,
+} from "@/lib/certificates-data"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 
@@ -90,9 +95,12 @@ export default function CertificatesPage() {
 
       {/* Breadcrumb header */}
       <header className="sticky top-0 z-20 flex items-center justify-between border-b border-border bg-background/70 px-6 py-3 backdrop-blur">
-        <span className="text-xs font-medium tracking-widest text-muted-foreground uppercase">
+        <Link
+          href="/"
+          className="text-xs font-medium tracking-widest text-muted-foreground uppercase transition-colors hover:text-foreground"
+        >
           fadhil.dev / certificates
-        </span>
+        </Link>
       </header>
 
       <main className="relative z-10 mx-auto flex w-full max-w-6xl flex-1 flex-col px-6 pb-8">

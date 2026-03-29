@@ -1,5 +1,6 @@
 "use client"
 
+import Link from "next/link"
 import {
   EnvelopeIcon,
   GithubLogoIcon,
@@ -61,9 +62,12 @@ export default function ContactPage() {
 
       {/* Breadcrumb header */}
       <header className="sticky top-0 z-20 flex items-center justify-between border-b border-border bg-background/70 px-6 py-3 backdrop-blur">
-        <span className="text-xs font-medium tracking-widest text-muted-foreground uppercase">
+        <Link
+          href="/"
+          className="text-xs font-medium tracking-widest text-muted-foreground uppercase transition-colors hover:text-foreground"
+        >
           fadhil.dev / contact
-        </span>
+        </Link>
       </header>
 
       <main className="relative z-10 mx-auto flex w-full max-w-5xl flex-1 flex-col items-center justify-center px-6 pt-10 pb-20">

@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useMemo } from "react"
+import Link from "next/link"
 import { motion, AnimatePresence } from "motion/react"
 import { SpotlightBackground } from "@/components/ui/spotlight"
 import { ProjectCard } from "@/components/ui/project-card"
@@ -120,9 +121,12 @@ export default function ProjectsPage() {
 
       {/* Breadcrumb header */}
       <header className="sticky top-0 z-20 flex items-center justify-between border-b border-border bg-background/70 px-6 py-3 backdrop-blur">
-        <span className="text-xs font-medium tracking-widest text-muted-foreground uppercase">
+        <Link
+          href="/"
+          className="text-xs font-medium tracking-widest text-muted-foreground uppercase transition-colors hover:text-foreground"
+        >
           fadhil.dev / projects
-        </span>
+        </Link>
       </header>
 
       <main className="relative z-10 mx-auto flex w-full max-w-6xl flex-1 flex-col px-6 pb-8">
