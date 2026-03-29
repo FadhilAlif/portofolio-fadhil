@@ -4,9 +4,9 @@ export type FilterId = "all" | CertificateCategory
 
 export const CERTIFICATE_FILTERS: { id: FilterId; label: string }[] = [
   { id: "all", label: "All" },
-  { id: "web", label: "Web Dev" },
-  { id: "mobile", label: "Mobile Dev" },
-  { id: "ai", label: "AI & Data" },
+  { id: "web", label: "Web" },
+  { id: "mobile", label: "Mobile" },
+  { id: "ai", label: "AI" },
   { id: "design", label: "UI/UX" },
   { id: "others", label: "Others" },
 ]
@@ -134,7 +134,6 @@ export const certificates: CertificateItem[] = [
     issuedDate: "Dec 2025",
     credentialId: "SIY6OGYDHQ7R",
     image: `${R2_URL}/Foundations%20of%20User%20Experience%20(UX)%20Design.jpg`,
-    featured: true,
     credentialUrl:
       "https://www.coursera.org/account/accomplishments/verify/SIY6OGYDHQ7R",
     skills: ["User Experience (UX)"],
@@ -323,6 +322,7 @@ export const certificates: CertificateItem[] = [
       "Project Management",
       "Problem Solving",
     ],
+    featured: true,
     category: "others",
   },
   {
