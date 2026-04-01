@@ -18,8 +18,31 @@ export function FadhilSignatureEffect({
   const [start, setStart] = useState(false)
 
   useEffect(() => {
-    const id = requestIdleCallback(() => setStart(true))
-    return () => cancelIdleCallback(id)
+    const win = window as Window & {
+      requestIdleCallback?: (callback: IdleRequestCallback) => number
+      cancelIdleCallback?: (handle: number) => void
+    }
+
+    let timeoutId: number | undefined
+    let idleId: number | undefined
+
+    if (typeof win.requestIdleCallback === "function") {
+      idleId = win.requestIdleCallback(() => setStart(true))
+    } else {
+      timeoutId = window.setTimeout(() => setStart(true), 16)
+    }
+
+    return () => {
+      if (
+        typeof idleId === "number" &&
+        typeof win.cancelIdleCallback === "function"
+      ) {
+        win.cancelIdleCallback(idleId)
+      }
+      if (typeof timeoutId === "number") {
+        window.clearTimeout(timeoutId)
+      }
+    }
   }, [])
 
   const duration = 2 * speed
