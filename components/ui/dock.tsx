@@ -84,6 +84,35 @@ function Dock({
 }: DockProps) {
   const mouseX = useMotionValue(Number.POSITIVE_INFINITY)
   const isHovered = useMotionValue(0)
+  const [supportsHover, setSupportsHover] = useState(false)
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(hover: hover) and (pointer: fine)")
+    const handleChange = () => setSupportsHover(mediaQuery.matches)
+
+    handleChange()
+
+    if (typeof mediaQuery.addEventListener === "function") {
+      mediaQuery.addEventListener("change", handleChange)
+    } else {
+      mediaQuery.addListener(handleChange)
+    }
+
+    return () => {
+      if (typeof mediaQuery.removeEventListener === "function") {
+        mediaQuery.removeEventListener("change", handleChange)
+      } else {
+        mediaQuery.removeListener(handleChange)
+      }
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!supportsHover) {
+      isHovered.set(0)
+      mouseX.set(Number.POSITIVE_INFINITY)
+    }
+  }, [isHovered, mouseX, supportsHover])
 
   const maxHeight = useMemo(() => {
     return Math.max(DOCK_HEIGHT, magnification + magnification / 2 + 4)
@@ -107,10 +136,12 @@ function Dock({
           className
         )}
         onMouseLeave={() => {
+          if (!supportsHover) return
           isHovered.set(0)
           mouseX.set(Number.POSITIVE_INFINITY)
         }}
         onMouseMove={({ pageX }) => {
+          if (!supportsHover) return
           isHovered.set(1)
           mouseX.set(pageX)
         }}
@@ -156,7 +187,16 @@ function DockItem({ children, className, onClick, active }: DockItemProps) {
       onFocus={() => isHovered.set(1)}
       onHoverEnd={() => isHovered.set(0)}
       onHoverStart={() => isHovered.set(1)}
-      onClick={onClick}
+      onPointerCancel={() => isHovered.set(0)}
+      onPointerUp={(event) => {
+        event.currentTarget.blur()
+        isHovered.set(0)
+      }}
+      onClick={(event) => {
+        onClick?.(event)
+        event.currentTarget.blur()
+        isHovered.set(0)
+      }}
       ref={ref}
       role="button"
       style={{ width }}
