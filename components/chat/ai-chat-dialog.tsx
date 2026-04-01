@@ -1,6 +1,13 @@
 "use client"
 
-import { Bot, Send, X, Loader2, RotateCcw, Sparkles } from "lucide-react"
+import {
+  RobotIcon,
+  PaperPlaneRightIcon,
+  XIcon,
+  CircleNotchIcon,
+  ArrowClockwiseIcon,
+  SparkleIcon,
+} from "@phosphor-icons/react"
 import { useCallback, useEffect, useRef, useState } from "react"
 import { AnimatePresence, motion } from "framer-motion"
 import ReactMarkdown from "react-markdown"
@@ -16,7 +23,7 @@ interface AiChatDialogProps {
   onClose: () => void
 }
 
-const MAX_QUESTIONS = 7
+const MAX_QUESTIONS = 3
 
 const SUGGESTION_BADGES = [
   "Who is Fadhil Alif Priyatno?",
@@ -128,15 +135,13 @@ export function AiChatDialog({ isOpen, onClose }: AiChatDialogProps) {
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 20, scale: 0.95 }}
           transition={{ duration: 0.2 }}
-          className="fixed z-100 flex flex-col overflow-hidden rounded-2xl border border-border bg-background shadow-2xl
-            bottom-4 left-2 right-2
-            md:bottom-6 md:right-6 md:left-auto md:w-[380px]"
+          className="fixed right-2 bottom-4 left-2 z-100 flex flex-col overflow-hidden rounded-2xl border border-border bg-background shadow-2xl md:right-6 md:bottom-6 md:left-auto md:w-95"
           style={{ height: "min(520px, calc(100vh - 100px))" }}
         >
           {/* Header */}
           <div className="flex items-center justify-between border-b border-border bg-muted/50 px-4 py-3">
             <div className="flex items-center gap-2">
-              <Bot className="h-5 w-5 text-primary" />
+              <RobotIcon className="h-5 w-5 text-primary" />
               <span className="text-sm font-medium">Fadhil AI</span>
               <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary">
                 {remaining}/{MAX_QUESTIONS}
@@ -149,14 +154,14 @@ export function AiChatDialog({ isOpen, onClose }: AiChatDialogProps) {
                 title="Start new session"
                 className="rounded-md p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
               >
-                <RotateCcw className="h-4 w-4" />
+                <ArrowClockwiseIcon className="h-4 w-4" />
               </button>
               <button
                 onClick={onClose}
                 aria-label="Close Chat"
                 className="rounded-md p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
               >
-                <X className="h-4 w-4" />
+                <XIcon className="h-4 w-4" />
               </button>
             </div>
           </div>
@@ -168,8 +173,9 @@ export function AiChatDialog({ isOpen, onClose }: AiChatDialogProps) {
               <div className="flex flex-col gap-3">
                 <div className="flex w-full justify-start">
                   <div className="max-w-[85%] rounded-2xl rounded-tl-sm border border-border bg-muted px-4 py-2 text-sm text-foreground">
-                    Hi there! 👋 I&apos;m Fadhil&apos;s AI assistant. Ask me anything about his
-                    skills, experience, projects, or education. You have{" "}
+                    Hi there! 👋 I&apos;m Fadhil&apos;s AI assistant. Ask me
+                    anything about his skills, experience, projects, or
+                    education. You have{" "}
                     <strong>{MAX_QUESTIONS} questions</strong> per session.
                   </div>
                 </div>
@@ -186,7 +192,7 @@ export function AiChatDialog({ isOpen, onClose }: AiChatDialogProps) {
                       disabled={isLoading}
                       className="group flex items-center gap-1.5 rounded-full border border-border bg-background px-3 py-1.5 text-xs font-medium text-muted-foreground transition-all hover:border-primary/40 hover:bg-primary/5 hover:text-primary disabled:pointer-events-none disabled:opacity-50"
                     >
-                      <Sparkles className="h-3 w-3 text-primary/60 transition-colors group-hover:text-primary" />
+                      <SparkleIcon className="h-3 w-3 text-primary/60 transition-colors group-hover:text-primary" />
                       {suggestion}
                     </motion.button>
                   ))}
@@ -207,7 +213,7 @@ export function AiChatDialog({ isOpen, onClose }: AiChatDialogProps) {
                   } `}
                 >
                   {msg.role === "assistant" ? (
-                    <div className="prose prose-sm dark:prose-invert max-w-none [&_p]:m-0 [&_ul]:my-1 [&_ol]:my-1 [&_li]:my-0">
+                    <div className="prose prose-sm dark:prose-invert max-w-none [&_li]:my-0 [&_ol]:my-1 [&_p]:m-0 [&_ul]:my-1">
                       <ReactMarkdown>{msg.content}</ReactMarkdown>
                     </div>
                   ) : (
@@ -222,7 +228,7 @@ export function AiChatDialog({ isOpen, onClose }: AiChatDialogProps) {
               <div className="flex w-full justify-start">
                 <div className="max-w-[85%] rounded-2xl rounded-tl-sm border border-border bg-muted px-4 py-3 text-sm text-foreground">
                   <div className="flex items-center gap-2">
-                    <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
+                    <CircleNotchIcon className="h-3.5 w-3.5 animate-spin text-primary" />
                     <span className="text-muted-foreground">Thinking...</span>
                   </div>
                 </div>
@@ -263,9 +269,7 @@ export function AiChatDialog({ isOpen, onClose }: AiChatDialogProps) {
                 ref={inputRef}
                 type="text"
                 placeholder={
-                  isLimitReached
-                    ? "Session limit reached"
-                    : "Ask something..."
+                  isLimitReached ? "Session limit reached" : "Ask something..."
                 }
                 className="w-full rounded-full border border-border bg-muted py-2.5 pr-10 pl-4 text-sm transition-colors outline-none focus:border-primary/50 disabled:cursor-not-allowed disabled:opacity-50"
                 value={input}
@@ -278,7 +282,7 @@ export function AiChatDialog({ isOpen, onClose }: AiChatDialogProps) {
                 disabled={!input.trim() || isLoading || isLimitReached}
                 className="absolute right-1.5 rounded-full bg-primary p-1.5 text-primary-foreground disabled:cursor-not-allowed disabled:opacity-50"
               >
-                <Send className="h-4 w-4" />
+                <PaperPlaneRightIcon className="h-4 w-4" />
               </button>
             </form>
           </div>

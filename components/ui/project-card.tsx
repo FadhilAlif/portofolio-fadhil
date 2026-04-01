@@ -156,7 +156,7 @@ const LazyVideo = memo(function LazyVideo({
           loop
           muted
           playsInline
-          preload="metadata"
+          preload="none"
           className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover/card:scale-[1.03]"
           aria-label={alt}
         />

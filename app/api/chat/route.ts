@@ -3,7 +3,7 @@ import { createClient } from "@supabase/supabase-js"
 import { FADHIL_KNOWLEDGE_BASE } from "@/lib/knowledge-base"
 
 // ── Constants ──────────────────────────────────────────────
-const MAX_QUESTIONS_PER_SESSION = 7
+const MAX_QUESTIONS_PER_SESSION = 3
 
 // Fallback chain: try each model in order if the previous one is rate-limited
 const GEMINI_MODELS = [
@@ -54,10 +54,7 @@ export async function POST(request: Request) {
     }
 
     if (!message || typeof message !== "string" || !message.trim()) {
-      return Response.json(
-        { error: "Message is required" },
-        { status: 400 }
-      )
+      return Response.json({ error: "Message is required" }, { status: 400 })
     }
 
     // 2. Rate-limit check: count user messages in this session
@@ -132,7 +129,9 @@ export async function POST(request: Request) {
             err.message?.toLowerCase().includes("quota"))
 
         if (isRateLimit) {
-          console.warn(`[Chat] Model ${model} rate-limited, trying next fallback...`)
+          console.warn(
+            `[Chat] Model ${model} rate-limited, trying next fallback...`
+          )
           continue
         }
 
@@ -145,7 +144,10 @@ export async function POST(request: Request) {
       // All models exhausted
       console.error("All Gemini models rate-limited:", lastError)
       return Response.json(
-        { error: "All AI models are currently unavailable. Please try again later." },
+        {
+          error:
+            "All AI models are currently unavailable. Please try again later.",
+        },
         { status: 503 }
       )
     }
@@ -164,8 +166,7 @@ export async function POST(request: Request) {
     }
 
     // 6. Return response with remaining question count
-    const remaining =
-      MAX_QUESTIONS_PER_SESSION - ((count ?? 0) + 1)
+    const remaining = MAX_QUESTIONS_PER_SESSION - ((count ?? 0) + 1)
 
     return Response.json({
       response: aiResponse,
@@ -173,9 +174,6 @@ export async function POST(request: Request) {
     })
   } catch (error) {
     console.error("Chat API error:", error)
-    return Response.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    )
+    return Response.json({ error: "Internal server error" }, { status: 500 })
   }
 }

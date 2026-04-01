@@ -27,6 +27,7 @@ interface PixelImageProps {
   pixelFadeInDuration?: number
   maxAnimationDelay?: number
   className?: string
+  sizes?: string
 }
 
 export const PixelImage = ({
@@ -37,6 +38,7 @@ export const PixelImage = ({
   pixelFadeInDuration = 800,
   maxAnimationDelay = 1200,
   className,
+  sizes = "(max-width: 768px) 224px, (max-width: 1024px) 256px, 280px",
 }: PixelImageProps) => {
   const [visible, setVisible] = useState(false)
   const [removeGrid, setRemoveGrid] = useState(false)
@@ -77,6 +79,7 @@ export const PixelImage = ({
         alt="Profile photo"
         fill
         priority
+        sizes={sizes}
         className={cn(
           "object-cover transition-all duration-700",
           grayscaleAnimation && !visible ? "grayscale" : "grayscale-0"
