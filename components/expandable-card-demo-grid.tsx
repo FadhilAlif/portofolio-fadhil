@@ -16,18 +16,12 @@ export default function ExpandableCertificateGrid({
   const [active, setActive] = useState<CertificateItem | boolean | null>(null)
   const [zoomedImage, setZoomedImage] = useState<string | null>(null)
   const [visibleCount, setVisibleCount] = useState(9)
-  const [prevCerts, setPrevCerts] = useState(certificates)
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
     const timer = setTimeout(() => setMounted(true), 0)
     return () => clearTimeout(timer)
   }, [])
-
-  if (certificates !== prevCerts) {
-    setPrevCerts(certificates)
-    setVisibleCount(9)
-  }
 
   const id = useId()
   const ref = useRef<HTMLDivElement>(null)
@@ -95,7 +89,6 @@ export default function ExpandableCertificateGrid({
                       alt="Zoomed certificate"
                       fill
                       className="object-contain"
-                      unoptimized
                     />
                   </motion.div>
                 </motion.div>
@@ -145,7 +138,7 @@ export default function ExpandableCertificateGrid({
                         src={active.image}
                         alt={active.title}
                         className="object-cover object-top"
-                        unoptimized
+ 
                       />
                     </motion.div>
 
@@ -276,7 +269,7 @@ export default function ExpandableCertificateGrid({
                       src={card.image}
                       alt={card.title}
                       className="object-cover object-top transition-transform duration-500 group-hover:scale-105"
-                      unoptimized // Cloudflare R2 bucket images are external, avoiding Next.js image optimization costs if preferred, but we can leave it off if remotePattern is configed
+               
                     />
                   </motion.div>
                   <div className="flex flex-1 flex-col p-5">

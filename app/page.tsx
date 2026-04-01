@@ -14,7 +14,6 @@ import SkillCategory from "@/components/ui/skill-category"
 import { EducationSection } from "@/components/section/education-section"
 import { WorkSection } from "@/components/section/work-section"
 import { PixelImage } from "@/components/icons/pixel-image"
-import { FadhilSignatureEffect } from "@/components/ui/apple-hello-effect"
 import {
   AnimatedSection,
   StaggerContainer,
@@ -179,10 +178,6 @@ export default function Page() {
                   pixelFadeInDuration={800}
                 />
               </div>
-              <FadhilSignatureEffect
-                className="h-20 pb-4 text-foreground/80 md:h-24"
-                speed={1.2}
-              />
             </AnimatedSection>
           </div>
         </section>
