@@ -27,9 +27,9 @@ export interface CertificateItem {
   featured?: boolean
 }
 
-const R2_URL = "https://cdn.fadhildev.my.id/certificate"
+const R2_URL = "https://cdn.fadhildev.my.id/certificate-avif"
 
-// Note: Replace the placeholder images with the actual JPG/PNG versions of your certificates
+// Note: Replace the placeholder images with the actual AVIF/PNG versions of your certificates
 export const certificates: CertificateItem[] = [
   {
     id: "cert-conduct-ux-research ",
@@ -37,7 +37,7 @@ export const certificates: CertificateItem[] = [
     issuer: "Google",
     issuedDate: "Mar 2026",
     credentialId: "A7N2DNOYXFKL",
-    image: `${R2_URL}/Conduct%20UX%20Research%20and%20Test%20Early%20Concepts.jpeg`,
+    image: `${R2_URL}/Conduct%20UX%20Research%20and%20Test%20Early%20Concepts.avif`,
     credentialUrl:
       "https://www.coursera.org/account/accomplishments/verify/A7N2DNOYXFKL",
     skills: ["UX Research", "User Testing"],
@@ -49,7 +49,7 @@ export const certificates: CertificateItem[] = [
     issuer: "Google",
     issuedDate: "Mar 2026",
     credentialId: "CR3KMGPMS69O",
-    image: `${R2_URL}/Start%20Writing%20Prompts%20like%20a%20Pro.jpeg`,
+    image: `${R2_URL}/Start%20Writing%20Prompts%20like%20a%20Pro.avif`,
     credentialUrl:
       "https://www.coursera.org/account/accomplishments/verify/CR3KMGPMS69O",
     skills: ["AI Prompting"],
@@ -61,7 +61,7 @@ export const certificates: CertificateItem[] = [
     issuer: "Google",
     issuedDate: "Mar 2026",
     credentialId: "C8VRBMBHB479",
-    image: `${R2_URL}/Build%20Wireframes%20and%20Low-Fidelity%20Prototypes.jpeg`,
+    image: `${R2_URL}/Build%20Wireframes%20and%20Low-Fidelity%20Prototypes.avif`,
     credentialUrl:
       "https://www.coursera.org/account/accomplishments/verify/C8VRBMBHB479",
     skills: ["Wireframing"],
@@ -73,7 +73,7 @@ export const certificates: CertificateItem[] = [
     issuer: "Universitas 'Aisyiyah (UNISA) Yogyakarta",
     issuedDate: "Aug 2025",
     credentialId: "1537/U-STEP/PPB/VIII/2025",
-    image: `${R2_URL}/Sertifikat_U-STEP_UNISA.jpg`,
+    image: `${R2_URL}/Sertifikat_U-STEP_UNISA.avif`,
     credentialUrl:
       "https://drive.google.com/file/d/1aqnxjqPcWJfDT2i7MnUm7smWM71Q3Dz4/view?usp=sharing",
     skills: ["English"],
@@ -86,7 +86,7 @@ export const certificates: CertificateItem[] = [
     issuedDate: "Jan 2026",
     expirationDate: "Jan 2029",
     credentialId: "L4PQ2N6G2ZO1",
-    image: `${R2_URL}/Memulai%20Pemrograman%20dengan%20Python.jpg`,
+    image: `${R2_URL}/Memulai%20Pemrograman%20dengan%20Python.avif`,
     credentialUrl: "https://www.dicoding.com/certificates/L4PQ2N6G2ZO1",
     skills: ["Python"],
     category: "others",
@@ -98,7 +98,7 @@ export const certificates: CertificateItem[] = [
     issuedDate: "Jan 2026",
     expirationDate: "Jan 2029",
     credentialId: "98XWOMLJ9ZM3",
-    image: `${R2_URL}/Prompt%20Engineering%20untuk%20Software%20Developer.jpg`,
+    image: `${R2_URL}/Prompt%20Engineering%20untuk%20Software%20Developer.avif`,
     credentialUrl: "https://www.dicoding.com/certificates/98XWOMLJ9ZM3",
     skills: ["AI Prompting", "Generative AI"],
     category: "ai",
@@ -109,7 +109,7 @@ export const certificates: CertificateItem[] = [
     issuer: "Google",
     issuedDate: "Dec 2025",
     credentialId: "NF7POVGVZ2VG",
-    image: `${R2_URL}/Start%20the%20UX%20Design%20Process.jpeg`,
+    image: `${R2_URL}/Start%20the%20UX%20Design%20Process.avif`,
     credentialUrl:
       "https://www.coursera.org/account/accomplishments/verify/NF7POVGVZ2VG",
     skills: ["User Experience (UX)", "UX Research"],
@@ -122,7 +122,7 @@ export const certificates: CertificateItem[] = [
     issuedDate: "Dec 2025",
     expirationDate: "Dec 2028",
     credentialId: "QLZ96E647Z5D",
-    image: `${R2_URL}/Belajar%20Pengembangan%20Aplikasi%20Flutter%20Intermediate.jpg`,
+    image: `${R2_URL}/Belajar%20Pengembangan%20Aplikasi%20Flutter%20Intermediate.avif`,
     credentialUrl: "https://www.dicoding.com/certificates/QLZ96E647Z5D",
     skills: ["Flutter", "Dart"],
     category: "mobile",
@@ -133,7 +133,7 @@ export const certificates: CertificateItem[] = [
     issuer: "Google",
     issuedDate: "Dec 2025",
     credentialId: "SIY6OGYDHQ7R",
-    image: `${R2_URL}/Foundations%20of%20User%20Experience%20(UX)%20Design.jpg`,
+    image: `${R2_URL}/Foundations%20of%20User%20Experience%20(UX)%20Design.avif`,
     credentialUrl:
       "https://www.coursera.org/account/accomplishments/verify/SIY6OGYDHQ7R",
     skills: ["User Experience (UX)"],
@@ -146,7 +146,7 @@ export const certificates: CertificateItem[] = [
     issuedDate: "Nov 2025",
     credentialId: "BC25/GRAD/XXV-11/BC25B053",
     featured: true,
-    image: `${R2_URL}/Multi%20Platform%20App%20Developer%20(Flutter).jpg`,
+    image: `${R2_URL}/Multi%20Platform%20App%20Developer%20(Flutter).avif`,
     credentialUrl:
       "https://drive.google.com/file/d/1Ew1q2eswyBto2V5-biSx0wb6HOG8tjhh/view?usp=sharing",
     skills: [
@@ -164,7 +164,7 @@ export const certificates: CertificateItem[] = [
     issuedDate: "Sep 2025",
     expirationDate: "Sep 2028",
     credentialId: "62024 3512500000072025",
-    image: `${R2_URL}/Sertif_Helpdesk_BNSP.jpg`,
+    image: `${R2_URL}/Sertif_Helpdesk_BNSP.avif`,
     featured: true,
     skills: ["Help Desk Support", "Technical Support"],
     category: "others",
@@ -176,7 +176,7 @@ export const certificates: CertificateItem[] = [
     issuedDate: "Sep 2025",
     expirationDate: "Sep 2028",
     credentialId: "NVP7JOVMOXR0",
-    image: `${R2_URL}/Meniti%20Karier%20sebagai%20Software%20Developer.jpg`,
+    image: `${R2_URL}/Meniti%20Karier%20sebagai%20Software%20Developer.avif`,
     credentialUrl: "https://www.dicoding.com/certificates/NVP7JOVMOXR0",
     category: "others",
   },
@@ -187,7 +187,7 @@ export const certificates: CertificateItem[] = [
     issuedDate: "Sep 2025",
     expirationDate: "Sep 2028",
     credentialId: "JLX15DY85Z72",
-    image: `${R2_URL}/Belajar%20Penerapan%20ML%20Pada%20Flutter.jpg`,
+    image: `${R2_URL}/Belajar%20Penerapan%20ML%20Pada%20Flutter.avif`,
     credentialUrl: "https://www.dicoding.com/certificates/JLX15DY85Z72",
     skills: ["Firebase", "Artificial Intelligence (AI)", "Flutter"],
     category: "ai",
@@ -199,7 +199,7 @@ export const certificates: CertificateItem[] = [
     issuedDate: "Sep 2025",
     expirationDate: "Sep 2028",
     credentialId: "QLZ96QKJMZ5D",
-    image: `${R2_URL}/Belajar_Dasar_AI.jpg`,
+    image: `${R2_URL}/Belajar_Dasar_AI.avif`,
     skills: ["Artificial Intelligence (AI)"],
     credentialUrl: "https://www.dicoding.com/certificates/QLZ96QKJMZ5D",
     category: "ai",
@@ -211,7 +211,7 @@ export const certificates: CertificateItem[] = [
     issuedDate: "Sep 2025",
     expirationDate: "Sep 2028",
     credentialId: "L4PQ2G48OZO1",
-    image: `${R2_URL}/Belajar%20Prinsip%20Pemrograman%20SOLID.jpg`,
+    image: `${R2_URL}/Belajar%20Prinsip%20Pemrograman%20SOLID.avif`,
     credentialUrl: "https://www.dicoding.com/certificates/L4PQ2G48OZO1",
     skills: ["SOLID"],
     category: "others",
@@ -223,7 +223,7 @@ export const certificates: CertificateItem[] = [
     issuedDate: "Sep 2025",
     expirationDate: "Sep 2028",
     credentialId: "72ZDK9W1VPYW",
-    image: `${R2_URL}/Belajar%20Fundamental%20Aplikasi%20Flutter.jpg`,
+    image: `${R2_URL}/Belajar%20Fundamental%20Aplikasi%20Flutter.avif`,
     credentialUrl: "https://www.dicoding.com/certificates/72ZDK9W1VPYW",
     skills: ["Flutter", "Dart"],
     category: "mobile",
@@ -235,7 +235,7 @@ export const certificates: CertificateItem[] = [
     issuedDate: "Aug 2025",
     expirationDate: "Aug 2028",
     credentialId: "1RXYQY16KZVM",
-    image: `${R2_URL}/Belajar%20Membuat%20Aplikasi%20Flutter%20untuk%20Pemula.jpg`,
+    image: `${R2_URL}/Belajar%20Membuat%20Aplikasi%20Flutter%20untuk%20Pemula.avif`,
     credentialUrl: "https://www.dicoding.com/certificates/1RXYQY16KZVM",
     skills: ["Flutter", "Dart"],
     category: "mobile",
@@ -246,7 +246,7 @@ export const certificates: CertificateItem[] = [
     issuer: "Digistar Club by Telkom Indonesia",
     issuedDate: "Feb 2025",
     credentialId: "347/SC-DA/DigiClub/I/2025",
-    image: `${R2_URL}/The%20Fundamentals%20of%20Large%20Language%20Model.jpg`,
+    image: `${R2_URL}/The%20Fundamentals%20of%20Large%20Language%20Model.avif`,
     skills: ["Artificial Intelligence (AI)", "Large Language Models (LLM)"],
     category: "ai",
   },
@@ -257,7 +257,7 @@ export const certificates: CertificateItem[] = [
     issuedDate: "Jul 2025",
     expirationDate: "Jul 2028",
     credentialId: "0LZ05D5YNX65",
-    image: `${R2_URL}/Memulai%20Pemrograman%20dengan%20Dart.jpg`,
+    image: `${R2_URL}/Memulai%20Pemrograman%20dengan%20Dart.avif`,
     credentialUrl: "https://www.dicoding.com/certificates/0LZ05D5YNX65",
     skills: ["Dart"],
     category: "mobile",
@@ -269,7 +269,7 @@ export const certificates: CertificateItem[] = [
     issuedDate: "Jul 2025",
     expirationDate: "Jul 2028",
     credentialId: "RVZKG4KOOXD5",
-    image: `${R2_URL}/Sertifikat_Belajar%20Dasar%20Git%20dengan%20GitHub_Dicoding.jpg`,
+    image: `${R2_URL}/Sertifikat_Belajar%20Dasar%20Git%20dengan%20GitHub_Dicoding.avif`,
     credentialUrl: "https://www.dicoding.com/certificates/RVZKG4KOOXD5",
     skills: ["GitHub", "Git", "Gitlab"],
     category: "others",
@@ -281,7 +281,7 @@ export const certificates: CertificateItem[] = [
     issuedDate: "Jul 2025",
     expirationDate: "Jul 2028",
     credentialId: "L4PQ2M4D2ZO1",
-    image: `${R2_URL}/Pengenalan%20ke%20Logika%20Pemrograman%20(Programming%20Logic%20101).jpg`,
+    image: `${R2_URL}/Pengenalan%20ke%20Logika%20Pemrograman%20(Programming%20Logic%20101).avif`,
     credentialUrl: "https://www.dicoding.com/certificates/L4PQ2M4D2ZO1",
     skills: ["Programming Logic"],
     category: "others",
@@ -291,7 +291,7 @@ export const certificates: CertificateItem[] = [
     title: "Code Generation and Optimization Using IBM Granite",
     issuer: "IBM",
     issuedDate: "Jul 2025",
-    image: `${R2_URL}/Code%20Generation%20and%20Optimization%20Using%20IBM%20Granite.png`,
+    image: `${R2_URL}/Code%20Generation%20and%20Optimization%20Using%20IBM%20Granite.avif`,
     credentialUrl:
       "https://www.credly.com/badges/96fdd3eb-0df9-49c0-9f9c-9117399754e9/linked_in_profile",
     skills: ["Code Generation", "Generative AI", "AI Prompting", "LLM"],
@@ -304,7 +304,7 @@ export const certificates: CertificateItem[] = [
     issuedDate: "Jul 2025",
     expirationDate: "Jul 2028",
     credentialId: "1OP8JYG5LPQK",
-    image: `${R2_URL}/Memulai%20Dasar%20Pemrograman%20untuk%20Menjadi%20Pengembang%20Software.jpg`,
+    image: `${R2_URL}/Memulai%20Dasar%20Pemrograman%20untuk%20Menjadi%20Pengembang%20Software.avif`,
     credentialUrl: "https://www.dicoding.com/certificates/1OP8JYG5LPQK",
     category: "others",
   },
@@ -313,7 +313,7 @@ export const certificates: CertificateItem[] = [
     title: "MSIB 6 Kampus Merdeka - PT Telkom Indonesia",
     issuer: "Telkom Indonesia",
     issuedDate: "Jul 2024",
-    image: `${R2_URL}/Sertifikat_Magang_MSIB_Telkom%20Indonesia.jpg`,
+    image: `${R2_URL}/Sertifikat_Magang_MSIB_Telkom%20Indonesia.avif`,
     credentialUrl:
       "https://drive.google.com/file/d/1wXttR1V9d6DWFucCl_L1LhX_NRO4g50G/view?usp=sharing",
     skills: [
@@ -330,7 +330,7 @@ export const certificates: CertificateItem[] = [
     title: "Data Mining",
     issuer: "Great Learning",
     issuedDate: "Jan 2025",
-    image: `${R2_URL}/DataMining_GreatLearning.jpg`,
+    image: `${R2_URL}/DataMining_GreatLearning.avif`,
     credentialUrl: "https://www.mygreatlearning.com/certificate/VCVIVMYF",
     skills: ["Data Analysis", "Jupyter", "Data Manipulation", "Data Mining"],
     category: "ai",
@@ -342,7 +342,7 @@ export const certificates: CertificateItem[] = [
     issuedDate: "Oct 2024",
     expirationDate: "Oct 2027",
     credentialId: "L4PQ51LNQZO1",
-    image: `${R2_URL}/Belajar_Dasar_DevOps.jpg`,
+    image: `${R2_URL}/Belajar_Dasar_DevOps.avif`,
     credentialUrl: "https://www.dicoding.com/certificates/L4PQ51LNQZO1",
     skills: ["DevOps", "CALMS Framework"],
     category: "others",
@@ -353,7 +353,7 @@ export const certificates: CertificateItem[] = [
     issuer: "Pijar Mahir",
     issuedDate: "Feb 2024",
     credentialId: "2024/02/2985/980699",
-    image: `${R2_URL}/Mahir%20SCRUM%20untuk%20Pengembangan%20Produk%20Digital.jpg`,
+    image: `${R2_URL}/Mahir%20SCRUM%20untuk%20Pengembangan%20Produk%20Digital.avif`,
     credentialUrl: "https://pijarmahir.id/sertifikat/xAl9GGFx9E",
     skills: ["Agile Project Management", "Scrum"],
     category: "others",
@@ -364,7 +364,7 @@ export const certificates: CertificateItem[] = [
     issuer: "Alterra Academy",
     issuedDate: "Jan 2024",
     credentialId: "243/SER/B2G-MKP/I/2024",
-    image: `${R2_URL}/Complete%20Front-End%20Engineer%20Career%20with%20ReactJS.jpg`, // User provided pdf earlier, expected to convert to PNG
+    image: `${R2_URL}/Complete%20Front-End%20Engineer%20Career%20with%20ReactJS.avif`, // User provided pdf earlier, expected to convert to PNG
     featured: true,
     credentialUrl: `https://drive.google.com/file/d/1h7IxDECLekH2zE5ARQQaZdVXmYMHsSac/view`,
     skills: [
@@ -384,7 +384,7 @@ export const certificates: CertificateItem[] = [
     title: "Autentikasi dan Otorisasi Pada RestAPI",
     issuer: "Dicoding Indonesia",
     issuedDate: "Jan 2024",
-    image: `${R2_URL}/Autentikasi%20dan%20Otorisasi%20Pada%20RestAPI.jpg`,
+    image: `${R2_URL}/Autentikasi%20dan%20Otorisasi%20Pada%20RestAPI.avif`,
     skills: ["REST APIs", "Authentication Systems"],
     category: "web",
   },
@@ -394,8 +394,8 @@ export const certificates: CertificateItem[] = [
     issuer: "Coding Studio",
     issuedDate: "Dec 2023",
     credentialId: "19731",
-    credentialUrl: `${R2_URL}/CodingStudio_Fundamental-Front-End-Web-Development%20(2).jpg`,
-    image: `${R2_URL}/CodingStudio_Fundamental-Front-End-Web-Development%20(2).jpg`,
+    credentialUrl: `${R2_URL}/CodingStudio_Fundamental-Front-End-Web-Development%20(2).avif`,
+    image: `${R2_URL}/CodingStudio_Fundamental-Front-End-Web-Development%20(2).avif`,
     category: "web",
   },
   {
@@ -404,7 +404,7 @@ export const certificates: CertificateItem[] = [
     issuer: "Coding Studio",
     issuedDate: "Dec 2023",
     credentialId: "19731",
-    image: `${R2_URL}/CodingStudio_Fundamental-Front-End-Web-Development%20(1).jpg`,
+    image: `${R2_URL}/CodingStudio_Fundamental-Front-End-Web-Development%20(1).avif`,
     category: "web",
   },
 ]

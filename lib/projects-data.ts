@@ -80,7 +80,7 @@ export function getCategories(
 // ─── Projects Array ───────────────────────────────────────────────────────────
 // Sorted newest → oldest. Replace image/video values with actual R2 URLs.
 
-const R2_URL = "https://cdn.fadhildev.my.id/project"
+const R2_URL = "https://cdn.fadhildev.my.id/project-avif"
 
 export const projects: ProjectItem[] = [
   {
@@ -92,8 +92,8 @@ export const projects: ProjectItem[] = [
     description:
       "A smart, modern finance app built with Flutter to make expense tracking effortless. Features receipt scanning, AI auto-categorization, seamless Supabase sync, and WhatsApp Bot integration.",
     tags: ["Flutter", "Dart", "Supabase"],
-    image: `${R2_URL}/duwitku-banner.png`,
-    video: `${R2_URL}/Duwitku_DemoVideo.mp4`,
+    image: `${R2_URL}/duwitku-banner.avif`,
+    video: `https://cdn.fadhildev.my.id/project/Duwitku_DemoVideo.mp4`,
     href: "https://duwitku-landing.vercel.app/",
     links: [
       {
@@ -124,7 +124,7 @@ export const projects: ProjectItem[] = [
     description:
       "A Public WBS that enables external users to securely submit reports with flexible identity options (full, partial, or anonymous). It ensures structured reporting while allowing users to track the status of their submissions.",
     tags: ["Next.js", "TypeScript", "Tailwind CSS", "Django"],
-    image: `${R2_URL}/wbs-public-preview.png`,
+    image: `${R2_URL}/wbs-public-preview.avif`,
   },
   {
     title: "WBS Internal — Whistleblowing System",
@@ -136,7 +136,7 @@ export const projects: ProjectItem[] = [
     description:
       "An internal WBS for the Internal Audit team to manage, validate, and monitor whistleblowing reports end-to-end. It centralizes data from multiple sources, supports structured workflows, and provides dashboards for effective monitoring and decision-making.",
     tags: ["Next.js", "TypeScript", "Tailwind CSS", "Django"],
-    image: `${R2_URL}/wbs-internal-preview.png`,
+    image: `${R2_URL}/wbs-internal-preview.avif`,
   },
   {
     title: "PLUSTIX — Pertamina",
@@ -148,7 +148,7 @@ export const projects: ProjectItem[] = [
     description:
       "A web-based ticketing system for monitoring SPBU shifts and operational issues, featuring Ticket Summary, FAQ, L3 internal tickets, reporting, and a dashboard with filters, insights, and downloadable reports.",
     tags: ["Next.js", "TypeScript", "Tailwind CSS"],
-    image: `${R2_URL}/plustix-preview.png`,
+    image: `${R2_URL}/plustix-preview.avif`,
   },
   {
     title: "JSON Polish",
@@ -158,7 +158,7 @@ export const projects: ProjectItem[] = [
     description:
       "A modern JSON formatting & validation tool with syntax highlighting, diff comparison, auto-fix (quotes, trailing commas, brackets), tabbed editing, file upload/download, and dark/light theme.",
     tags: ["React", "Vite", "TypeScript", "Tailwind CSS"],
-    image: `${R2_URL}/json-polish-preview.png`,
+    image: `${R2_URL}/json-polish-preview.avif`,
     href: "https://json-polish.vercel.app/",
     links: [
       {
@@ -179,7 +179,7 @@ export const projects: ProjectItem[] = [
     description:
       "A web-based module within Logistic Sourcing Management (LSM) that enables Finance teams to track vendor invoice submissions, featuring searchable logs and integrated reporting for better visibility and control.",
     tags: ["Nuxt.js", "TypeScript", "Tailwind CSS"],
-    image: `${R2_URL}/lsm-preview.png`,
+    image: `${R2_URL}/lsm-preview.avif`,
   },
   {
     title: "Dishcovery",
@@ -191,7 +191,7 @@ export const projects: ProjectItem[] = [
     description:
       "A mobile app that preserves Indonesia's traditional culinary heritage through AI-powered image recognition using Gemini API to identify traditional dishes from camera.",
     tags: ["Flutter", "Dart", "Firebase"],
-    image: `${R2_URL}/dishcovery-banner.jpg`,
+    image: `${R2_URL}/dishcovery-banner.avif`,
     href: "https://github.com/Dishcovery-Dev",
     links: [
       {
@@ -215,7 +215,7 @@ export const projects: ProjectItem[] = [
     description:
       "A Flutter app that uses TensorFlow Lite and Firebase ML to recognize food from a photo, then generates nutritional info via Gemini AI and fetches recipes from MealDB & YouTube APIs.",
     tags: ["Flutter", "Firebase", "TensorFlow", "Dart"],
-    image: `${R2_URL}/manganku-preview.png`,
+    image: `${R2_URL}/manganku-preview.avif`,
     href: "https://github.com/FadhilAlif/manganku_app",
     links: [
       {
@@ -240,7 +240,7 @@ export const projects: ProjectItem[] = [
     description:
       "A web-based ERP platform covering management, accounting, and inventory modules. Built responsive and scalable UI using Vue 3, Pinia, and Tailwind CSS with microservice-based API integration.",
     tags: ["Vue.js", "Pinia", "JavaScript", "Tailwind CSS", "Python", "Flask"],
-    image: `${R2_URL}/ting-preview.png`,
+    image: `${R2_URL}/ting-preview.avif`,
   },
   {
     title: "DiabExpert",
@@ -251,7 +251,7 @@ export const projects: ProjectItem[] = [
     description:
       "A Web-based expert system for early detection of Type 1 & Type 2 Diabetes Mellitus using the Certainty Factor method. Processes user-reported symptoms and confidence levels to estimate risk.",
     tags: ["Laravel", "MySQL", "Bootstrap"],
-    image: `${R2_URL}/diabexpert-preview.png`,
+    image: `${R2_URL}/diabexpert-preview.avif`,
     href: "https://github.com/FadhilAlif/DiabExpert",
     links: [
       {
@@ -269,7 +269,7 @@ export const projects: ProjectItem[] = [
   //   description:
   //     "A full-stack social media app — photo uploads, comments, social media links, user auth, and a home feed. Frontend in Vue 3 + PrimeVue, backend in Express.js + Sequelize with JWT auth.",
   //   tags: ["Vue.js", "Pinia", "Express.js", "MySQL", "Sequelize"],
-  //   image: `${R2_URL}/stargram-preview.png`,
+  //   image: `${R2_URL}/stargram-preview.avif`,
   //   href: "https://github.com/FadhilAlif/Stargram-app",
   //   links: [
   //     {
@@ -289,7 +289,7 @@ export const projects: ProjectItem[] = [
     description:
       "A web-based admin dashboard for managing users across Apilogy platforms (Developer & Publisher). Built with optimized performance using React,Zustand, TanStack Query, Nest.js and Docker for efficient data handling and scalability.",
     tags: ["React", "TypeScript", "Tailwind CSS", "Nestjs", "Docker"],
-    image: `${R2_URL}/apilogy-landing.png`,
+    image: `${R2_URL}/apilogy-landing.avif`,
     href: "https://apilogy.id/",
   },
   {
@@ -301,7 +301,7 @@ export const projects: ProjectItem[] = [
     description:
       "A cashier web application for restaurants built as an individual capstone project. Implements product management, real-time order processing, and sales reporting dashboard.",
     tags: ["React", "JavaScript", "Tailwind CSS"],
-    image: `${R2_URL}/cuisinecash-preview.png`,
+    image: `${R2_URL}/cuisinecash-preview.avif`,
     href: "https://cuisine-cash.vercel.app",
     links: [
       {
@@ -321,7 +321,7 @@ export const projects: ProjectItem[] = [
     description:
       "A web app that helps farmers manage planting activities with features like watering and fertilizing reminders, planting history, and weather monitoring to support better crop management and decision-making.",
     tags: ["React", "JavaScript", "Tailwind CSS"],
-    image: `${R2_URL}/agriplant-preview.png`,
+    image: `${R2_URL}/agriplant-preview.avif`,
     href: "https://agriculture-react.vercel.app/dashboard",
     links: [
       {
@@ -345,7 +345,7 @@ export const projects: ProjectItem[] = [
     description:
       "Responsive landing page for a home services marketplace, built as a Code Competence learning task at Alterra Academy using React and Bootstrap.",
     tags: ["React", "HTML", "CSS", "JavaScript", "Bootstrap"],
-    image: `${R2_URL}/tukangin-preview.png`,
+    image: `${R2_URL}/tukangin-preview.avif`,
     href: "https://tukangin.vercel.app/",
     links: [
       {
