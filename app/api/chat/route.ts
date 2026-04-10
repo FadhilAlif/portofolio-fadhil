@@ -7,8 +7,8 @@ const MAX_QUESTIONS_PER_SESSION = 3
 
 // Fallback chain: try each model in order if the previous one is rate-limited
 const GEMINI_MODELS = [
+  "gemini-3-flash-preview",
   "gemini-2.5-flash",
-  "gemini-2.5-flash-lite",
   "gemini-1.5-flash",
 ] as const
 
@@ -121,21 +121,24 @@ export async function POST(request: Request) {
         break // success — stop trying fallback models
       } catch (err: unknown) {
         lastError = err
-        const isRateLimit =
+        const shouldTryNext =
           err instanceof Error &&
           (err.message?.includes("429") ||
+            err.message?.includes("403") ||
             err.message?.includes("RESOURCE_EXHAUSTED") ||
+            err.message?.includes("PERMISSION_DENIED") ||
             err.message?.toLowerCase().includes("rate limit") ||
-            err.message?.toLowerCase().includes("quota"))
+            err.message?.toLowerCase().includes("quota") ||
+            err.message?.toLowerCase().includes("denied access"))
 
-        if (isRateLimit) {
+        if (shouldTryNext) {
           console.warn(
-            `[Chat] Model ${model} rate-limited, trying next fallback...`
+            `[Chat] Model ${model} unavailable (${err.message?.slice(0, 60)}), trying next fallback...`
           )
           continue
         }
 
-        // Non-rate-limit error — don't try fallback, just throw
+        // Other unexpected error — don't try fallback, just throw
         throw err
       }
     }
