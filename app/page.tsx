@@ -87,7 +87,7 @@ export default function Page() {
               >
                 <StaggerItem variant="fade-up">
                   <span className="flex items-center gap-1.5 transition-colors hover:text-foreground">
-                    <MapPinIcon className="h-4 w-4" /> Bantul, Yogyakarta
+                    <MapPinIcon className="h-4 w-4" /> DI Yogyakarta
                   </span>
                 </StaggerItem>
                 <StaggerItem variant="fade-up">
@@ -284,8 +284,7 @@ export default function Page() {
               Projects
             </h3>
             <p className="mt-1 text-sm text-muted-foreground">
-              Explore my work across web and mobile platforms — auto-scrolls or
-              swipe to browse.
+              A collection of my work across web and mobile platforms.
             </p>
           </div>
 
@@ -335,7 +334,8 @@ export default function Page() {
               Certifications &amp; Achievements
             </h3>
             <p className="mt-1 text-sm text-muted-foreground">
-              My continuous learning journey — swipe or let it auto-scroll.
+              Highlights from my continuous learning journey and professional
+              growth.
             </p>
           </div>
 

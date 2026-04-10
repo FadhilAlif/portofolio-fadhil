@@ -24,7 +24,7 @@ const contactInfo = [
   },
   {
     label: "Location",
-    value: "Bantul, Yogyakarta",
+    value: "DI Yogyakarta",
     href: null,
     icon: MapPinIcon,
   },

@@ -5,7 +5,7 @@ import { type SkillCategoryItem } from "@/components/ui/skill-category"
 export const experiences: WorkItem[] = [
   {
     company: "TELKOMSIGMA",
-    location: "Yogyakarta, Indonesia",
+    location: "Yogyakarta",
     role: "Full-Stack Engineer",
     start: "Aug 2025",
     description: [
@@ -175,7 +175,7 @@ export const skillGroups: SkillGroup[] = [
 // const aboutFadhil = {
 //   name: "Fadhil Alif Priyatno",
 //   role: "Full-Stack Engineer",
-//   location: "Bantul, Yogyakarta",
+//   location: "Yogyakarta",
 //   education: {
 //     degree: "B.Sc. Information Technology",
 //     university: "Universitas 'Aisyiyah Yogyakarta",

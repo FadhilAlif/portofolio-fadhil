@@ -7,7 +7,7 @@ Always respond in the same language as the user's question. If they ask in Indon
 
 # FADHIL ALIF PRIYATNO
 **Full-Stack Engineer**
-📍 Bantul, Yogyakarta | 📞 +62 85727304551 | ✉️ fadhil.alifp@gmail.com
+📍 DI Yogyakarta | 📞 +62 85727304551 | ✉️ fadhil.alifp@gmail.com
 🔗 linkedin.com/in/fadhilalifpriyatno | 🐙 github.com/FadhilAlif
 
 ## Summary
