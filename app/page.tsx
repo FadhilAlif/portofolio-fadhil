@@ -25,6 +25,7 @@ import { HoverBorderGradient } from "@/components/ui/hover-border-gradient"
 import { MagicCard } from "@/components/ui/magic-card"
 import { Button } from "@/components/ui/button"
 import { ProjectCard } from "@/components/ui/project-card"
+import { AutoCarousel } from "@/components/ui/auto-carousel"
 import Link from "next/link"
 import { useTheme } from "next-themes"
 import { experiences, educations, skillGroups } from "@/lib/about-data"
@@ -270,7 +271,7 @@ export default function Page() {
           </AnimatedSection>
         </div>
 
-        {/* ── Featured Projects ─────────────────────────────────────────── */}
+        {/* ── Projects Carousel ─────────────────────────────────────────── */}
         <AnimatedSection
           variant="fade-up"
           delay={0.1}
@@ -280,46 +281,48 @@ export default function Page() {
         >
           <div>
             <h3 className="text-2xl font-semibold tracking-tight text-foreground">
-              Featured Projects
+              Projects
             </h3>
             <p className="mt-1 text-sm text-muted-foreground">
-              A selection of my most impactful work across web and mobile
-              platforms.
+              Explore my work across web and mobile platforms — auto-scrolls or
+              swipe to browse.
             </p>
           </div>
 
-          <div className="mt-2 grid w-full auto-rows-fr grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {projects
-              .filter((p) => p.featured)
-              .slice(0, 3)
-              .map((project) => (
-                <ProjectCard
-                  key={project.title}
-                  title={project.title}
-                  description={project.description}
-                  dates={project.dates}
-                  association={project.association}
-                  role={project.role}
-                  tags={project.tags}
-                  isInternal={project.isInternal}
-                  href={project.href}
-                  image={project.image}
-                  video={project.video}
-                  links={project.links}
-                />
-              ))}
-          </div>
+          <AutoCarousel
+            items={projects}
+            keyExtractor={(p) => p.title}
+            interval={5000}
+            gap={16}
+            itemMinWidth={320}
+            renderItem={(project) => (
+              <ProjectCard
+                title={project.title}
+                description={project.description}
+                dates={project.dates}
+                association={project.association}
+                role={project.role}
+                tags={project.tags}
+                isInternal={project.isInternal}
+                href={project.href}
+                image={project.image}
+                video={project.video}
+                links={project.links}
+                className="h-full"
+              />
+            )}
+          />
 
           <Link
             href="/projects"
             className="group mt-2 inline-flex w-fit items-center gap-2 text-sm font-medium text-primary transition-colors hover:text-primary/80 hover:underline"
           >
-            See More Projects
+            See All Projects
             <ArrowRightIcon className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
           </Link>
         </AnimatedSection>
 
-        {/* ── Featured Certificates ────────────────────────────────────── */}
+        {/* ── Certificates Carousel ────────────────────────────────────── */}
         <AnimatedSection
           variant="fade-up"
           delay={0.1}
@@ -332,50 +335,53 @@ export default function Page() {
               Certifications &amp; Achievements
             </h3>
             <p className="mt-1 text-sm text-muted-foreground">
-              Highlights from my continuous learning journey and professional
-              growth.
+              My continuous learning journey — swipe or let it auto-scroll.
             </p>
           </div>
 
-          <div className="mt-2 grid w-full grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {certificates
-              .filter((c) => c.featured)
-              .slice(0, 4)
-              .map((cert) => (
-                <div
-                  key={cert.id}
-                  className="group flex flex-col overflow-hidden rounded-xl border border-border bg-card/50 backdrop-blur-sm transition-all duration-300 hover:border-border/80 hover:shadow-lg hover:ring-1 hover:shadow-primary/5 hover:ring-primary/10"
-                >
-                  <div className="relative aspect-4/3 w-full overflow-hidden bg-muted">
-                    <Image
-                      src={cert.image}
-                      alt={cert.title}
-                      fill
-                      className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-                      loading="lazy"
-                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                    />
-                  </div>
-                  <div className="flex flex-1 flex-col gap-1 p-3">
-                    <h4 className="line-clamp-2 text-xs leading-snug font-semibold text-foreground">
-                      {cert.title}
-                    </h4>
-                    <span className="text-[11px] text-muted-foreground">
-                      {cert.issuer}
-                    </span>
-                    <span className="mt-auto text-[10px] text-muted-foreground/60">
-                      {cert.issuedDate}
-                    </span>
-                  </div>
+          <AutoCarousel
+            items={certificates}
+            keyExtractor={(c) => c.id}
+            interval={4000}
+            gap={16}
+            itemMinWidth={260}
+            renderItem={(cert) => (
+              <a
+                href={cert.credentialUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group flex h-full flex-col overflow-hidden rounded-xl border border-border bg-card/50 backdrop-blur-sm transition-all duration-300 hover:border-border/80 hover:shadow-lg hover:ring-1 hover:shadow-primary/5 hover:ring-primary/10"
+              >
+                <div className="relative aspect-4/3 w-full overflow-hidden bg-muted">
+                  <Image
+                    src={cert.image}
+                    alt={cert.title}
+                    fill
+                    className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                    loading="lazy"
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                  />
                 </div>
-              ))}
-          </div>
+                <div className="flex flex-1 flex-col gap-1 p-3">
+                  <h4 className="line-clamp-2 text-xs leading-snug font-semibold text-foreground">
+                    {cert.title}
+                  </h4>
+                  <span className="text-[11px] text-muted-foreground">
+                    {cert.issuer}
+                  </span>
+                  <span className="mt-auto text-[10px] text-muted-foreground/60">
+                    {cert.issuedDate}
+                  </span>
+                </div>
+              </a>
+            )}
+          />
 
           <Link
             href="/certificates"
             className="group mt-2 inline-flex w-fit items-center gap-2 text-sm font-medium text-primary transition-colors hover:text-primary/80 hover:underline"
           >
-            See More Certificates
+            See All Certificates
             <ArrowRightIcon className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
           </Link>
         </AnimatedSection>
