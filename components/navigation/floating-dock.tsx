@@ -4,6 +4,7 @@ import { Dock, DockIcon, DockItem, DockLabel } from "@/components/ui/dock"
 import { User, FolderGit2, Award, Mail, Bot, Sun, Moon } from "lucide-react"
 import { useEffect, useState } from "react"
 import { usePathname, useRouter } from "next/navigation"
+import Image from "next/image"
 import { AiChatDialog } from "@/components/chat/ai-chat-dialog"
 import { cn } from "@/lib/utils"
 import { useThemeAnimation } from "@/hooks/use-theme-animation"
@@ -22,6 +23,10 @@ export function FloatingDock() {
   const [isChatOpen, setIsChatOpen] = useState(false)
   const activeLanguage = getSupportedLanguage(i18n.resolvedLanguage)
   const isLanguageActive = mounted && activeLanguage === "id"
+  const activeLanguageFlag =
+    activeLanguage === "en"
+      ? { label: "ENG", src: "/assets/ENG-flag.png" }
+      : { label: "INA", src: "/assets/INA-flag.png" }
 
   // Avoid hydration mismatch
   useEffect(() => {
@@ -135,19 +140,33 @@ export function FloatingDock() {
           </DockItem>
 
           <DockItem
+            className="group"
             active={isLanguageActive}
             onClick={handleLanguageToggle}
           >
             <DockLabel>{t("dock.language")}</DockLabel>
             <DockIcon>
-              <TranslateIcon
-                className={cn(
-                  "size-full transition-colors",
-                  isLanguageActive
-                    ? "text-primary"
-                    : "text-neutral-600 dark:text-neutral-300"
-                )}
-              />
+              <div className="relative flex size-full items-center justify-center">
+                <TranslateIcon
+                  className={cn(
+                    "size-full transition-all duration-150 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover:-translate-y-0.5 group-hover:scale-70 group-hover:opacity-0",
+                    isLanguageActive
+                      ? "text-primary"
+                      : "text-neutral-600 dark:text-neutral-300"
+                  )}
+                />
+                <div className="absolute inset-0 flex scale-75 items-center justify-center opacity-0 transition-all duration-150 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover:scale-105 group-hover:opacity-100">
+                  <span className="relative block size-full overflow-hidden rounded-full">
+                    <Image
+                      alt={`${activeLanguageFlag.label} flag`}
+                      className="object-cover"
+                      fill
+                      sizes="40px"
+                      src={activeLanguageFlag.src}
+                    />
+                  </span>
+                </div>
+              </div>
             </DockIcon>
           </DockItem>
 
