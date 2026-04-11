@@ -3,6 +3,8 @@
 import Link from "next/link"
 import Image from "next/image"
 import { ArrowUpRight } from "lucide-react"
+import type { PortfolioMediaItem } from "@/types"
+import { PhotoGallery } from "./photo-gallery"
 
 export type EducationItem = {
   institution: string
@@ -13,6 +15,7 @@ export type EducationItem = {
   description?: string[]
   logo?: string
   href?: string
+  gallery?: PortfolioMediaItem[]
 }
 
 type EducationSectionProps = {
@@ -111,6 +114,10 @@ export function EducationSection({ items }: EducationSectionProps) {
                       </li>
                     ))}
                   </ul>
+                )}
+
+                {education.gallery && education.gallery.length > 0 && (
+                  <PhotoGallery photos={education.gallery} />
                 )}
               </div>
             </div>

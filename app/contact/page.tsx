@@ -24,7 +24,7 @@ const contactInfo = [
   },
   {
     label: "Location",
-    value: "DI Yogyakarta",
+    value: "Yogyakarta",
     href: null,
     icon: MapPinIcon,
   },

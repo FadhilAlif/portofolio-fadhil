@@ -2,9 +2,12 @@ import { type EducationItem } from "@/components/section/education-section"
 import { type WorkItem } from "@/components/section/work-section"
 import { type SkillCategoryItem } from "@/components/ui/skill-category"
 
+const WORK_MEDIA_BASE = "https://cdn.fadhildev.my.id/work-avif"
+const EDU_MEDIA_BASE = "https://cdn.fadhildev.my.id/edu-avif"
+
 export const experiences: WorkItem[] = [
   {
-    company: "TELKOMSIGMA",
+    company: "TELKOMSIGMA (Telkom Indonesia Subsidiary)",
     location: "Yogyakarta",
     role: "Full-Stack Engineer",
     start: "Aug 2025",
@@ -16,6 +19,29 @@ export const experiences: WorkItem[] = [
     ],
     logoUrl: "/assets/company-logo/telkomsigma-icon.jpeg",
     companyUrl: "https://www.telkomsigma.co.id/",
+    gallery: [
+      {
+        id: "telkomsigma-1",
+        title: "HUT-17 Telkomsigma",
+        description:
+          "A celebratory image from the 17th anniversary event, representing company culture and team spirit.",
+        imageUrl: `${WORK_MEDIA_BASE}/Telkomsigma-HUT.avif`,
+      },
+      {
+        id: "telkomsigma-2",
+        title: "Hari Batik Nasional",
+        description:
+          "Celebrating the national day of batik, showcasing the cultural heritage and pride.",
+        imageUrl: `${WORK_MEDIA_BASE}/Telkomsigma-Hari%20Batik.avif`,
+      },
+      {
+        id: "telkomsigma-3",
+        title: "BOD x Telsigers",
+        description:
+          "Board of Directors meeting with Telsigers, symbolizing leadership engagement and strategic discussions.",
+        imageUrl: `${WORK_MEDIA_BASE}/Telkomsigma-Direksi-BOD.avif`,
+      },
+    ],
   },
   {
     company: "BEKUP (Baparekraf for Startup)",
@@ -31,6 +57,22 @@ export const experiences: WorkItem[] = [
     ],
     logoUrl: "/assets/company-logo/bekup-icon.webp",
     companyUrl: "https://bekup.kemenparekraf.go.id/",
+    gallery: [
+      {
+        id: "bekup-1",
+        title: "BEKUP ILT Session",
+        description:
+          "A snapshot from the Instructor-Led Training (ILT) sessions, highlighting interactive learning and hands-on coding activities.",
+        imageUrl: `${WORK_MEDIA_BASE}/BEKUP-Class.avif`,
+      },
+      {
+        id: "bekup-2",
+        title: "Dokumen Kelulusan",
+        description:
+          "Graduation certificate, marking the successful completion of the BEKUP program.",
+        imageUrl: `${WORK_MEDIA_BASE}/BEKUP-Kelulusan.avif`,
+      },
+    ],
   },
   {
     company: "HORUS TECHNOLOGY",
@@ -45,6 +87,28 @@ export const experiences: WorkItem[] = [
     ],
     logoUrl: "/assets/company-logo/horus-icon.png",
     companyUrl: "https://horus.co.id/",
+    gallery: [
+      {
+        id: "horus-1",
+        title: "Horus Office",
+        description:
+          "Horus Technology office environment, representing the workspace and company culture.",
+        imageUrl: `${WORK_MEDIA_BASE}/Horus-Office.avif`,
+      },
+      {
+        id: "horus-2",
+        title: "Horus Technology Team",
+        description: "A team photo representing collaboration and team spirit.",
+        imageUrl: `${WORK_MEDIA_BASE}/Horus-Technology-Team.avif`,
+      },
+      {
+        id: "horus-3",
+        title: "My Farewell with Ting.ID Team",
+        description:
+          "My internship farewell, celebrating the learning journey and team collaboration.",
+        imageUrl: `${WORK_MEDIA_BASE}/Horus-Farewell.avif`,
+      },
+    ],
   },
   {
     company: "TELKOM INDONESIA",
@@ -59,6 +123,29 @@ export const experiences: WorkItem[] = [
     ],
     logoUrl: "/assets/company-logo/telkom-icon.png",
     companyUrl: "https://www.telkom.co.id/",
+    gallery: [
+      {
+        id: "telkom-1",
+        title: "Telkom Indonesia Fadhil",
+        description:
+          "My picture during the internship, representing my role and experience at Telkom Indonesia.",
+        imageUrl: `${WORK_MEDIA_BASE}/Telkom%20Indonesia-Fadhil.avif`,
+      },
+      {
+        id: "telkom-2",
+        title: "Daily Scrum Apilogy Team",
+        description:
+          "One of our daily stand-up meetings, showcasing team communication and alignment.",
+        imageUrl: `${WORK_MEDIA_BASE}/Daily-Scrum-Apilogy.avif`,
+      },
+      {
+        id: "telkom-3",
+        title: "IndigoHub DBT Office Bandung",
+        description:
+          "Indigohub co-working space in Bandung, where the internship took place, representing the work environment and company culture.",
+        imageUrl: `${WORK_MEDIA_BASE}/Indigohub-DBT.avif`,
+      },
+    ],
   },
   {
     company: "ALTERRA ACADEMY",
@@ -73,6 +160,15 @@ export const experiences: WorkItem[] = [
     ],
     logoUrl: "/assets/company-logo/alterra-icon.png",
     companyUrl: "https://www.alterra.id/",
+    gallery: [
+      {
+        id: "alterra-1",
+        title: "Farewell Session",
+        description:
+          "A commemorative visual for the bootcamp's closing ceremony, celebrating the learning journey and cohort achievements.",
+        imageUrl: `${WORK_MEDIA_BASE}/Alterra-Farewell.avif`,
+      },
+    ],
   },
 ]
 
@@ -88,6 +184,29 @@ export const educations: EducationItem[] = [
       "Final Thesis: Early Detection Expert System for Diabetes Mellitus using the Certainty Factor (CF) method built with Laravel.",
     ],
     logo: "/assets/company-logo/unisa-icon.webp",
+    gallery: [
+      {
+        id: "unisa-1",
+        title: "After Graduation Ceremony",
+        description:
+          "A photo taken after the graduation ceremony, symbolizing the culmination of academic achievements and the transition to professional life.",
+        imageUrl: `${EDU_MEDIA_BASE}/Edu-Cumlaude-Fadhil.avif`,
+      },
+      {
+        id: "unisa-2",
+        title: "Graduated with Cum Laude Honors",
+        description:
+          "A snapshot of the graduation certificate highlighting the Cum Laude distinction, representing academic excellence and dedication.",
+        imageUrl: `${EDU_MEDIA_BASE}/Edu-Graduated.avif`,
+      },
+      {
+        id: "unisa-3",
+        title: "Graduation Day Celebration",
+        description:
+          "A celebratory moment during the graduation day, capturing the joy and pride of completing the degree program.",
+        imageUrl: `${EDU_MEDIA_BASE}/Edu-Wisuda-Fadhil.avif`,
+      },
+    ],
   },
 ]
 

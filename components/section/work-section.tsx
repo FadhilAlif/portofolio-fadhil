@@ -12,6 +12,8 @@ import { ChevronDown, MousePointerClick } from "lucide-react"
 import { ArrowSquareOutIcon } from "@phosphor-icons/react"
 import { cn } from "@/lib/utils"
 import { useReadLocalStorage } from "@/hooks/use-read-local-storage"
+import type { PortfolioMediaItem } from "@/types"
+import { PhotoGallery } from "./photo-gallery"
 
 const WORK_HINT_STORAGE_KEY = "portfolio.work-section-hint-dismissed"
 
@@ -24,6 +26,7 @@ export type WorkItem = {
   description: string[]
   logoUrl: string
   companyUrl: string
+  gallery?: PortfolioMediaItem[]
 }
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
@@ -211,14 +214,20 @@ export function WorkSection({ items }: WorkSectionProps) {
 
             {/* Content */}
             <AccordionPrimitive.Content className="overflow-hidden data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down">
-              <ul className="ml-13 space-y-3 pt-4 pb-1 text-sm text-muted-foreground">
-                {work.description.map((desc, i) => (
-                  <li key={i} className="flex gap-2">
-                    <span className="mt-0.5 shrink-0 text-primary/50">•</span>
-                    <span className="leading-relaxed">{desc}</span>
-                  </li>
-                ))}
-              </ul>
+              <div className="ml-13 space-y-5 pt-4 pb-1 text-sm text-muted-foreground">
+                <ul className="space-y-3">
+                  {work.description.map((desc, i) => (
+                    <li key={i} className="flex gap-2">
+                      <span className="mt-0.5 shrink-0 text-primary/50">•</span>
+                      <span className="leading-relaxed">{desc}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                {work.gallery && work.gallery.length > 0 && (
+                  <PhotoGallery photos={work.gallery} />
+                )}
+              </div>
             </AccordionPrimitive.Content>
           </AccordionPrimitive.Item>
         )

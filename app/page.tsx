@@ -31,12 +31,41 @@ import { useTheme } from "next-themes"
 import { experiences, educations, skillGroups } from "@/lib/about-data"
 import { projects } from "@/lib/projects-data"
 import { certificates } from "@/lib/certificates-data"
+import { GitHubCalendar } from "react-github-calendar"
+import { getExperienceSummary } from "@/utils/experience-summary"
+
+const EXPERIENCE_COMPANIES_FOR_SUMMARY = new Set([
+  "TELKOM INDONESIA",
+  "HORUS TECHNOLOGY",
+  "TELKOMSIGMA (Telkom Indonesia Subsidiary)",
+])
 
 // ─── Page Component ─────────────────────────────────────────────────────────
 
 export default function Page() {
   const { resolvedTheme } = useTheme()
+  const totalProjects = projects.length
+  const totalCertificates = certificates.length
+  const { totalMonths: experienceMonths, totalYears: yearsOfExperience } =
+    getExperienceSummary(experiences, {
+      includedCompanies: EXPERIENCE_COMPANIES_FOR_SUMMARY,
+    })
 
+  const snapshotStats = [
+    {
+      label: "Total Projects",
+      value: String(totalProjects),
+    },
+    {
+      label: "Total Certificates",
+      value: String(totalCertificates),
+    },
+    {
+      label: "Years of Experience",
+      value: yearsOfExperience.toFixed(2),
+      description: `${experienceMonths} months total`,
+    },
+  ]
   // Use much lighter spotlight colors in light mode to prevent text blend/legibility issues
   const spotlightColors =
     resolvedTheme === "light"
@@ -87,7 +116,7 @@ export default function Page() {
               >
                 <StaggerItem variant="fade-up">
                   <span className="flex items-center gap-1.5 transition-colors hover:text-foreground">
-                    <MapPinIcon className="h-4 w-4" /> DI Yogyakarta
+                    <MapPinIcon className="h-4 w-4" /> Yogyakarta
                   </span>
                 </StaggerItem>
                 <StaggerItem variant="fade-up">
@@ -384,6 +413,95 @@ export default function Page() {
             See All Certificates
             <ArrowRightIcon className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
           </Link>
+        </AnimatedSection>
+
+        <AnimatedSection
+          variant="fade-up"
+          delay={0.1}
+          duration={0.6}
+          as="section"
+          className="mt-16 flex w-full flex-col gap-6 border-t border-border pt-12"
+        >
+          <div>
+            <h3 className="text-2xl font-semibold tracking-tight text-foreground">
+              Statistics &amp; GitHub Activity
+            </h3>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Quick stats and GitHub contribution activity.
+            </p>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {snapshotStats.map((item) => (
+              <MagicCard
+                key={item.label}
+                mode="orb"
+                glowFrom={resolvedTheme === "dark" ? "#7c3aed" : "#C4B5FD"}
+                glowTo={resolvedTheme === "dark" ? "#3b82f6" : "#BFDBFE"}
+                className="h-full rounded-xl p-0"
+              >
+                <div className="flex h-full min-h-32 flex-col rounded-[inherit] bg-card/65 p-5 backdrop-blur-sm">
+                  <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
+                    {item.label}
+                  </p>
+                  <p className="mt-2 text-3xl font-semibold text-foreground">
+                    {item.value}
+                  </p>
+                  {item.description ? (
+                    <p className="mt-auto pt-2 text-xs text-muted-foreground">
+                      {item.description}
+                    </p>
+                  ) : null}
+                </div>
+              </MagicCard>
+            ))}
+          </div>
+
+          <MagicCard
+            mode="orb"
+            glowFrom={resolvedTheme === "dark" ? "#7c3aed" : "#C4B5FD"}
+            glowTo={resolvedTheme === "dark" ? "#3b82f6" : "#BFDBFE"}
+            className="rounded-xl p-0"
+          >
+            <div className="overflow-hidden rounded-[inherit] bg-card/65 p-5 backdrop-blur-sm">
+              <div className="mb-4 flex items-center gap-2">
+                <GithubLogoIcon className="h-5 w-5 text-foreground" />
+                <h4 className="text-sm font-medium text-foreground">
+                  GitHub Contributions
+                </h4>
+              </div>
+
+              <div className="overflow-x-auto px-2 py-1">
+                <div className="flex justify-center">
+                  <div className="w-fit min-w-max">
+                    <GitHubCalendar
+                      username="FadhilAlif"
+                      colorScheme={resolvedTheme === "dark" ? "dark" : "light"}
+                      blockSize={13}
+                      blockMargin={4}
+                      fontSize={12}
+                      theme={{
+                        light: [
+                          "#ebedf0",
+                          "#9be9a8",
+                          "#40c463",
+                          "#30a14e",
+                          "#216e39",
+                        ],
+                        dark: [
+                          "#161b22",
+                          "#0e4429",
+                          "#006d32",
+                          "#26a641",
+                          "#39d353",
+                        ],
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </MagicCard>
         </AnimatedSection>
 
         {/* ── Contact CTA ─────────────────────────────────────────────── */}
