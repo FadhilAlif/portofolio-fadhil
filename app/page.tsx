@@ -26,13 +26,26 @@ import { MagicCard } from "@/components/ui/magic-card"
 import { Button } from "@/components/ui/button"
 import { ProjectCard } from "@/components/ui/project-card"
 import { AutoCarousel } from "@/components/ui/auto-carousel"
+import dynamic from "next/dynamic"
 import Link from "next/link"
 import { useTheme } from "next-themes"
 import { experiences, educations, skillGroups } from "@/lib/about-data"
 import { projects } from "@/lib/projects-data"
 import { certificates } from "@/lib/certificates-data"
-import { GitHubCalendar } from "react-github-calendar"
 import { getExperienceSummary } from "@/utils/experience-summary"
+
+const GitHubCalendar = dynamic(
+  () => import("react-github-calendar").then((mod) => mod.GitHubCalendar),
+  {
+    ssr: false,
+    loading: () => (
+      <div
+        className="h-37 w-190 max-w-full rounded-lg border border-border/60 bg-card/35"
+        aria-hidden="true"
+      />
+    ),
+  }
+)
 
 const EXPERIENCE_COMPANIES_FOR_SUMMARY = new Set([
   "TELKOM INDONESIA",
@@ -62,7 +75,7 @@ export default function Page() {
     },
     {
       label: "Years of Experience",
-      value: yearsOfExperience.toFixed(2),
+      value: yearsOfExperience.toFixed(1),
       description: `${experienceMonths} months total`,
     },
   ]
