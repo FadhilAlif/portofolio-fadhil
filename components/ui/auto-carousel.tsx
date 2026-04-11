@@ -4,6 +4,7 @@ import { useRef, useState, useEffect, useCallback, type ReactNode } from "react"
 import { motion, useMotionValue, animate } from "motion/react"
 import { cn } from "@/lib/utils"
 import { CaretLeftIcon, CaretRightIcon } from "@phosphor-icons/react"
+import { Button } from "./button"
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -50,6 +51,20 @@ function computeLayout(
   const totalGroups = Math.ceil(itemCount / visibleCount)
 
   return { itemWidth, totalGroups }
+}
+
+function getVisibleGroups(total: number, active: number, maxDots: number) {
+  if (total <= maxDots) {
+    return Array.from({ length: total }, (_, index) => index)
+  }
+
+  const clampedMaxDots = Math.max(1, maxDots)
+  const halfWindow = Math.floor(clampedMaxDots / 2)
+  let start = active - halfWindow
+
+  start = Math.max(0, Math.min(start, total - clampedMaxDots))
+
+  return Array.from({ length: clampedMaxDots }, (_, index) => start + index)
 }
 
 // ─── Component ──────────────────────────────────────────────────────────────
@@ -182,9 +197,9 @@ export function AutoCarousel<T>({
 
   if (items.length === 0) return null
 
-  // ── Indicator mode ──────────────────────────────────────────────────────
+  // ── Indicator window ───────────────────────────────────────────────────
 
-  const useCompactIndicator = totalGroups > maxDots
+  const visibleGroups = getVisibleGroups(totalGroups, activeGroup, maxDots)
 
   return (
     <div
@@ -195,13 +210,13 @@ export function AutoCarousel<T>({
       {/* ── Arrow ← Track → Arrow ──────────────────────────────────────── */}
       <div className="flex items-center gap-2 sm:gap-3">
         {/* Prev — desktop side */}
-        <button
+        <Button
           onClick={goPrev}
           aria-label="Previous"
-          className="hidden h-9 w-9 shrink-0 items-center justify-center rounded-full border border-border/60 bg-card/60 text-muted-foreground backdrop-blur-sm transition-all duration-200 hover:bg-card hover:text-foreground hover:shadow-sm sm:flex"
+          className="hidden h-9 w-9 shrink-0 items-center justify-center rounded-full border border-border/60 bg-card/60 text-muted-foreground backdrop-blur-sm transition-all duration-200 hover:cursor-pointer hover:bg-card hover:text-foreground hover:shadow-sm sm:flex"
         >
           <CaretLeftIcon className="h-4 w-4" weight="bold" />
-        </button>
+        </Button>
 
         {/* Track */}
         <div ref={containerRef} className="min-w-0 flex-1 overflow-hidden">
@@ -228,100 +243,52 @@ export function AutoCarousel<T>({
         </div>
 
         {/* Next — desktop side */}
-        <button
+        <Button
           onClick={goNext}
           aria-label="Next"
-          className="hidden h-9 w-9 shrink-0 items-center justify-center rounded-full border border-border/60 bg-card/60 text-muted-foreground backdrop-blur-sm transition-all duration-200 hover:bg-card hover:text-foreground hover:shadow-sm sm:flex"
+          className="hidden h-9 w-9 shrink-0 items-center justify-center rounded-full border border-border/60 bg-card/60 text-muted-foreground backdrop-blur-sm transition-all duration-200 hover:cursor-pointer hover:bg-card hover:text-foreground hover:shadow-sm sm:flex"
         >
           <CaretRightIcon className="h-4 w-4" weight="bold" />
-        </button>
+        </Button>
       </div>
 
       {/* ── Bottom controls ────────────────────────────────────────────── */}
       <div className="mt-4 flex items-center justify-center gap-3">
         {/* Mobile prev */}
-        <button
+        <Button
           onClick={goPrev}
           aria-label="Previous"
           className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-border/60 bg-card/60 text-muted-foreground backdrop-blur-sm transition-all duration-200 hover:bg-card hover:text-foreground sm:hidden"
         >
           <CaretLeftIcon className="h-4 w-4" weight="bold" />
-        </button>
+        </Button>
 
         {/* Indicator */}
-        {useCompactIndicator ? (
-          <CompactIndicator
-            active={activeGroup}
-            total={totalGroups}
-            onSelect={scrollToGroup}
-          />
-        ) : (
-          <div className="flex items-center gap-1.5">
-            {Array.from({ length: totalGroups }).map((_, i) => (
-              <button
-                key={i}
-                onClick={() => scrollToGroup(i)}
-                aria-label={`Go to group ${i + 1}`}
-                className={cn(
-                  "h-2 rounded-full transition-all duration-300",
-                  i === activeGroup
-                    ? "w-6 bg-primary"
-                    : "w-2 bg-muted-foreground/30 hover:bg-muted-foreground/50"
-                )}
-              />
-            ))}
-          </div>
-        )}
+        <div className="flex items-center gap-1.5">
+          {visibleGroups.map((groupIndex) => (
+            <button
+              key={groupIndex}
+              onClick={() => scrollToGroup(groupIndex)}
+              aria-label={`Go to group ${groupIndex + 1}`}
+              className={cn(
+                "h-2 rounded-full transition-all duration-300",
+                groupIndex === activeGroup
+                  ? "w-6 bg-primary"
+                  : "w-2 bg-muted-foreground/30 hover:bg-muted-foreground/50"
+              )}
+            />
+          ))}
+        </div>
 
         {/* Mobile next */}
-        <button
+        <Button
           onClick={goNext}
           aria-label="Next"
           className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-border/60 bg-card/60 text-muted-foreground backdrop-blur-sm transition-all duration-200 hover:bg-card hover:text-foreground sm:hidden"
         >
           <CaretRightIcon className="h-4 w-4" weight="bold" />
-        </button>
+        </Button>
       </div>
-    </div>
-  )
-}
-
-// ─── Compact Indicator ──────────────────────────────────────────────────────
-
-function CompactIndicator({
-  active,
-  total,
-  onSelect,
-}: {
-  active: number
-  total: number
-  onSelect: (idx: number) => void
-}) {
-  const progress = total > 1 ? (active / (total - 1)) * 100 : 0
-
-  return (
-    <div className="flex items-center gap-3">
-      {/* Clickable progress bar */}
-      <button
-        className="relative h-1.5 w-24 overflow-hidden rounded-full bg-muted-foreground/20 sm:w-32"
-        aria-label="Carousel progress"
-        onClick={(e) => {
-          const rect = e.currentTarget.getBoundingClientRect()
-          const ratio = (e.clientX - rect.left) / rect.width
-          const target = Math.round(ratio * (total - 1))
-          onSelect(Math.max(0, Math.min(target, total - 1)))
-        }}
-      >
-        <div
-          className="absolute inset-y-0 left-0 rounded-full bg-primary transition-all duration-300"
-          style={{ width: `${progress}%` }}
-        />
-      </button>
-
-      {/* Counter */}
-      <span className="min-w-14 text-center text-xs text-muted-foreground tabular-nums">
-        {active + 1} / {total}
-      </span>
     </div>
   )
 }
