@@ -16,6 +16,7 @@ import {
   LockKeyIcon,
   ArrowUpRightIcon,
 } from "@phosphor-icons/react"
+import { useTranslation } from "react-i18next"
 
 // ─── Role Badge Color Map ────────────────────────────────────────────────────
 
@@ -54,11 +55,13 @@ function getLinkIcon(icon?: string): React.ReactNode {
 // ─── Internal Project Ribbon ─────────────────────────────────────────────────
 
 function InternalRibbon() {
+  const { t } = useTranslation()
+
   return (
     <div
       className="pointer-events-none absolute top-0 right-0 z-20 overflow-hidden"
       style={{ width: "88px", height: "88px" }}
-      aria-label="Internal Project"
+      aria-label={t("projectCard.internal")}
     >
       {/* Diagonal ribbon */}
       <div
@@ -74,7 +77,7 @@ function InternalRibbon() {
         }}
       >
         <LockKeyIcon className="h-2.5 w-2.5 shrink-0" aria-hidden />
-        Internal
+        {t("projectCard.internal")}
       </div>
     </div>
   )
@@ -89,12 +92,15 @@ const ProjectImage = memo(function ProjectImage({
   src: string
   alt: string
 }) {
+  const { t } = useTranslation()
   const [hasError, setHasError] = useState(false)
 
   if (!src || hasError) {
     return (
       <div className="flex aspect-video w-full items-center justify-center bg-muted">
-        <span className="text-xs text-muted-foreground">No preview</span>
+        <span className="text-xs text-muted-foreground">
+          {t("projectCard.noPreview")}
+        </span>
       </div>
     )
   }
@@ -176,11 +182,15 @@ function MediaSlot({
   image?: string
   video?: string
 }) {
+  const { t } = useTranslation()
+
   if (video) return <LazyVideo src={video} alt={title} />
   if (image) return <ProjectImage src={image} alt={title} />
   return (
     <div className="flex aspect-video w-full items-center justify-center bg-muted/60">
-      <span className="text-xs text-muted-foreground">No preview</span>
+      <span className="text-xs text-muted-foreground">
+        {t("projectCard.noPreview")}
+      </span>
     </div>
   )
 }
@@ -216,6 +226,8 @@ export const ProjectCard = memo(function ProjectCard({
   links,
   className,
 }: ProjectCardProps) {
+  const { t } = useTranslation()
+
   return (
     <div
       className={cn(
@@ -235,7 +247,7 @@ export const ProjectCard = memo(function ProjectCard({
             target="_blank"
             rel="noopener noreferrer"
             className="block"
-            aria-label={`View ${title}`}
+            aria-label={t("projectCard.viewProject", { title })}
           >
             <MediaSlot title={title} image={image} video={video} />
           </Link>
@@ -271,7 +283,7 @@ export const ProjectCard = memo(function ProjectCard({
           <div className="absolute inset-0 flex items-end justify-end bg-linear-to-t from-black/30 via-transparent to-transparent">
             <span className="m-2.5 flex items-center gap-1 rounded-md border border-amber-500/30 bg-amber-500/10 px-2 py-1 text-[10px] font-medium text-amber-400 backdrop-blur-sm">
               <LockIcon className="h-2.5 w-2.5" />
-              Private
+              {t("projectCard.private")}
             </span>
           </div>
         )}
@@ -298,7 +310,7 @@ export const ProjectCard = memo(function ProjectCard({
               target="_blank"
               rel="noopener noreferrer"
               className="shrink-0 rounded p-0.5 text-muted-foreground transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none"
-              aria-label={`Open ${title}`}
+              aria-label={t("projectCard.openProject", { title })}
             >
               <ArrowUpRightIcon className="h-3.5 w-3.5" aria-hidden />
             </Link>

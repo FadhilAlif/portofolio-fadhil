@@ -3,6 +3,9 @@
 import Link from "next/link"
 import Image from "next/image"
 import { ArrowUpRight } from "lucide-react"
+import type { PortfolioMediaItem } from "@/types"
+import { PhotoGallery } from "./photo-gallery"
+import { useTranslation } from "react-i18next"
 
 export type EducationItem = {
   institution: string
@@ -13,6 +16,7 @@ export type EducationItem = {
   description?: string[]
   logo?: string
   href?: string
+  gallery?: PortfolioMediaItem[]
 }
 
 type EducationSectionProps = {
@@ -25,9 +29,11 @@ type DateBadgeProps = {
 }
 
 function DateBadge({ start, end }: DateBadgeProps) {
+  const { t } = useTranslation()
+
   return (
     <span className="inline-flex flex-none items-center rounded-md border border-border bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground tabular-nums">
-      {start} – {end ?? "Present"}
+      {start} – {end ?? t("educationSection.present")}
     </span>
   )
 }
@@ -111,6 +117,10 @@ export function EducationSection({ items }: EducationSectionProps) {
                       </li>
                     ))}
                   </ul>
+                )}
+
+                {education.gallery && education.gallery.length > 0 && (
+                  <PhotoGallery photos={education.gallery} />
                 )}
               </div>
             </div>

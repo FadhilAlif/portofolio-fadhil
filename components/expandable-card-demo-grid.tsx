@@ -7,12 +7,14 @@ import { useOutsideClick } from "@/hooks/use-outside-click"
 import Image from "next/image"
 import { CertificateItem } from "@/lib/certificates-data"
 import { Badge } from "@/components/ui/badge"
+import { useTranslation } from "react-i18next"
 
 export default function ExpandableCertificateGrid({
   certificates,
 }: {
   certificates: CertificateItem[]
 }) {
+  const { t } = useTranslation()
   const [active, setActive] = useState<CertificateItem | boolean | null>(null)
   const [zoomedImage, setZoomedImage] = useState<string | null>(null)
   const [visibleCount, setVisibleCount] = useState(9)
@@ -86,7 +88,7 @@ export default function ExpandableCertificateGrid({
                   >
                     <Image
                       src={zoomedImage}
-                      alt="Zoomed certificate"
+                      alt={t("certificateGrid.zoomAlt")}
                       fill
                       className="object-contain"
                     />
@@ -130,7 +132,8 @@ export default function ExpandableCertificateGrid({
                     >
                       <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center bg-black/30 opacity-0 transition-opacity group-hover/image:opacity-100">
                         <span className="flex items-center gap-2 rounded-full bg-black/50 px-3 py-1.5 text-sm font-medium text-white backdrop-blur-md">
-                          <MaximizeIcon className="h-4 w-4" /> Expand Image
+                          <MaximizeIcon className="h-4 w-4" />{" "}
+                          {t("certificateGrid.expandImage")}
                         </span>
                       </div>
                       <Image
@@ -138,7 +141,6 @@ export default function ExpandableCertificateGrid({
                         src={active.image}
                         alt={active.title}
                         className="object-cover object-top"
- 
                       />
                     </motion.div>
 
@@ -169,7 +171,7 @@ export default function ExpandableCertificateGrid({
                           rel="noopener noreferrer"
                           className="inline-flex shrink-0 items-center justify-center rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none"
                         >
-                          View Credential
+                          {t("certificateGrid.viewCredential")}
                         </motion.a>
                       </div>
 
@@ -183,14 +185,14 @@ export default function ExpandableCertificateGrid({
                         <div className="flex flex-col gap-1 sm:flex-row sm:gap-6">
                           <div>
                             <span className="font-semibold text-foreground">
-                              Issued:{" "}
+                              {t("certificateGrid.issued")}
                             </span>
                             {active.issuedDate}
                           </div>
                           {active.expirationDate && (
                             <div>
                               <span className="font-semibold text-foreground">
-                                Expires:{" "}
+                                {t("certificateGrid.expires")}
                               </span>
                               {active.expirationDate}
                             </div>
@@ -237,10 +239,10 @@ export default function ExpandableCertificateGrid({
                 🏅
               </div>
               <p className="text-sm font-medium text-foreground">
-                No certificates found
+                {t("certificateGrid.noCertificates")}
               </p>
               <p className="mt-1 text-xs text-muted-foreground">
-                Try selecting a different category filter.
+                {t("certificateGrid.noCertificatesHint")}
               </p>
             </motion.div>
           ) : (
@@ -269,7 +271,6 @@ export default function ExpandableCertificateGrid({
                       src={card.image}
                       alt={card.title}
                       className="object-cover object-top transition-transform duration-500 group-hover:scale-105"
-               
                     />
                   </motion.div>
                   <div className="flex flex-1 flex-col p-5">
@@ -305,7 +306,7 @@ export default function ExpandableCertificateGrid({
             onClick={() => setVisibleCount((prev) => prev + 9)}
             className="inline-flex items-center justify-center rounded-full bg-primary/10 px-6 py-3 text-sm font-semibold text-primary transition-colors hover:bg-primary/20 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none"
           >
-            Load More Certificates
+            {t("certificateGrid.loadMore")}
           </button>
         </motion.div>
       )}

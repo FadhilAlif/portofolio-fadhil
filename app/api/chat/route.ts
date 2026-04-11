@@ -7,8 +7,8 @@ const MAX_QUESTIONS_PER_SESSION = 3
 
 // Fallback chain: try each model in order if the previous one is rate-limited
 const GEMINI_MODELS = [
+  "gemini-3-flash-preview",
   "gemini-2.5-flash",
-  "gemini-2.5-flash-lite",
   "gemini-1.5-flash",
 ] as const
 
@@ -30,6 +30,50 @@ const supabaseAdmin = createClient(
 const UUID_REGEX =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
+type SupportedLanguage = "en" | "id"
+
+function resolveLanguage(value?: string): SupportedLanguage {
+  if (!value) return "en"
+  return value.toLowerCase().startsWith("id") ? "id" : "en"
+}
+
+const CHAT_TEXT = {
+  en: {
+    invalidSession: "Invalid or missing session_id",
+    messageRequired: "Message is required",
+    rateLimitCheckFailed: "Failed to check rate limit",
+    rateLimitReached: "Rate limit reached",
+    rateLimitMessage:
+      "You have reached the maximum of {{max}} questions for this session. Please start a new session to continue chatting.",
+    noAiResponse: "Sorry, I could not generate a response.",
+    allModelsUnavailable:
+      "All AI models are currently unavailable. Please try again later.",
+    internalServerError: "Internal server error",
+  },
+  id: {
+    invalidSession: "session_id tidak valid atau tidak ditemukan",
+    messageRequired: "Pesan wajib diisi",
+    rateLimitCheckFailed: "Gagal memeriksa batas pertanyaan",
+    rateLimitReached: "Batas pertanyaan tercapai",
+    rateLimitMessage:
+      "Anda telah mencapai batas maksimal {{max}} pertanyaan untuk sesi ini. Silakan mulai sesi baru untuk melanjutkan percakapan.",
+    noAiResponse: "Maaf, saya belum bisa menghasilkan jawaban saat ini.",
+    allModelsUnavailable:
+      "Semua model AI sedang tidak tersedia. Silakan coba lagi nanti.",
+    internalServerError: "Terjadi kesalahan pada server",
+  },
+} as const
+
+function interpolate(
+  template: string,
+  values: Record<string, string | number>
+) {
+  return template.replace(/\{\{(\w+)\}\}/g, (_, key: string) => {
+    const value = values[key]
+    return value !== undefined ? String(value) : ""
+  })
+}
+
 interface ChatMessage {
   role: "user" | "assistant"
   content: string
@@ -40,21 +84,21 @@ export async function POST(request: Request) {
   try {
     // 1. Parse & validate request body
     const body = await request.json()
-    const { session_id, message, history } = body as {
+    const { session_id, message, history, lang } = body as {
       session_id: string
       message: string
       history: ChatMessage[]
+      lang?: string
     }
+    const language = resolveLanguage(lang)
+    const text = CHAT_TEXT[language]
 
     if (!session_id || !UUID_REGEX.test(session_id)) {
-      return Response.json(
-        { error: "Invalid or missing session_id" },
-        { status: 400 }
-      )
+      return Response.json({ error: text.invalidSession }, { status: 400 })
     }
 
     if (!message || typeof message !== "string" || !message.trim()) {
-      return Response.json({ error: "Message is required" }, { status: 400 })
+      return Response.json({ error: text.messageRequired }, { status: 400 })
     }
 
     // 2. Rate-limit check: count user messages in this session
@@ -67,7 +111,7 @@ export async function POST(request: Request) {
     if (countError) {
       console.error("Supabase count error:", countError)
       return Response.json(
-        { error: "Failed to check rate limit" },
+        { error: text.rateLimitCheckFailed },
         { status: 500 }
       )
     }
@@ -75,8 +119,10 @@ export async function POST(request: Request) {
     if ((count ?? 0) >= MAX_QUESTIONS_PER_SESSION) {
       return Response.json(
         {
-          error: "Rate limit reached",
-          message: `You have reached the maximum of ${MAX_QUESTIONS_PER_SESSION} questions for this session. Please start a new session to continue chatting.`,
+          error: text.rateLimitReached,
+          message: interpolate(text.rateLimitMessage, {
+            max: MAX_QUESTIONS_PER_SESSION,
+          }),
           remaining: 0,
         },
         { status: 429 }
@@ -100,7 +146,7 @@ export async function POST(request: Request) {
     ]
 
     // 4. Call Gemini API with fallback chain
-    let aiResponse = "Sorry, I could not generate a response."
+    let aiResponse: string = text.noAiResponse
     let lastError: unknown = null
 
     for (const model of GEMINI_MODELS) {
@@ -115,27 +161,30 @@ export async function POST(request: Request) {
           },
         })
 
-        aiResponse = response.text ?? "Sorry, I could not generate a response."
+        aiResponse = response.text ?? text.noAiResponse
         lastError = null
         console.log(`[Chat] Successfully used model: ${model}`)
         break // success — stop trying fallback models
       } catch (err: unknown) {
         lastError = err
-        const isRateLimit =
+        const shouldTryNext =
           err instanceof Error &&
           (err.message?.includes("429") ||
+            err.message?.includes("403") ||
             err.message?.includes("RESOURCE_EXHAUSTED") ||
+            err.message?.includes("PERMISSION_DENIED") ||
             err.message?.toLowerCase().includes("rate limit") ||
-            err.message?.toLowerCase().includes("quota"))
+            err.message?.toLowerCase().includes("quota") ||
+            err.message?.toLowerCase().includes("denied access"))
 
-        if (isRateLimit) {
+        if (shouldTryNext) {
           console.warn(
-            `[Chat] Model ${model} rate-limited, trying next fallback...`
+            `[Chat] Model ${model} unavailable (${err.message?.slice(0, 60)}), trying next fallback...`
           )
           continue
         }
 
-        // Non-rate-limit error — don't try fallback, just throw
+        // Other unexpected error — don't try fallback, just throw
         throw err
       }
     }
@@ -145,8 +194,7 @@ export async function POST(request: Request) {
       console.error("All Gemini models rate-limited:", lastError)
       return Response.json(
         {
-          error:
-            "All AI models are currently unavailable. Please try again later.",
+          error: text.allModelsUnavailable,
         },
         { status: 503 }
       )
@@ -174,6 +222,9 @@ export async function POST(request: Request) {
     })
   } catch (error) {
     console.error("Chat API error:", error)
-    return Response.json({ error: "Internal server error" }, { status: 500 })
+    return Response.json(
+      { error: CHAT_TEXT.en.internalServerError },
+      { status: 500 }
+    )
   }
 }

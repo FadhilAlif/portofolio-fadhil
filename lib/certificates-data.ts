@@ -1,8 +1,10 @@
+import type { AppLanguage } from "@/lib/i18n/config"
+
 export type CertificateCategory = "web" | "mobile" | "ai" | "design" | "others"
 
 export type FilterId = "all" | CertificateCategory
 
-export const CERTIFICATE_FILTERS: { id: FilterId; label: string }[] = [
+const BASE_CERTIFICATE_FILTERS: { id: FilterId; label: string }[] = [
   { id: "all", label: "All" },
   { id: "web", label: "Web" },
   { id: "mobile", label: "Mobile" },
@@ -10,6 +12,23 @@ export const CERTIFICATE_FILTERS: { id: FilterId; label: string }[] = [
   { id: "design", label: "UI/UX" },
   { id: "others", label: "Others" },
 ]
+
+export function getCertificateFilters(
+  language: AppLanguage
+): readonly { id: FilterId; label: string }[] {
+  if (language === "id") {
+    return [
+      { id: "all", label: "Semua" },
+      { id: "web", label: "Web" },
+      { id: "mobile", label: "Mobile" },
+      { id: "ai", label: "AI" },
+      { id: "design", label: "UI/UX" },
+      { id: "others", label: "Lainnya" },
+    ] as const
+  }
+
+  return BASE_CERTIFICATE_FILTERS
+}
 
 export interface CertificateItem {
   id: string
@@ -408,3 +427,9 @@ export const certificates: CertificateItem[] = [
     category: "web",
   },
 ]
+
+export function getCertificates(_language: AppLanguage): CertificateItem[] {
+  return certificates
+}
+
+export const CERTIFICATE_FILTERS = BASE_CERTIFICATE_FILTERS

@@ -25,17 +25,70 @@ import { HoverBorderGradient } from "@/components/ui/hover-border-gradient"
 import { MagicCard } from "@/components/ui/magic-card"
 import { Button } from "@/components/ui/button"
 import { ProjectCard } from "@/components/ui/project-card"
+import { AutoCarousel } from "@/components/ui/auto-carousel"
+import dynamic from "next/dynamic"
 import Link from "next/link"
 import { useTheme } from "next-themes"
-import { experiences, educations, skillGroups } from "@/lib/about-data"
-import { projects } from "@/lib/projects-data"
-import { certificates } from "@/lib/certificates-data"
+import { getAboutData } from "@/lib/about-data"
+import { getProjects } from "@/lib/projects-data"
+import { getCertificates } from "@/lib/certificates-data"
+import { getExperienceSummary } from "@/utils/experience-summary"
+import { useTranslation } from "react-i18next"
+import { getSupportedLanguage } from "@/lib/i18n/config"
+
+const GitHubCalendar = dynamic(
+  () => import("react-github-calendar").then((mod) => mod.GitHubCalendar),
+  {
+    ssr: false,
+    loading: () => (
+      <div
+        className="h-37 w-190 max-w-full rounded-lg border border-border/60 bg-card/35"
+        aria-hidden="true"
+      />
+    ),
+  }
+)
+
+const EXPERIENCE_COMPANIES_FOR_SUMMARY = new Set([
+  "TELKOM INDONESIA",
+  "HORUS TECHNOLOGY",
+  "TELKOMSIGMA (Telkom Indonesia Subsidiary)",
+])
 
 // ─── Page Component ─────────────────────────────────────────────────────────
 
 export default function Page() {
+  const { t, i18n } = useTranslation()
   const { resolvedTheme } = useTheme()
+  const language = getSupportedLanguage(i18n.resolvedLanguage)
+  const { experiences, educations, skillGroups } = getAboutData(language)
+  const projects = getProjects(language)
+  const certificates = getCertificates(language)
 
+  const totalProjects = projects.length
+  const totalCertificates = certificates.length
+  const { totalMonths: experienceMonths, totalYears: yearsOfExperience } =
+    getExperienceSummary(experiences, {
+      includedCompanies: EXPERIENCE_COMPANIES_FOR_SUMMARY,
+    })
+
+  const snapshotStats = [
+    {
+      label: t("home.totalProjects"),
+      value: String(totalProjects),
+    },
+    {
+      label: t("home.totalCertificates"),
+      value: String(totalCertificates),
+    },
+    {
+      label: t("home.yearsExperience"),
+      value: yearsOfExperience.toFixed(1),
+      description: t("home.monthsTotal", { count: experienceMonths }),
+    },
+  ]
+
+  const roles = t("home.roles", { returnObjects: true }) as string[]
   // Use much lighter spotlight colors in light mode to prevent text blend/legibility issues
   const spotlightColors =
     resolvedTheme === "light"
@@ -64,13 +117,7 @@ export default function Page() {
                 FADHIL ALIF PRIYATNO
               </h1>
               <TypingAnimation
-                words={[
-                  "Full-Stack Engineer",
-                  "Mobile Developer",
-                  "Frontend Developer",
-                  "Backend Developer",
-                  "UI/UX Designer",
-                ]}
+                words={roles}
                 className="mb-4 text-xl font-medium text-primary/80 md:text-2xl"
                 typeSpeed={40}
                 deleteSpeed={80}
@@ -86,7 +133,7 @@ export default function Page() {
               >
                 <StaggerItem variant="fade-up">
                   <span className="flex items-center gap-1.5 transition-colors hover:text-foreground">
-                    <MapPinIcon className="h-4 w-4" /> Bantul, Yogyakarta
+                    <MapPinIcon className="h-4 w-4" /> Yogyakarta
                   </span>
                 </StaggerItem>
                 <StaggerItem variant="fade-up">
@@ -114,22 +161,14 @@ export default function Page() {
                     rel="noopener noreferrer"
                     className="flex items-center gap-1.5 transition-colors hover:text-foreground"
                   >
-                    <GithubLogoIcon className="h-4 w-4" /> Github
+                    <GithubLogoIcon className="h-4 w-4" /> GitHub
                   </a>
                 </StaggerItem>
               </StaggerContainer>
 
               <AnimatedSection variant="fade-up" delay={0.4} duration={0.7}>
                 <div className="prose dark:prose-invert mx-auto max-w-2xl leading-relaxed text-muted-foreground md:mx-0 lg:text-lg">
-                  <p>
-                    Fresh Graduate in Information Technology currently working
-                    as a Full-Stack Engineer at Telkomsigma, a subsidiary of PT
-                    Telkom Indonesia. Experienced in building enterprise systems
-                    and scalable web and mobile applications using modern
-                    frontend and backend technologies. Strong in Agile
-                    collaboration, cross-functional teamwork, and delivering
-                    secure, reliable, and user-focused digital solutions.
-                  </p>
+                  <p>{t("home.intro")}</p>
                 </div>
               </AnimatedSection>
 
@@ -140,7 +179,7 @@ export default function Page() {
                       variant="outline"
                       className="h-11 rounded-full border-border bg-transparent px-6 text-foreground hover:cursor-pointer hover:bg-muted"
                     >
-                      <span className="text-sm">Contact Me</span>
+                      <span className="text-sm">{t("home.contactMe")}</span>
                     </Button>
                   </Link>
 
@@ -154,7 +193,9 @@ export default function Page() {
                       as="div"
                       className="flex h-11 items-center space-x-2 bg-white text-black dark:bg-black dark:text-white"
                     >
-                      <span className="pr-1 text-sm">Download CV</span>
+                      <span className="pr-1 text-sm">
+                        {t("home.downloadCV")}
+                      </span>
                       <DownloadIcon className="h-4 w-4" />
                     </HoverBorderGradient>
                   </a>
@@ -215,7 +256,7 @@ export default function Page() {
             className="flex w-full flex-col gap-6"
           >
             <h3 className="text-2xl font-semibold tracking-tight text-foreground">
-              Experience
+              {t("home.sectionExperience")}
             </h3>
             <WorkSection items={experiences} />
           </AnimatedSection>
@@ -229,7 +270,7 @@ export default function Page() {
             className="flex w-full flex-col gap-6 border-t border-border pt-12"
           >
             <h3 className="text-2xl font-semibold tracking-tight text-foreground">
-              Education
+              {t("home.sectionEducation")}
             </h3>
             <EducationSection items={educations} />
           </AnimatedSection>
@@ -244,11 +285,10 @@ export default function Page() {
           >
             <div>
               <h3 className="text-2xl font-semibold tracking-tight text-foreground">
-                Skills
+                {t("home.sectionSkills")}
               </h3>
               <p className="mt-1 text-sm text-muted-foreground">
-                A selection of tools, languages, and frameworks I use to build
-                digital solutions.
+                {t("home.skillsDescription")}
               </p>
             </div>
 
@@ -270,7 +310,7 @@ export default function Page() {
           </AnimatedSection>
         </div>
 
-        {/* ── Featured Projects ─────────────────────────────────────────── */}
+        {/* ── Projects Carousel ─────────────────────────────────────────── */}
         <AnimatedSection
           variant="fade-up"
           delay={0.1}
@@ -280,46 +320,47 @@ export default function Page() {
         >
           <div>
             <h3 className="text-2xl font-semibold tracking-tight text-foreground">
-              Featured Projects
+              {t("home.sectionProjects")}
             </h3>
             <p className="mt-1 text-sm text-muted-foreground">
-              A selection of my most impactful work across web and mobile
-              platforms.
+              {t("home.projectsDescription")}
             </p>
           </div>
 
-          <div className="mt-2 grid w-full auto-rows-fr grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {projects
-              .filter((p) => p.featured)
-              .slice(0, 3)
-              .map((project) => (
-                <ProjectCard
-                  key={project.title}
-                  title={project.title}
-                  description={project.description}
-                  dates={project.dates}
-                  association={project.association}
-                  role={project.role}
-                  tags={project.tags}
-                  isInternal={project.isInternal}
-                  href={project.href}
-                  image={project.image}
-                  video={project.video}
-                  links={project.links}
-                />
-              ))}
-          </div>
+          <AutoCarousel
+            items={projects}
+            keyExtractor={(p) => p.title}
+            interval={5000}
+            gap={16}
+            itemMinWidth={320}
+            renderItem={(project) => (
+              <ProjectCard
+                title={project.title}
+                description={project.description}
+                dates={project.dates}
+                association={project.association}
+                role={project.role}
+                tags={project.tags}
+                isInternal={project.isInternal}
+                href={project.href}
+                image={project.image}
+                video={project.video}
+                links={project.links}
+                className="h-full"
+              />
+            )}
+          />
 
           <Link
             href="/projects"
             className="group mt-2 inline-flex w-fit items-center gap-2 text-sm font-medium text-primary transition-colors hover:text-primary/80 hover:underline"
           >
-            See More Projects
+            {t("home.seeAllProjects")}
             <ArrowRightIcon className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
           </Link>
         </AnimatedSection>
 
-        {/* ── Featured Certificates ────────────────────────────────────── */}
+        {/* ── Certificates Carousel ────────────────────────────────────── */}
         <AnimatedSection
           variant="fade-up"
           delay={0.1}
@@ -329,55 +370,147 @@ export default function Page() {
         >
           <div>
             <h3 className="text-2xl font-semibold tracking-tight text-foreground">
-              Certifications &amp; Achievements
+              {t("home.sectionCertificates")}
             </h3>
             <p className="mt-1 text-sm text-muted-foreground">
-              Highlights from my continuous learning journey and professional
-              growth.
+              {t("home.certificatesDescription")}
             </p>
           </div>
 
-          <div className="mt-2 grid w-full grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {certificates
-              .filter((c) => c.featured)
-              .slice(0, 4)
-              .map((cert) => (
-                <div
-                  key={cert.id}
-                  className="group flex flex-col overflow-hidden rounded-xl border border-border bg-card/50 backdrop-blur-sm transition-all duration-300 hover:border-border/80 hover:shadow-lg hover:ring-1 hover:shadow-primary/5 hover:ring-primary/10"
-                >
-                  <div className="relative aspect-4/3 w-full overflow-hidden bg-muted">
-                    <Image
-                      src={cert.image}
-                      alt={cert.title}
-                      fill
-                      className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-                      loading="lazy"
-                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                    />
-                  </div>
-                  <div className="flex flex-1 flex-col gap-1 p-3">
-                    <h4 className="line-clamp-2 text-xs leading-snug font-semibold text-foreground">
-                      {cert.title}
-                    </h4>
-                    <span className="text-[11px] text-muted-foreground">
-                      {cert.issuer}
-                    </span>
-                    <span className="mt-auto text-[10px] text-muted-foreground/60">
-                      {cert.issuedDate}
-                    </span>
-                  </div>
+          <AutoCarousel
+            items={certificates}
+            keyExtractor={(c) => c.id}
+            interval={4000}
+            gap={16}
+            itemMinWidth={260}
+            renderItem={(cert) => (
+              <a
+                href={cert.credentialUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group flex h-full flex-col overflow-hidden rounded-xl border border-border bg-card/50 backdrop-blur-sm transition-all duration-300 hover:border-border/80 hover:shadow-lg hover:ring-1 hover:shadow-primary/5 hover:ring-primary/10"
+              >
+                <div className="relative aspect-4/3 w-full overflow-hidden bg-muted">
+                  <Image
+                    src={cert.image}
+                    alt={cert.title}
+                    fill
+                    className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                    loading="lazy"
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                  />
                 </div>
-              ))}
-          </div>
+                <div className="flex flex-1 flex-col gap-1 p-3">
+                  <h4 className="line-clamp-2 text-xs leading-snug font-semibold text-foreground">
+                    {cert.title}
+                  </h4>
+                  <span className="text-[11px] text-muted-foreground">
+                    {cert.issuer}
+                  </span>
+                  <span className="mt-auto text-[10px] text-muted-foreground/60">
+                    {cert.issuedDate}
+                  </span>
+                </div>
+              </a>
+            )}
+          />
 
           <Link
             href="/certificates"
             className="group mt-2 inline-flex w-fit items-center gap-2 text-sm font-medium text-primary transition-colors hover:text-primary/80 hover:underline"
           >
-            See More Certificates
+            {t("home.seeAllCertificates")}
             <ArrowRightIcon className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
           </Link>
+        </AnimatedSection>
+
+        <AnimatedSection
+          variant="fade-up"
+          delay={0.1}
+          duration={0.6}
+          as="section"
+          className="mt-16 flex w-full flex-col gap-6 border-t border-border pt-12"
+        >
+          <div>
+            <h3 className="text-2xl font-semibold tracking-tight text-foreground">
+              {t("home.sectionStats")}
+            </h3>
+            <p className="mt-1 text-sm text-muted-foreground">
+              {t("home.statsDescription")}
+            </p>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {snapshotStats.map((item) => (
+              <MagicCard
+                key={item.label}
+                mode="orb"
+                glowFrom={resolvedTheme === "dark" ? "#7c3aed" : "#C4B5FD"}
+                glowTo={resolvedTheme === "dark" ? "#3b82f6" : "#BFDBFE"}
+                className="h-full rounded-xl p-0"
+              >
+                <div className="flex h-full min-h-32 flex-col rounded-[inherit] bg-card/65 p-5 backdrop-blur-sm">
+                  <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
+                    {item.label}
+                  </p>
+                  <p className="mt-2 text-3xl font-semibold text-foreground">
+                    {item.value}
+                  </p>
+                  {item.description ? (
+                    <p className="mt-auto pt-2 text-xs text-muted-foreground">
+                      {item.description}
+                    </p>
+                  ) : null}
+                </div>
+              </MagicCard>
+            ))}
+          </div>
+
+          <MagicCard
+            mode="orb"
+            glowFrom={resolvedTheme === "dark" ? "#7c3aed" : "#C4B5FD"}
+            glowTo={resolvedTheme === "dark" ? "#3b82f6" : "#BFDBFE"}
+            className="rounded-xl p-0"
+          >
+            <div className="overflow-hidden rounded-[inherit] bg-card/65 p-5 backdrop-blur-sm">
+              <div className="mb-4 flex items-center gap-2">
+                <GithubLogoIcon className="h-5 w-5 text-foreground" />
+                <h4 className="text-sm font-medium text-foreground">
+                  {t("home.githubContributions")}
+                </h4>
+              </div>
+
+              <div className="overflow-x-auto px-2 py-1">
+                <div className="flex justify-center">
+                  <div className="w-fit min-w-max">
+                    <GitHubCalendar
+                      username="FadhilAlif"
+                      colorScheme={resolvedTheme === "dark" ? "dark" : "light"}
+                      blockSize={13}
+                      blockMargin={4}
+                      fontSize={12}
+                      theme={{
+                        light: [
+                          "#ebedf0",
+                          "#9be9a8",
+                          "#40c463",
+                          "#30a14e",
+                          "#216e39",
+                        ],
+                        dark: [
+                          "#161b22",
+                          "#0e4429",
+                          "#006d32",
+                          "#26a641",
+                          "#39d353",
+                        ],
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </MagicCard>
         </AnimatedSection>
 
         {/* ── Contact CTA ─────────────────────────────────────────────── */}
@@ -404,12 +537,11 @@ export default function Page() {
                 </div>
 
                 <h3 className="text-2xl font-semibold tracking-tight text-foreground md:text-3xl">
-                  Let&apos;s Work Together
+                  {t("home.letsWorkTogether")}
                 </h3>
 
                 <p className="max-w-md text-sm leading-relaxed text-muted-foreground md:text-base">
-                  I&apos;m always open to discussing new projects, creative
-                  ideas, or opportunities to bring your visions to life.
+                  {t("home.ctaDescription")}
                 </p>
 
                 {/* Availability badge */}
@@ -418,7 +550,7 @@ export default function Page() {
                     <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
                     <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
                   </span>
-                  Available for new opportunities
+                  {t("home.availableBadge")}
                 </div>
 
                 <Link href="/contact">
@@ -427,7 +559,9 @@ export default function Page() {
                     as="div"
                     className="flex h-11 items-center space-x-2 bg-white px-8 text-black dark:bg-black dark:text-white"
                   >
-                    <span className="text-sm font-medium">Get in Touch</span>
+                    <span className="text-sm font-medium">
+                      {t("home.getInTouch")}
+                    </span>
                     <ArrowRightIcon className="h-4 w-4" />
                   </HoverBorderGradient>
                 </Link>

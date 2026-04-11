@@ -12,6 +12,32 @@ const rateLimitMap = new Map<string, { count: number; resetAt: number }>()
 const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000 // 1 hour
 const RATE_LIMIT_MAX = 3
 
+type SupportedLanguage = "en" | "id"
+
+function resolveLanguage(value?: string): SupportedLanguage {
+  if (!value) return "en"
+  return value.toLowerCase().startsWith("id") ? "id" : "en"
+}
+
+const CONTACT_TEXT = {
+  en: {
+    tooManyRequests:
+      "Too many requests. Please wait before sending another message.",
+    invalidJson: "Invalid JSON body.",
+    validationFailed: "Validation failed.",
+    sendFailed: "Failed to send email. Please try again later.",
+    unexpectedError: "An unexpected server error occurred.",
+  },
+  id: {
+    tooManyRequests:
+      "Terlalu banyak permintaan. Mohon tunggu sebelum mengirim pesan lagi.",
+    invalidJson: "Format JSON tidak valid.",
+    validationFailed: "Validasi gagal.",
+    sendFailed: "Gagal mengirim email. Silakan coba lagi nanti.",
+    unexpectedError: "Terjadi kesalahan server yang tidak terduga.",
+  },
+} as const
+
 function checkRateLimit(ip: string): { allowed: boolean; retryAfter: number } {
   const now = Date.now()
   const entry = rateLimitMap.get(ip)
@@ -21,7 +47,10 @@ function checkRateLimit(ip: string): { allowed: boolean; retryAfter: number } {
     return { allowed: true, retryAfter: 0 }
   }
   if (entry.count >= RATE_LIMIT_MAX) {
-    return { allowed: false, retryAfter: Math.ceil((entry.resetAt - now) / 1000) }
+    return {
+      allowed: false,
+      retryAfter: Math.ceil((entry.resetAt - now) / 1000),
+    }
   }
 
   entry.count++
@@ -30,10 +59,19 @@ function checkRateLimit(ip: string): { allowed: boolean; retryAfter: number } {
 
 // ─── Email HTML builder ───────────────────────────────────────────────────────
 
-function buildEmailHtml(name: string, email: string, message: string, sentAt: string): string {
+function buildEmailHtml(
+  name: string,
+  email: string,
+  message: string,
+  sentAt: string
+): string {
   // Escape HTML to prevent injection
   const esc = (s: string) =>
-    s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;")
+    s
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -138,9 +176,14 @@ export async function POST(request: NextRequest) {
       "unknown"
 
     const { allowed, retryAfter } = checkRateLimit(ip)
+    const fallbackLanguage = resolveLanguage(
+      request.headers.get("accept-language") ?? undefined
+    )
+    const fallbackText = CONTACT_TEXT[fallbackLanguage]
+
     if (!allowed) {
       return NextResponse.json(
-        { error: "Too many requests. Please wait before sending another message.", retryAfter },
+        { error: fallbackText.tooManyRequests, retryAfter },
         { status: 429, headers: { "Retry-After": String(retryAfter) } }
       )
     }
@@ -150,13 +193,25 @@ export async function POST(request: NextRequest) {
     try {
       body = await request.json()
     } catch {
-      return NextResponse.json({ error: "Invalid JSON body." }, { status: 400 })
+      return NextResponse.json(
+        { error: fallbackText.invalidJson },
+        { status: 400 }
+      )
     }
+
+    const requestedLanguage =
+      typeof body === "object" && body !== null && "lang" in body
+        ? resolveLanguage(String((body as { lang?: string }).lang))
+        : fallbackLanguage
+    const text = CONTACT_TEXT[requestedLanguage]
 
     const parsed = contactSchema.safeParse(body)
     if (!parsed.success) {
       return NextResponse.json(
-        { error: "Validation failed.", issues: parsed.error.flatten().fieldErrors },
+        {
+          error: text.validationFailed,
+          issues: parsed.error.flatten().fieldErrors,
+        },
         { status: 422 }
       )
     }
@@ -187,21 +242,20 @@ export async function POST(request: NextRequest) {
     })
 
     if (error) {
-      console.error("[contact/send] Resend error:", JSON.stringify(error, null, 2))
-      return NextResponse.json(
-        { error: "Failed to send email. Please try again later." },
-        { status: 500 }
+      console.error(
+        "[contact/send] Resend error:",
+        JSON.stringify(error, null, 2)
       )
+      return NextResponse.json({ error: text.sendFailed }, { status: 500 })
     }
 
     console.log("[contact/send] Email sent. ID:", data?.id)
     return NextResponse.json({ success: true, id: data?.id })
-
   } catch (err) {
     // Catch-all so server never returns empty response
     console.error("[contact/send] Unexpected error:", err)
     return NextResponse.json(
-      { error: "An unexpected server error occurred." },
+      { error: CONTACT_TEXT.en.unexpectedError },
       { status: 500 }
     )
   }
