@@ -8,14 +8,20 @@ import { AiChatDialog } from "@/components/chat/ai-chat-dialog"
 import { cn } from "@/lib/utils"
 import { useThemeAnimation } from "@/hooks/use-theme-animation"
 import { useIsMobile } from "@/hooks/use-mobile"
+import { TranslateIcon } from "@phosphor-icons/react"
+import { useTranslation } from "react-i18next"
+import { getSupportedLanguage } from "@/lib/i18n/config"
 
 export function FloatingDock() {
+  const { t, i18n } = useTranslation()
   const { toggleTheme, theme } = useThemeAnimation()
   const isMobile = useIsMobile()
   const [mounted, setMounted] = useState(false)
   const pathname = usePathname()
   const router = useRouter()
   const [isChatOpen, setIsChatOpen] = useState(false)
+  const activeLanguage = getSupportedLanguage(i18n.resolvedLanguage)
+  const isLanguageActive = mounted && activeLanguage === "id"
 
   // Avoid hydration mismatch
   useEffect(() => {
@@ -25,6 +31,11 @@ export function FloatingDock() {
 
   const handleNavigation = (path: string) => {
     router.push(path)
+  }
+
+  const handleLanguageToggle = () => {
+    const nextLanguage = activeLanguage === "en" ? "id" : "en"
+    void i18n.changeLanguage(nextLanguage)
   }
 
   return (
@@ -40,7 +51,7 @@ export function FloatingDock() {
             active={pathname === "/"}
             onClick={() => handleNavigation("/")}
           >
-            <DockLabel>About</DockLabel>
+            <DockLabel>{t("dock.about")}</DockLabel>
             <DockIcon>
               <User
                 className={cn(
@@ -57,7 +68,7 @@ export function FloatingDock() {
             active={pathname === "/projects"}
             onClick={() => handleNavigation("/projects")}
           >
-            <DockLabel>Projects</DockLabel>
+            <DockLabel>{t("dock.projects")}</DockLabel>
             <DockIcon>
               <FolderGit2
                 className={cn(
@@ -74,7 +85,7 @@ export function FloatingDock() {
             active={pathname === "/certificates"}
             onClick={() => handleNavigation("/certificates")}
           >
-            <DockLabel>Certificate</DockLabel>
+            <DockLabel>{t("dock.certificates")}</DockLabel>
             <DockIcon>
               <Award
                 className={cn(
@@ -91,7 +102,7 @@ export function FloatingDock() {
             active={pathname === "/contact"}
             onClick={() => handleNavigation("/contact")}
           >
-            <DockLabel>Contact</DockLabel>
+            <DockLabel>{t("dock.contact")}</DockLabel>
             <DockIcon>
               <Mail
                 className={cn(
@@ -110,7 +121,7 @@ export function FloatingDock() {
             active={isChatOpen}
             onClick={() => setIsChatOpen((prev) => !prev)}
           >
-            <DockLabel>AI Chat</DockLabel>
+            <DockLabel>{t("dock.aiChat")}</DockLabel>
             <DockIcon>
               <Bot
                 className={cn(
@@ -123,8 +134,25 @@ export function FloatingDock() {
             </DockIcon>
           </DockItem>
 
+          <DockItem
+            active={isLanguageActive}
+            onClick={handleLanguageToggle}
+          >
+            <DockLabel>{t("dock.language")}</DockLabel>
+            <DockIcon>
+              <TranslateIcon
+                className={cn(
+                  "size-full transition-colors",
+                  isLanguageActive
+                    ? "text-primary"
+                    : "text-neutral-600 dark:text-neutral-300"
+                )}
+              />
+            </DockIcon>
+          </DockItem>
+
           <DockItem onClick={toggleTheme}>
-            <DockLabel>Theme</DockLabel>
+            <DockLabel>{t("dock.theme")}</DockLabel>
             <DockIcon>
               {mounted && theme === "dark" ? (
                 <Sun className="size-full text-neutral-600 transition-colors dark:text-neutral-300" />

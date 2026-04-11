@@ -14,6 +14,7 @@ import { cn } from "@/lib/utils"
 import { useReadLocalStorage } from "@/hooks/use-read-local-storage"
 import type { PortfolioMediaItem } from "@/types"
 import { PhotoGallery } from "./photo-gallery"
+import { useTranslation } from "react-i18next"
 
 const WORK_HINT_STORAGE_KEY = "portfolio.work-section-hint-dismissed"
 
@@ -65,9 +66,11 @@ type DateBadgeProps = {
 }
 
 function DateBadge({ start, end }: DateBadgeProps) {
+  const { t } = useTranslation()
+
   return (
     <span className="inline-flex flex-none items-center rounded-md border border-border bg-muted px-2 py-0.5 text-xs font-medium whitespace-nowrap text-muted-foreground tabular-nums">
-      {start} – {end ?? "Present"}
+      {start} – {end ?? t("workSection.present")}
     </span>
   )
 }
@@ -78,6 +81,8 @@ type CompanyLinkProps = {
 }
 
 function CompanyLink({ company, companyUrl }: CompanyLinkProps) {
+  const { t } = useTranslation()
+
   return (
     <Tooltip>
       <TooltipTrigger asChild>
@@ -93,7 +98,7 @@ function CompanyLink({ company, companyUrl }: CompanyLinkProps) {
         </a>
       </TooltipTrigger>
       <TooltipContent side="top">
-        <span>Visit {company}</span>
+        <span>{t("workSection.visitCompany", { company })}</span>
       </TooltipContent>
     </Tooltip>
   )
@@ -106,6 +111,7 @@ type WorkSectionProps = {
 }
 
 export function WorkSection({ items }: WorkSectionProps) {
+  const { t } = useTranslation()
   const [isHintLocallyDismissed, setIsHintLocallyDismissed] = useState(false)
   const isHintDismissed = useReadLocalStorage<boolean>(WORK_HINT_STORAGE_KEY, {
     initializeWithValue: false,
@@ -195,7 +201,7 @@ export function WorkSection({ items }: WorkSectionProps) {
                           )}
                         >
                           <MousePointerClick className="size-3" />
-                          Klik
+                          {t("workSection.clickHint")}
                         </span>
                       )}
                     </div>

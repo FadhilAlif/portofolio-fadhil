@@ -11,6 +11,8 @@ import {
 import { useCallback, useEffect, useRef, useState } from "react"
 import { AnimatePresence, motion } from "framer-motion"
 import ReactMarkdown from "react-markdown"
+import { useTranslation } from "react-i18next"
+import { getSupportedLanguage } from "@/lib/i18n/config"
 
 // ── Types ──────────────────────────────────────────────────
 interface ChatMessage {
@@ -25,15 +27,9 @@ interface AiChatDialogProps {
 
 const MAX_QUESTIONS = 3
 
-const SUGGESTION_BADGES = [
-  "Who is Fadhil Alif Priyatno?",
-  "What is his tech stack?",
-  "What projects has he built?",
-  "How can I contact him?",
-]
-
 // ── Component ──────────────────────────────────────────────
 export function AiChatDialog({ isOpen, onClose }: AiChatDialogProps) {
+  const { t, i18n } = useTranslation()
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [input, setInput] = useState("")
   const [isLoading, setIsLoading] = useState(false)
@@ -97,6 +93,7 @@ export function AiChatDialog({ isOpen, onClose }: AiChatDialogProps) {
           session_id: sessionId,
           message: userMessage,
           history: messages, // send previous messages as context
+          lang: getSupportedLanguage(i18n.resolvedLanguage),
         }),
       })
 
@@ -105,9 +102,9 @@ export function AiChatDialog({ isOpen, onClose }: AiChatDialogProps) {
       if (!res.ok) {
         if (res.status === 429) {
           setRemaining(0)
-          setError(data.message || "Rate limit reached.")
+          setError(t("chat.rateLimitReached"))
         } else {
-          setError(data.error || "Something went wrong.")
+          setError(t("chat.unknownError"))
         }
         return
       }
@@ -119,13 +116,16 @@ export function AiChatDialog({ isOpen, onClose }: AiChatDialogProps) {
       ])
       setRemaining(data.remaining ?? remaining - 1)
     } catch {
-      setError("Failed to connect to the server. Please try again.")
+      setError(t("chat.connectionError"))
     } finally {
       setIsLoading(false)
     }
   }
 
   const isLimitReached = remaining <= 0
+  const suggestionBadges = t("chat.suggestions", {
+    returnObjects: true,
+  }) as string[]
 
   return (
     <AnimatePresence>
@@ -142,7 +142,7 @@ export function AiChatDialog({ isOpen, onClose }: AiChatDialogProps) {
           <div className="flex items-center justify-between border-b border-border bg-muted/50 px-4 py-3">
             <div className="flex items-center gap-2">
               <RobotIcon className="h-5 w-5 text-primary" />
-              <span className="text-sm font-medium">Fadhil AI</span>
+              <span className="text-sm font-medium">{t("chat.title")}</span>
               <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary">
                 {remaining}/{MAX_QUESTIONS}
               </span>
@@ -150,15 +150,15 @@ export function AiChatDialog({ isOpen, onClose }: AiChatDialogProps) {
             <div className="flex items-center gap-1">
               <button
                 onClick={handleNewSession}
-                aria-label="New Session"
-                title="Start new session"
+                aria-label={t("chat.newSessionLabel")}
+                title={t("chat.newSessionTitle")}
                 className="rounded-md p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
               >
                 <ArrowClockwiseIcon className="h-4 w-4" />
               </button>
               <button
                 onClick={onClose}
-                aria-label="Close Chat"
+                aria-label={t("chat.closeChatLabel")}
                 className="rounded-md p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
               >
                 <XIcon className="h-4 w-4" />
@@ -173,16 +173,13 @@ export function AiChatDialog({ isOpen, onClose }: AiChatDialogProps) {
               <div className="flex flex-col gap-3">
                 <div className="flex w-full justify-start">
                   <div className="max-w-[85%] rounded-2xl rounded-tl-sm border border-border bg-muted px-4 py-2 text-sm text-foreground">
-                    Hi there! 👋 I&apos;m Fadhil&apos;s AI assistant. Ask me
-                    anything about his skills, experience, projects, or
-                    education. You have{" "}
-                    <strong>{MAX_QUESTIONS} questions</strong> per session.
+                    {t("chat.welcome", { count: MAX_QUESTIONS })}
                   </div>
                 </div>
 
                 {/* Suggestion Badges */}
                 <div className="flex flex-wrap gap-2 px-1">
-                  {SUGGESTION_BADGES.map((suggestion) => (
+                  {suggestionBadges.map((suggestion) => (
                     <motion.button
                       key={suggestion}
                       initial={{ opacity: 0, y: 8 }}
@@ -229,7 +226,9 @@ export function AiChatDialog({ isOpen, onClose }: AiChatDialogProps) {
                 <div className="max-w-[85%] rounded-2xl rounded-tl-sm border border-border bg-muted px-4 py-3 text-sm text-foreground">
                   <div className="flex items-center gap-2">
                     <CircleNotchIcon className="h-3.5 w-3.5 animate-spin text-primary" />
-                    <span className="text-muted-foreground">Thinking...</span>
+                    <span className="text-muted-foreground">
+                      {t("chat.thinking")}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -248,12 +247,12 @@ export function AiChatDialog({ isOpen, onClose }: AiChatDialogProps) {
             {isLimitReached && !error && (
               <div className="flex w-full justify-center">
                 <div className="rounded-xl bg-muted px-4 py-2 text-center text-xs text-muted-foreground">
-                  Session limit reached.{" "}
+                  {t("chat.sessionLimit")}{" "}
                   <button
                     onClick={handleNewSession}
                     className="font-medium text-primary underline-offset-2 hover:underline"
                   >
-                    Start a new session
+                    {t("chat.startNewSession")}
                   </button>
                 </div>
               </div>
@@ -269,7 +268,9 @@ export function AiChatDialog({ isOpen, onClose }: AiChatDialogProps) {
                 ref={inputRef}
                 type="text"
                 placeholder={
-                  isLimitReached ? "Session limit reached" : "Ask something..."
+                  isLimitReached
+                    ? t("chat.placeholderLimitReached")
+                    : t("chat.placeholderAsk")
                 }
                 className="w-full rounded-full border border-border bg-muted py-2.5 pr-10 pl-4 text-sm transition-colors outline-none focus:border-primary/50 disabled:cursor-not-allowed disabled:opacity-50"
                 value={input}
@@ -278,7 +279,7 @@ export function AiChatDialog({ isOpen, onClose }: AiChatDialogProps) {
               />
               <button
                 type="submit"
-                aria-label="Send Message"
+                aria-label={t("chat.sendMessageLabel")}
                 disabled={!input.trim() || isLoading || isLimitReached}
                 className="absolute right-1.5 rounded-full bg-primary p-1.5 text-primary-foreground disabled:cursor-not-allowed disabled:opacity-50"
               >

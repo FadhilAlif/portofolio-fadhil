@@ -5,6 +5,7 @@ import Image from "next/image"
 import { ArrowUpRight } from "lucide-react"
 import type { PortfolioMediaItem } from "@/types"
 import { PhotoGallery } from "./photo-gallery"
+import { useTranslation } from "react-i18next"
 
 export type EducationItem = {
   institution: string
@@ -28,9 +29,11 @@ type DateBadgeProps = {
 }
 
 function DateBadge({ start, end }: DateBadgeProps) {
+  const { t } = useTranslation()
+
   return (
     <span className="inline-flex flex-none items-center rounded-md border border-border bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground tabular-nums">
-      {start} – {end ?? "Present"}
+      {start} – {end ?? t("educationSection.present")}
     </span>
   )
 }

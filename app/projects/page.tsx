@@ -8,14 +8,16 @@ import { ProjectCard } from "@/components/ui/project-card"
 import { Footer } from "@/components/section/footer"
 import { AnimatedSection } from "@/components/section/animated-section"
 import {
-  projects,
-  PROJECT_FILTERS,
+  getProjects,
+  getProjectFilters,
   getCategories,
   type ProjectItem,
   type FilterId,
 } from "@/lib/projects-data"
 import useDebounce from "@/hooks/use-debounce"
 import { FilterSearchToolbar } from "@/components/ui/filter-search-toolbar"
+import { useTranslation } from "react-i18next"
+import { getSupportedLanguage } from "@/lib/i18n/config"
 
 const SEARCH_DEBOUNCE_MS = 350
 
@@ -36,6 +38,8 @@ function matchesProjectSearch(project: ProjectItem, query: string) {
 }
 
 function EmptyState() {
+  const { t } = useTranslation()
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }}
@@ -45,15 +49,22 @@ function EmptyState() {
       <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-xl border border-border/60 bg-muted/40 text-2xl">
         🔍
       </div>
-      <p className="text-sm font-medium text-foreground">No projects found</p>
+      <p className="text-sm font-medium text-foreground">
+        {t("projectsPage.noProjects")}
+      </p>
       <p className="mt-1 text-xs text-muted-foreground">
-        Try selecting a different filter.
+        {t("projectsPage.noProjectsHint")}
       </p>
     </motion.div>
   )
 }
 
 export default function ProjectsPage() {
+  const { t, i18n } = useTranslation()
+  const language = getSupportedLanguage(i18n.resolvedLanguage)
+  const projects = getProjects(language)
+  const projectFilters = getProjectFilters(language)
+
   const [activeFilter, setActiveFilter] = useState<FilterId>("all")
   const [searchQuery, setSearchQuery] = useState("")
   const [visibleCount, setVisibleCount] = useState(9)
@@ -79,7 +90,7 @@ export default function ProjectsPage() {
     }
 
     return counts
-  }, [])
+  }, [projects])
 
   const filteredByCategory = useMemo(
     () =>
@@ -88,7 +99,7 @@ export default function ProjectsPage() {
         : projects.filter((project) =>
             getCategories(project.category).includes(activeFilter)
           ),
-    [activeFilter]
+    [activeFilter, projects]
   )
 
   const filtered = useMemo(
@@ -112,7 +123,7 @@ export default function ProjectsPage() {
           href="/"
           className="text-xs font-medium tracking-widest text-muted-foreground uppercase transition-colors hover:text-foreground"
         >
-          fadhil.dev / projects
+          {t("projectsPage.breadcrumb")}
         </Link>
       </header>
 
@@ -123,17 +134,16 @@ export default function ProjectsPage() {
           className="flex flex-col items-center pt-16 pb-10 text-center"
         >
           <h1 className="mb-3 text-3xl font-bold tracking-tight sm:text-4xl">
-            Check out my latest work
+            {t("projectsPage.title")}
           </h1>
           <p className="max-w-xl text-balance text-muted-foreground md:text-lg">
-            From mobile apps to enterprise web platforms - here are a few
-            highlights from my work.
+            {t("projectsPage.subtitle")}
           </p>
         </AnimatedSection>
 
         <AnimatedSection variant="fade-up" duration={0.4} className="mb-8">
           <FilterSearchToolbar
-            filters={PROJECT_FILTERS}
+            filters={projectFilters}
             activeFilter={activeFilter}
             counts={filterCounts}
             onFilterChange={(filter) => {
@@ -146,8 +156,8 @@ export default function ProjectsPage() {
               setVisibleCount(9)
             }}
             searchInputId="project-search"
-            searchLabel="Search projects"
-            searchPlaceholder="Search by project name, role, tech, or description"
+            searchLabel={t("projectsPage.searchLabel")}
+            searchPlaceholder={t("projectsPage.searchPlaceholder")}
           />
         </AnimatedSection>
 
@@ -199,7 +209,7 @@ export default function ProjectsPage() {
               onClick={() => setVisibleCount((prev) => prev + 9)}
               className="inline-flex cursor-pointer items-center justify-center rounded-full bg-primary/10 px-6 py-3 text-sm font-semibold text-primary transition-colors hover:bg-primary/20 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none"
             >
-              Load More Projects
+              {t("projectsPage.loadMore")}
             </button>
           </motion.div>
         )}

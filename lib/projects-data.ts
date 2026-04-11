@@ -4,6 +4,8 @@
 // Sorted: newest → oldest
 // ─────────────────────────────────────────────────────────────────────────────
 
+import type { AppLanguage } from "@/lib/i18n/config"
+
 export type ProjectCategory = "web" | "mobile" | "private"
 
 export type ProjectRole =
@@ -59,14 +61,27 @@ export interface ProjectItem {
 
 // ─── Filter Config ────────────────────────────────────────────────────────────
 
-export const PROJECT_FILTERS = [
+const BASE_PROJECT_FILTERS = [
   { id: "all", label: "All" },
   { id: "web", label: "Web" },
   { id: "mobile", label: "Mobile" },
   { id: "private", label: "Internal" },
 ] as const
 
-export type FilterId = (typeof PROJECT_FILTERS)[number]["id"]
+export type FilterId = (typeof BASE_PROJECT_FILTERS)[number]["id"]
+
+export function getProjectFilters(language: AppLanguage) {
+  if (language === "id") {
+    return [
+      { id: "all", label: "Semua" },
+      { id: "web", label: "Web" },
+      { id: "mobile", label: "Mobile" },
+      { id: "private", label: "Internal" },
+    ] as const
+  }
+
+  return BASE_PROJECT_FILTERS
+}
 
 // ─── Category Helper ─────────────────────────────────────────────────────────
 
@@ -357,3 +372,47 @@ export const projects: ProjectItem[] = [
     ],
   },
 ]
+
+const PROJECT_DESCRIPTION_ID: Record<string, string> = {
+  "Duwitku App":
+    "Aplikasi finansial modern berbasis Flutter untuk memudahkan pencatatan pengeluaran dengan fitur scan struk, auto-kategorisasi AI, sinkronisasi Supabase, dan integrasi WhatsApp Bot.",
+  "WBS Public — Whistleblowing System":
+    "Sistem WBS publik yang memungkinkan pengguna eksternal mengirim laporan secara aman dengan opsi identitas fleksibel (penuh, sebagian, atau anonim) serta pelacakan status laporan.",
+  "WBS Internal — Whistleblowing System":
+    "Sistem WBS internal untuk tim Audit Internal dalam mengelola, memvalidasi, dan memantau laporan whistleblowing secara end-to-end, lengkap dengan workflow terstruktur dan dashboard monitoring.",
+  "PLUSTIX — Pertamina":
+    "Sistem ticketing berbasis web untuk memantau shift SPBU dan isu operasional, dilengkapi ringkasan tiket, FAQ, tiket internal L3, pelaporan, serta dashboard dengan filter dan insight.",
+  "JSON Polish":
+    "Tool modern untuk formatting dan validasi JSON dengan syntax highlighting, diff comparison, auto-fix (quotes, trailing comma, brackets), editor bertab, upload/download file, serta dark/light theme.",
+  "LSM - Invoice Receipt Module":
+    "Modul berbasis web pada Logistic Sourcing Management (LSM) yang membantu tim Finance memantau pengajuan invoice vendor melalui log pencarian dan pelaporan terintegrasi.",
+  Dishcovery:
+    "Aplikasi mobile yang membantu melestarikan kuliner tradisional Indonesia melalui pengenalan gambar berbasis AI (Gemini API) untuk mengidentifikasi hidangan dari kamera.",
+  "ManganKu App":
+    "Aplikasi Flutter yang memanfaatkan TensorFlow Lite dan Firebase ML untuk mengenali makanan dari foto, lalu menghasilkan informasi nutrisi via Gemini AI serta resep dari MealDB dan YouTube API.",
+  "TING.ID SaaS ERP":
+    "Platform ERP berbasis web untuk modul manajemen, akuntansi, dan inventory. UI dibangun responsif dan skalabel dengan Vue 3, Pinia, Tailwind CSS, dan integrasi API microservice.",
+  DiabExpert:
+    "Sistem pakar berbasis web untuk deteksi dini Diabetes Mellitus tipe 1 dan tipe 2 menggunakan metode Certainty Factor, memproses gejala dan tingkat keyakinan pengguna.",
+  "Apilogy Admin Dashboard":
+    "Dashboard admin berbasis web untuk manajemen user pada platform Apilogy (Developer & Publisher), dioptimalkan dengan React, Zustand, TanStack Query, Nest.js, dan Docker.",
+  "Cuisine Cash":
+    "Aplikasi kasir restoran berbasis web sebagai proyek capstone individu, dilengkapi manajemen produk, pemrosesan pesanan real-time, dan dashboard laporan penjualan.",
+  Agriplant:
+    "Aplikasi web yang membantu petani mengelola aktivitas tanam dengan pengingat penyiraman/pemupukan, riwayat tanam, dan pemantauan cuaca untuk pengambilan keputusan yang lebih baik.",
+  "Tukangin Landing Page":
+    "Landing page responsif untuk marketplace jasa rumah tangga, dikembangkan sebagai tugas Code Competence di Alterra Academy menggunakan React dan Bootstrap.",
+}
+
+export function getProjects(language: AppLanguage): ProjectItem[] {
+  if (language === "en") {
+    return projects
+  }
+
+  return projects.map((project) => ({
+    ...project,
+    description: PROJECT_DESCRIPTION_ID[project.title] ?? project.description,
+  }))
+}
+
+export const PROJECT_FILTERS = BASE_PROJECT_FILTERS

@@ -1,13 +1,18 @@
 "use client"
 
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { motion, AnimatePresence } from "motion/react"
 import { cn } from "@/lib/utils"
 import { Send, Loader2, CheckCircle, AlertCircle } from "lucide-react"
-import { contactSchema, type ContactFormValues } from "@/lib/contact-schema"
+import {
+  createContactSchema,
+  type ContactFormValues,
+} from "@/lib/contact-schema"
 import { Button } from "../ui/button"
+import { useTranslation } from "react-i18next"
+import { getSupportedLanguage } from "@/lib/i18n/config"
 
 // ─── Input Field Component ────────────────────────────────────────────────────
 
@@ -212,11 +217,26 @@ interface ContactFormProps {
 type FocusedField = "name" | "email" | "message" | null
 
 export function ContactForm({ className }: ContactFormProps) {
+  const { t, i18n } = useTranslation()
   const [submitStatus, setSubmitStatus] = useState<
     "idle" | "success" | "error"
   >("idle")
   const [errorMessage, setErrorMessage] = useState<string>("")
   const [focusedField, setFocusedField] = useState<FocusedField>(null)
+
+  const schema = useMemo(
+    () =>
+      createContactSchema({
+        nameMin: t("contactForm.validation.nameMin"),
+        nameMax: t("contactForm.validation.nameMax"),
+        emailInvalid: t("contactForm.validation.emailInvalid"),
+        emailMax: t("contactForm.validation.emailMax"),
+        messageMin: t("contactForm.validation.messageMin"),
+        messageMax: t("contactForm.validation.messageMax"),
+        botDetected: t("contactForm.validation.botDetected"),
+      }),
+    [i18n.resolvedLanguage, t]
+  )
 
   const {
     register,
@@ -225,7 +245,7 @@ export function ContactForm({ className }: ContactFormProps) {
     reset,
     formState: { errors, isSubmitting },
   } = useForm<ContactFormValues>({
-    resolver: zodResolver(contactSchema),
+    resolver: zodResolver(schema),
     defaultValues: { name: "", email: "", message: "", _honey: "" },
   })
 
@@ -238,7 +258,10 @@ export function ContactForm({ className }: ContactFormProps) {
       const response = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: JSON.stringify({
+          ...data,
+          lang: getSupportedLanguage(i18n.resolvedLanguage),
+        }),
       })
 
       const result = (await response.json()) as {
@@ -252,13 +275,9 @@ export function ContactForm({ className }: ContactFormProps) {
           const mins = result.retryAfter
             ? Math.ceil(result.retryAfter / 60)
             : 60
-          setErrorMessage(
-            `Too many messages sent. Please wait ${mins} minute(s) before trying again.`
-          )
+          setErrorMessage(t("contactForm.tooManyMessages", { minutes: mins }))
         } else {
-          setErrorMessage(
-            result.error ?? "Something went wrong. Please try again."
-          )
+          setErrorMessage(t("contactForm.unknownError"))
         }
         setSubmitStatus("error")
         return
@@ -269,7 +288,7 @@ export function ContactForm({ className }: ContactFormProps) {
       // Reset to idle after 6s
       setTimeout(() => setSubmitStatus("idle"), 6000)
     } catch {
-      setErrorMessage("Network error. Please check your connection.")
+      setErrorMessage(t("contactForm.networkError"))
       setSubmitStatus("error")
     }
   }
@@ -313,11 +332,10 @@ export function ContactForm({ className }: ContactFormProps) {
               </motion.div>
               <div>
                 <p className="text-lg font-semibold text-foreground">
-                  Message sent!
+                  {t("contactForm.successTitle")}
                 </p>
                 <p className="mt-1.5 text-sm text-muted-foreground">
-                  Thank you for reaching out. I&apos;ll get back to you as soon
-                  as possible.
+                  {t("contactForm.successBody")}
                 </p>
               </div>
             </motion.div>
@@ -338,7 +356,9 @@ export function ContactForm({ className }: ContactFormProps) {
                 className="absolute -top-[9999px] left-0 h-0 w-0 overflow-hidden opacity-0"
                 tabIndex={-1}
               >
-                <label htmlFor="contact-website">Leave this empty</label>
+                <label htmlFor="contact-website">
+                  {t("contactForm.honeypotLabel")}
+                </label>
                 <input
                   id="contact-website"
                   type="text"
@@ -351,8 +371,8 @@ export function ContactForm({ className }: ContactFormProps) {
               {/* ── Name ─────────────────────────────────────────────── */}
               <ContactInput
                 id="contact-name"
-                label="Name"
-                placeholder="Your name"
+                label={t("contactForm.nameLabel")}
+                placeholder={t("contactForm.namePlaceholder")}
                 error={errors.name?.message}
                 isFocused={focusedField === "name"}
                 onFocus={() => setFocusedField("name")}
@@ -363,9 +383,9 @@ export function ContactForm({ className }: ContactFormProps) {
               {/* ── Email ─────────────────────────────────────────────── */}
               <ContactInput
                 id="contact-email"
-                label="Email Address"
+                label={t("contactForm.emailLabel")}
                 type="email"
-                placeholder="your@email.com"
+                placeholder={t("contactForm.emailPlaceholder")}
                 error={errors.email?.message}
                 isFocused={focusedField === "email"}
                 onFocus={() => setFocusedField("email")}
@@ -376,8 +396,8 @@ export function ContactForm({ className }: ContactFormProps) {
               {/* ── Message ───────────────────────────────────────────── */}
               <ContactTextarea
                 id="contact-message"
-                label="Message"
-                placeholder="Type your message here..."
+                label={t("contactForm.messageLabel")}
+                placeholder={t("contactForm.messagePlaceholder")}
                 error={errors.message?.message}
                 isFocused={focusedField === "message"}
                 onFocus={() => setFocusedField("message")}
@@ -421,12 +441,12 @@ export function ContactForm({ className }: ContactFormProps) {
                 {isSubmitting ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin" />
-                    Sending...
+                    {t("contactForm.sending")}
                   </>
                 ) : (
                   <>
                     <Send className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                    Send Message
+                    {t("contactForm.submit")}
                   </>
                 )}
               </Button>

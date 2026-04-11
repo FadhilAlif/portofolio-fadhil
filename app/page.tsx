@@ -29,10 +29,12 @@ import { AutoCarousel } from "@/components/ui/auto-carousel"
 import dynamic from "next/dynamic"
 import Link from "next/link"
 import { useTheme } from "next-themes"
-import { experiences, educations, skillGroups } from "@/lib/about-data"
-import { projects } from "@/lib/projects-data"
-import { certificates } from "@/lib/certificates-data"
+import { getAboutData } from "@/lib/about-data"
+import { getProjects } from "@/lib/projects-data"
+import { getCertificates } from "@/lib/certificates-data"
 import { getExperienceSummary } from "@/utils/experience-summary"
+import { useTranslation } from "react-i18next"
+import { getSupportedLanguage } from "@/lib/i18n/config"
 
 const GitHubCalendar = dynamic(
   () => import("react-github-calendar").then((mod) => mod.GitHubCalendar),
@@ -56,7 +58,13 @@ const EXPERIENCE_COMPANIES_FOR_SUMMARY = new Set([
 // ─── Page Component ─────────────────────────────────────────────────────────
 
 export default function Page() {
+  const { t, i18n } = useTranslation()
   const { resolvedTheme } = useTheme()
+  const language = getSupportedLanguage(i18n.resolvedLanguage)
+  const { experiences, educations, skillGroups } = getAboutData(language)
+  const projects = getProjects(language)
+  const certificates = getCertificates(language)
+
   const totalProjects = projects.length
   const totalCertificates = certificates.length
   const { totalMonths: experienceMonths, totalYears: yearsOfExperience } =
@@ -66,19 +74,21 @@ export default function Page() {
 
   const snapshotStats = [
     {
-      label: "Total Projects",
+      label: t("home.totalProjects"),
       value: String(totalProjects),
     },
     {
-      label: "Total Certificates",
+      label: t("home.totalCertificates"),
       value: String(totalCertificates),
     },
     {
-      label: "Years of Experience",
+      label: t("home.yearsExperience"),
       value: yearsOfExperience.toFixed(1),
-      description: `${experienceMonths} months total`,
+      description: t("home.monthsTotal", { count: experienceMonths }),
     },
   ]
+
+  const roles = t("home.roles", { returnObjects: true }) as string[]
   // Use much lighter spotlight colors in light mode to prevent text blend/legibility issues
   const spotlightColors =
     resolvedTheme === "light"
@@ -107,13 +117,7 @@ export default function Page() {
                 FADHIL ALIF PRIYATNO
               </h1>
               <TypingAnimation
-                words={[
-                  "Full-Stack Engineer",
-                  "Mobile Developer",
-                  "Frontend Developer",
-                  "Backend Developer",
-                  "UI/UX Designer",
-                ]}
+                words={roles}
                 className="mb-4 text-xl font-medium text-primary/80 md:text-2xl"
                 typeSpeed={40}
                 deleteSpeed={80}
@@ -157,22 +161,14 @@ export default function Page() {
                     rel="noopener noreferrer"
                     className="flex items-center gap-1.5 transition-colors hover:text-foreground"
                   >
-                    <GithubLogoIcon className="h-4 w-4" /> Github
+                    <GithubLogoIcon className="h-4 w-4" /> GitHub
                   </a>
                 </StaggerItem>
               </StaggerContainer>
 
               <AnimatedSection variant="fade-up" delay={0.4} duration={0.7}>
                 <div className="prose dark:prose-invert mx-auto max-w-2xl leading-relaxed text-muted-foreground md:mx-0 lg:text-lg">
-                  <p>
-                    Fresh Graduate in Information Technology currently working
-                    as a Full-Stack Engineer at Telkomsigma, a subsidiary of PT
-                    Telkom Indonesia. Experienced in building enterprise systems
-                    and scalable web and mobile applications using modern
-                    frontend and backend technologies. Strong in Agile
-                    collaboration, cross-functional teamwork, and delivering
-                    secure, reliable, and user-focused digital solutions.
-                  </p>
+                  <p>{t("home.intro")}</p>
                 </div>
               </AnimatedSection>
 
@@ -183,7 +179,7 @@ export default function Page() {
                       variant="outline"
                       className="h-11 rounded-full border-border bg-transparent px-6 text-foreground hover:cursor-pointer hover:bg-muted"
                     >
-                      <span className="text-sm">Contact Me</span>
+                      <span className="text-sm">{t("home.contactMe")}</span>
                     </Button>
                   </Link>
 
@@ -197,7 +193,9 @@ export default function Page() {
                       as="div"
                       className="flex h-11 items-center space-x-2 bg-white text-black dark:bg-black dark:text-white"
                     >
-                      <span className="pr-1 text-sm">Download CV</span>
+                      <span className="pr-1 text-sm">
+                        {t("home.downloadCV")}
+                      </span>
                       <DownloadIcon className="h-4 w-4" />
                     </HoverBorderGradient>
                   </a>
@@ -258,7 +256,7 @@ export default function Page() {
             className="flex w-full flex-col gap-6"
           >
             <h3 className="text-2xl font-semibold tracking-tight text-foreground">
-              Experience
+              {t("home.sectionExperience")}
             </h3>
             <WorkSection items={experiences} />
           </AnimatedSection>
@@ -272,7 +270,7 @@ export default function Page() {
             className="flex w-full flex-col gap-6 border-t border-border pt-12"
           >
             <h3 className="text-2xl font-semibold tracking-tight text-foreground">
-              Education
+              {t("home.sectionEducation")}
             </h3>
             <EducationSection items={educations} />
           </AnimatedSection>
@@ -287,11 +285,10 @@ export default function Page() {
           >
             <div>
               <h3 className="text-2xl font-semibold tracking-tight text-foreground">
-                Skills
+                {t("home.sectionSkills")}
               </h3>
               <p className="mt-1 text-sm text-muted-foreground">
-                A selection of tools, languages, and frameworks I use to build
-                digital solutions.
+                {t("home.skillsDescription")}
               </p>
             </div>
 
@@ -323,10 +320,10 @@ export default function Page() {
         >
           <div>
             <h3 className="text-2xl font-semibold tracking-tight text-foreground">
-              Projects
+              {t("home.sectionProjects")}
             </h3>
             <p className="mt-1 text-sm text-muted-foreground">
-              A collection of my work across web and mobile platforms.
+              {t("home.projectsDescription")}
             </p>
           </div>
 
@@ -358,7 +355,7 @@ export default function Page() {
             href="/projects"
             className="group mt-2 inline-flex w-fit items-center gap-2 text-sm font-medium text-primary transition-colors hover:text-primary/80 hover:underline"
           >
-            See All Projects
+            {t("home.seeAllProjects")}
             <ArrowRightIcon className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
           </Link>
         </AnimatedSection>
@@ -373,11 +370,10 @@ export default function Page() {
         >
           <div>
             <h3 className="text-2xl font-semibold tracking-tight text-foreground">
-              Certifications &amp; Achievements
+              {t("home.sectionCertificates")}
             </h3>
             <p className="mt-1 text-sm text-muted-foreground">
-              Highlights from my continuous learning journey and professional
-              growth.
+              {t("home.certificatesDescription")}
             </p>
           </div>
 
@@ -423,7 +419,7 @@ export default function Page() {
             href="/certificates"
             className="group mt-2 inline-flex w-fit items-center gap-2 text-sm font-medium text-primary transition-colors hover:text-primary/80 hover:underline"
           >
-            See All Certificates
+            {t("home.seeAllCertificates")}
             <ArrowRightIcon className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
           </Link>
         </AnimatedSection>
@@ -437,10 +433,10 @@ export default function Page() {
         >
           <div>
             <h3 className="text-2xl font-semibold tracking-tight text-foreground">
-              Statistics &amp; GitHub Activity
+              {t("home.sectionStats")}
             </h3>
             <p className="mt-1 text-sm text-muted-foreground">
-              Quick stats and GitHub contribution activity.
+              {t("home.statsDescription")}
             </p>
           </div>
 
@@ -480,7 +476,7 @@ export default function Page() {
               <div className="mb-4 flex items-center gap-2">
                 <GithubLogoIcon className="h-5 w-5 text-foreground" />
                 <h4 className="text-sm font-medium text-foreground">
-                  GitHub Contributions
+                  {t("home.githubContributions")}
                 </h4>
               </div>
 
@@ -541,12 +537,11 @@ export default function Page() {
                 </div>
 
                 <h3 className="text-2xl font-semibold tracking-tight text-foreground md:text-3xl">
-                  Let&apos;s Work Together
+                  {t("home.letsWorkTogether")}
                 </h3>
 
                 <p className="max-w-md text-sm leading-relaxed text-muted-foreground md:text-base">
-                  I&apos;m always open to discussing new projects, creative
-                  ideas, or opportunities to bring your visions to life.
+                  {t("home.ctaDescription")}
                 </p>
 
                 {/* Availability badge */}
@@ -555,7 +550,7 @@ export default function Page() {
                     <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
                     <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
                   </span>
-                  Available for new opportunities
+                  {t("home.availableBadge")}
                 </div>
 
                 <Link href="/contact">
@@ -564,7 +559,9 @@ export default function Page() {
                     as="div"
                     className="flex h-11 items-center space-x-2 bg-white px-8 text-black dark:bg-black dark:text-white"
                   >
-                    <span className="text-sm font-medium">Get in Touch</span>
+                    <span className="text-sm font-medium">
+                      {t("home.getInTouch")}
+                    </span>
                     <ArrowRightIcon className="h-4 w-4" />
                   </HoverBorderGradient>
                 </Link>

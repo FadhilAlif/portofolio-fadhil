@@ -12,18 +12,19 @@ import { ContactForm } from "@/components/section/contact-form"
 import { Footer } from "@/components/section/footer"
 import { AnimatedSection } from "@/components/section/animated-section"
 import { SpotlightBackground } from "@/components/ui/spotlight"
+import { useTranslation } from "react-i18next"
 
 // ─── Contact Info Items ───────────────────────────────────────────────────────
 
 const contactInfo = [
   {
-    label: "Email",
+    labelKey: "contactPage.email",
     value: "fadhil.alifp@gmail.com",
     href: "mailto:fadhil.alifp@gmail.com",
     icon: EnvelopeIcon,
   },
   {
-    label: "Location",
+    labelKey: "contactPage.location",
     value: "Yogyakarta",
     href: null,
     icon: MapPinIcon,
@@ -51,6 +52,8 @@ const socialLinks = [
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function ContactPage() {
+  const { t } = useTranslation()
+
   return (
     <div className="relative flex min-h-svh flex-col bg-background text-foreground">
       {/* Spotlight aura */}
@@ -66,7 +69,7 @@ export default function ContactPage() {
           href="/"
           className="text-xs font-medium tracking-widest text-muted-foreground uppercase transition-colors hover:text-foreground"
         >
-          fadhil.dev / contact
+          {t("contactPage.breadcrumb")}
         </Link>
       </header>
 
@@ -87,11 +90,10 @@ export default function ContactPage() {
                 />
               </div>
               <h1 className="mb-3 text-4xl font-bold tracking-tight text-foreground md:text-5xl">
-                Get in touch
+                {t("contactPage.title")}
               </h1>
               <p className="max-w-lg text-base leading-relaxed text-muted-foreground md:text-lg">
-                I&apos;m always open to discussing new projects, creative ideas,
-                or opportunities to bring your visions to life.
+                {t("contactPage.subtitle")}
               </p>
             </AnimatedSection>
 
@@ -104,9 +106,9 @@ export default function ContactPage() {
               {/* Contact details */}
               <div className="flex flex-col gap-6">
                 {contactInfo.map((item) => (
-                  <div key={item.label} className="flex flex-col gap-1">
+                  <div key={item.labelKey} className="flex flex-col gap-1">
                     <span className="text-xs font-medium tracking-wider text-muted-foreground uppercase">
-                      {item.label}
+                      {t(item.labelKey)}
                     </span>
                     {item.href ? (
                       <a
@@ -132,7 +134,7 @@ export default function ContactPage() {
               {/* Socials */}
               <div className="flex flex-col gap-3">
                 <span className="text-xs font-medium tracking-wider text-muted-foreground uppercase">
-                  Socials
+                  {t("contactPage.socials")}
                 </span>
                 <div className="flex gap-3">
                   {socialLinks.map((s) => (
@@ -159,7 +161,7 @@ export default function ContactPage() {
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
                   <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
                 </span>
-                Available for new opportunities
+                {t("contactPage.availableBadge")}
               </div>
             </AnimatedSection>
           </div>
