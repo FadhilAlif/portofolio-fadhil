@@ -51,7 +51,7 @@ export const TechIcon = memo(function TechIcon({
   }
 
   return (
-    <div className="group relative flex items-center justify-center transition-transform hover:-translate-y-1 hover:scale-110">
+    <div className="group relative flex items-center justify-center transition-transform duration-150 hover:-translate-y-1 hover:scale-110">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={getSkillIconUrl(slug, theme)}
@@ -65,7 +65,7 @@ export const TechIcon = memo(function TechIcon({
       />
       
       {/* Custom Tooltip */}
-      <span className="pointer-events-none absolute -top-9 left-1/2 z-50 -translate-x-1/2 whitespace-nowrap rounded border border-border/50 bg-popover px-2.5 py-1 text-[11px] font-medium text-popover-foreground opacity-0 shadow-md transition-all group-hover:-translate-y-1 group-hover:opacity-100">
+      <span className="pointer-events-none absolute -top-9 left-1/2 z-50 -translate-x-1/2 whitespace-nowrap rounded border border-border/50 bg-popover px-2.5 py-1 text-[11px] font-medium text-popover-foreground opacity-0 shadow-md transition-[opacity,transform] duration-150 group-hover:-translate-y-1 group-hover:opacity-100">
         {tag}
       </span>
     </div>
