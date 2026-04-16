@@ -2,7 +2,7 @@
 
 import React, { useEffect, useId, useRef, useState } from "react"
 import { createPortal } from "react-dom"
-import { AnimatePresence, motion } from "framer-motion"
+import { AnimatePresence, motion } from "motion/react"
 import { useOutsideClick } from "@/hooks/use-outside-click"
 import Image from "next/image"
 import { CertificateItem } from "@/lib/certificates-data"

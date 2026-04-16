@@ -28,7 +28,7 @@ const caveat = Caveat({
 
 export const metadata: Metadata = {
   title: "Fadhil Alif Priyatno - Portfolio",
-  description: "Personal portfolio of Fadhil.",
+  description: "Personal portfolio of Fadhil Alif Priyatno.",
 }
 
 export default function RootLayout({

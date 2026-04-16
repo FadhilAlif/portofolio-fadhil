@@ -212,7 +212,7 @@ export default function Page() {
             >
               <div className="relative flex h-72 w-56 rotate-2 transform items-center justify-center overflow-hidden rounded-[2rem] border-[6px] border-background bg-background shadow-xl ring-1 ring-border/50 transition-transform duration-300 hover:rotate-0 md:h-80 md:w-64 lg:h-90 lg:w-70">
                 <PixelImage
-                  src="/assets/fadhil-photo-profie.png"
+                  src="/assets/fadhil-photo-profie.avif"
                   grid="8x8"
                   className="h-full w-full object-cover grayscale-0"
                   grayscaleAnimation={true}
