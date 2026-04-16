@@ -66,7 +66,7 @@ export const metadata: Metadata = {
     description: DEFAULT_DESCRIPTION,
     images: [
       {
-        url: "/assets/fadhil-photo-profile.png",
+        url: "/assets/fadhil-photo-profile.avif",
         width: 1200,
         height: 1200,
         alt: "Fadhil Alif Priyatno - Fadhil Dev",
@@ -78,7 +78,7 @@ export const metadata: Metadata = {
     title: DEFAULT_TITLE,
     description: DEFAULT_DESCRIPTION,
     creator: "@fdhlalf_",
-    images: ["/assets/fadhil-photo-profile.png"],
+    images: ["/assets/fadhil-photo-profile.avif"],
   },
   robots: {
     index: true,
