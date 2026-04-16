@@ -5,24 +5,27 @@ import { motion, type Variants } from "motion/react"
 import { cn } from "@/lib/utils"
 
 // ─── Animation Variants ─────────────────────────────────────────────────────
+// Uses a subtle blur(2px) for section-level reveal animations.
+// StaggerItem variants use ONLY transform + opacity (GPU-compositable) to avoid
+// the Lighthouse "non-composited animations" diagnostic when many items animate.
 
 const fadeInUp: Variants = {
-  hidden: { opacity: 0, y: 30, filter: "blur(4px)" },
+  hidden: { opacity: 0, y: 30, filter: "blur(2px)" },
   visible: { opacity: 1, y: 0, filter: "blur(0px)" },
 }
 
 const fadeInLeft: Variants = {
-  hidden: { opacity: 0, x: -30, filter: "blur(4px)" },
+  hidden: { opacity: 0, x: -30, filter: "blur(2px)" },
   visible: { opacity: 1, x: 0, filter: "blur(0px)" },
 }
 
 const fadeInRight: Variants = {
-  hidden: { opacity: 0, x: 30, filter: "blur(4px)" },
+  hidden: { opacity: 0, x: 30, filter: "blur(2px)" },
   visible: { opacity: 1, x: 0, filter: "blur(0px)" },
 }
 
 const scaleIn: Variants = {
-  hidden: { opacity: 0, scale: 0.9, filter: "blur(4px)" },
+  hidden: { opacity: 0, scale: 0.9, filter: "blur(2px)" },
   visible: { opacity: 1, scale: 1, filter: "blur(0px)" },
 }
 
@@ -34,6 +37,36 @@ const variantMap = {
 } as const
 
 type AnimationVariant = keyof typeof variantMap
+
+// ─── Lightweight Variants (compositable only — no filter) ────────────────────
+// Used by StaggerItem to keep per-child animations GPU-friendly.
+
+const lightFadeInUp: Variants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0 },
+}
+
+const lightFadeInLeft: Variants = {
+  hidden: { opacity: 0, x: -20 },
+  visible: { opacity: 1, x: 0 },
+}
+
+const lightFadeInRight: Variants = {
+  hidden: { opacity: 0, x: 20 },
+  visible: { opacity: 1, x: 0 },
+}
+
+const lightScaleIn: Variants = {
+  hidden: { opacity: 0, scale: 0.95 },
+  visible: { opacity: 1, scale: 1 },
+}
+
+const lightVariantMap = {
+  "fade-up": lightFadeInUp,
+  "fade-left": lightFadeInLeft,
+  "fade-right": lightFadeInRight,
+  "scale-in": lightScaleIn,
+} as const
 
 // ─── Animated Section Component ─────────────────────────────────────────────
 
@@ -131,6 +164,8 @@ function StaggerContainer({
 }
 
 // ─── Staggered Child Item ───────────────────────────────────────────────────
+// Uses lightweight, GPU-compositable variants (no filter) to prevent
+// 201 non-composited animation warnings from Lighthouse.
 
 interface StaggerItemProps {
   children: React.ReactNode
@@ -144,7 +179,7 @@ function StaggerItem({
   variant = "fade-up",
 }: StaggerItemProps) {
   return (
-    <motion.div className={cn(className)} variants={variantMap[variant]}>
+    <motion.div className={cn(className)} variants={lightVariantMap[variant]}>
       {children}
     </motion.div>
   )
@@ -160,6 +195,7 @@ export {
   scaleIn,
   staggerContainer,
   variantMap,
+  lightVariantMap,
   type AnimatedSectionProps,
   type AnimationVariant,
   type StaggerContainerProps,

@@ -8,6 +8,7 @@ import RootProvider from "@/lib/root-provider"
 import LoadingSpinner from "@/components/ui/loading-spinner"
 import { FloatingDock } from "@/components/navigation/floating-dock"
 import { Analytics } from "@vercel/analytics/next"
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 const fontSans = Geist({
   subsets: ["latin"],
@@ -118,6 +119,7 @@ export default function RootLayout({
             {children}
             <FloatingDock />
             <Analytics />
+            <SpeedInsights />
           </RootProvider>
         </Suspense>
       </body>

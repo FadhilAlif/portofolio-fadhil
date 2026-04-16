@@ -9,15 +9,16 @@ import {
 } from "@phosphor-icons/react"
 import { cn } from "@/lib/utils"
 import Image from "next/image"
+import { useTranslation } from "react-i18next"
 
 // ─── Nav Links ───────────────────────────────────────────────────────────────
 
 const navLinks = [
-  { label: "About", href: "/" },
-  { label: "Projects", href: "/projects" },
-  { label: "Certificates", href: "/certificates" },
-  { label: "Contact", href: "/contact" },
-]
+  { labelKey: "footer.about", href: "/" },
+  { labelKey: "footer.projects", href: "/projects" },
+  { labelKey: "footer.certificates", href: "/certificates" },
+  { labelKey: "footer.contact", href: "/contact" },
+] as const
 
 // ─── Social Links ─────────────────────────────────────────────────────────────
 
@@ -47,11 +48,18 @@ const socialLinks = [
 // ─── Logo Mark ───────────────────────────────────────────────────────────────
 
 function LogoMark() {
+  const { t } = useTranslation()
+
   return (
     <div className="flex items-center gap-2.5">
       {/* Icon box */}
       <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-white">
-        <Image src="/favicon.ico" alt="FadhilDev Logo" width={32} height={32} />
+        <Image
+          src="/favicon.ico"
+          alt={t("footer.logoAlt")}
+          width={32}
+          height={32}
+        />
       </div>
       <span className="text-base font-semibold tracking-tight text-foreground">
         FADHIL<span className="text-primary">.DEV</span>
@@ -67,6 +75,7 @@ interface FooterProps {
 }
 
 export function Footer({ className }: FooterProps) {
+  const { t } = useTranslation()
   const currentYear = new Date().getFullYear()
 
   return (
@@ -88,11 +97,11 @@ export function Footer({ className }: FooterProps) {
           <nav className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
             {navLinks.map((link) => (
               <Link
-                key={link.label}
+                key={link.labelKey}
                 href={link.href}
                 className="text-sm text-muted-foreground transition-colors duration-200 hover:text-foreground"
               >
-                {link.label}
+                {t(link.labelKey)}
               </Link>
             ))}
           </nav>
@@ -104,7 +113,7 @@ export function Footer({ className }: FooterProps) {
           <div className="flex w-full flex-col items-center justify-between gap-4 sm:flex-row">
             {/* Copyright */}
             <p className="text-xs text-muted-foreground">
-              &copy; {currentYear} Fadhil Alif P. All rights reserved.
+              &copy; {currentYear} Fadhil Alif P. {t("footer.copyright")}
             </p>
 
             {/* Social icons */}

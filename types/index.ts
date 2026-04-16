@@ -24,3 +24,11 @@ export interface CounterState {
   count: number
   increment: () => void
 }
+
+export interface PortfolioMediaItem {
+  id: string
+  title: string
+  description: string
+  imageUrl: string
+  alt?: string
+}

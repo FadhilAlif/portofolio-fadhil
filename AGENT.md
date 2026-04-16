@@ -1,4 +1,4 @@
-# AGENT.md — Fadhil Alif Portfolio
+# AGENT.md — Fadhil Alif Priyatno Portfolio
 
 > Panduan lengkap untuk AI-assisted coding pada project portfolio pribadi **Fadhil Alif Priyatno**.
 

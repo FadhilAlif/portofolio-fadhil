@@ -7,13 +7,15 @@ import ExpandableCertificateGrid from "@/components/expandable-card-demo-grid"
 import { Footer } from "@/components/section/footer"
 import { AnimatedSection } from "@/components/section/animated-section"
 import {
-  certificates,
-  CERTIFICATE_FILTERS,
+  getCertificates,
+  getCertificateFilters,
   type CertificateItem,
   type FilterId,
 } from "@/lib/certificates-data"
 import useDebounce from "@/hooks/use-debounce"
 import { FilterSearchToolbar } from "@/components/ui/filter-search-toolbar"
+import { useTranslation } from "react-i18next"
+import { getSupportedLanguage } from "@/lib/i18n/config"
 
 const SEARCH_DEBOUNCE_MS = 350
 
@@ -36,6 +38,11 @@ function matchesCertificateSearch(certificate: CertificateItem, query: string) {
 }
 
 export default function CertificatesPage() {
+  const { t, i18n } = useTranslation()
+  const language = getSupportedLanguage(i18n.resolvedLanguage)
+  const certificates = getCertificates(language)
+  const certificateFilters = getCertificateFilters(language)
+
   const [activeFilter, setActiveFilter] = useState<FilterId>("all")
   const [searchQuery, setSearchQuery] = useState("")
   const debouncedQuery = useDebounce(searchQuery, SEARCH_DEBOUNCE_MS)
@@ -60,14 +67,14 @@ export default function CertificatesPage() {
       }
     }
     return counts
-  }, [])
+  }, [certificates])
 
   const filteredByCategory = useMemo(
     () =>
       activeFilter === "all"
         ? certificates
         : certificates.filter((c) => c.category === activeFilter),
-    [activeFilter]
+    [activeFilter, certificates]
   )
 
   // Final list after category filter + debounced search
@@ -94,7 +101,7 @@ export default function CertificatesPage() {
           href="/"
           className="text-xs font-medium tracking-widest text-muted-foreground uppercase transition-colors hover:text-foreground"
         >
-          fadhil.dev / certificates
+          {t("certificatesPage.breadcrumb")}
         </Link>
       </header>
 
@@ -106,25 +113,25 @@ export default function CertificatesPage() {
           className="flex flex-col items-center pt-16 pb-12 text-center"
         >
           <h1 className="mb-3 text-3xl font-bold tracking-tight sm:text-4xl">
-            Certifications & Achievements
+            {t("certificatesPage.title")}
           </h1>
           <p className="max-w-xl text-balance text-muted-foreground md:text-lg">
-            A continuous journey of learning and professional growth.
+            {t("certificatesPage.subtitle")}
           </p>
         </AnimatedSection>
 
         {/* ── Filter + Search Bar ─────────────────────────────────────── */}
         <AnimatedSection variant="fade-up" duration={0.4} className="mb-8">
           <FilterSearchToolbar
-            filters={CERTIFICATE_FILTERS}
+            filters={certificateFilters}
             activeFilter={activeFilter}
             counts={filterCounts}
             onFilterChange={setActiveFilter}
             searchValue={searchQuery}
             onSearchChange={setSearchQuery}
             searchInputId="certificate-search"
-            searchLabel="Search certificates"
-            searchPlaceholder="Search by title, issuer, skill, or credential ID"
+            searchLabel={t("certificatesPage.searchLabel")}
+            searchPlaceholder={t("certificatesPage.searchPlaceholder")}
           />
         </AnimatedSection>
 
