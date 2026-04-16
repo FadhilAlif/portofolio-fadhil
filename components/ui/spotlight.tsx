@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { useCallback, useEffect, useMemo, useRef } from "react"
 import { cn } from "@/lib/utils"
 
 export interface SpotlightBackgroundProps {
@@ -27,6 +27,12 @@ interface SpotlightPosition {
   targetY: number
 }
 
+/**
+ * Animated spotlight background that follows the mouse cursor.
+ *
+ * Performance: Uses direct DOM manipulation via refs instead of React state
+ * to avoid ~60 React re-renders per second from the rAF animation loop.
+ */
 export function SpotlightBackground({
   className,
   children,
@@ -38,16 +44,21 @@ export function SpotlightBackground({
   opacity = 1,
 }: SpotlightBackgroundProps) {
   const containerRef = useRef<HTMLDivElement>(null)
+  const spotlightElRefs = useRef<HTMLDivElement[]>([])
   const spotlightsRef = useRef<SpotlightPosition[]>([])
   const animationRef = useRef<number>(0)
   const lastMouseMoveRef = useRef<number>(0)
-  const [positions, setPositions] = useState<{ x: number; y: number }[]>([])
 
   const colorArray = useMemo(() => {
     return Array.isArray(colors) ? colors : [colors]
   }, [colors])
 
-  // Initialize spotlight positions
+  // Lerp helper
+  const lerp = useCallback((start: number, end: number, factor: number) => {
+    return start + (end - start) * factor
+  }, [])
+
+  // Initialize spotlight positions + start animation loop
   useEffect(() => {
     const container = containerRef.current
     if (!container) return
@@ -56,6 +67,7 @@ export function SpotlightBackground({
     const centerX = width / 2
     const centerY = height / 2
 
+    // Initialize positions
     spotlightsRef.current = colorArray.map((_, i) => ({
       x: centerX + (i - (colorArray.length - 1) / 2) * 50,
       y: centerY,
@@ -63,20 +75,14 @@ export function SpotlightBackground({
       targetY: centerY,
     }))
 
-    setPositions(spotlightsRef.current.map((s) => ({ x: s.x, y: s.y })))
-  }, [colorArray, colorArray.length])
+    // Apply initial background to each spotlight element
+    spotlightElRefs.current.forEach((el, i) => {
+      if (!el) return
+      const s = spotlightsRef.current[i]
+      el.style.background = `radial-gradient(${size}px circle at ${s.x}px ${s.y}px, ${colorArray[i]}, transparent 70%)`
+    })
 
-  // Lerp helper
-  const lerp = useCallback((start: number, end: number, factor: number) => {
-    return start + (end - start) * factor
-  }, [])
-
-  // Animation loop
-  useEffect(() => {
-    const container = containerRef.current
-    if (!container) return
-
-    const { width, height } = container.getBoundingClientRect()
+    // Animation loop — manipulates DOM directly, zero React re-renders
     let tick = 0
 
     const animate = () => {
@@ -85,25 +91,27 @@ export function SpotlightBackground({
       const timeSinceMouseMove = now - lastMouseMoveRef.current
       const isAmbient = ambient && timeSinceMouseMove > 2000
 
-      spotlightsRef.current = spotlightsRef.current.map((spotlight, i) => {
-        let { x, y, targetX, targetY } = spotlight
-
+      spotlightsRef.current.forEach((spotlight, i) => {
         // Ambient drift when no mouse activity
         if (isAmbient) {
           const offset = i * 0.5
-          targetX = width / 2 + Math.sin(tick * 0.005 + offset) * (width * 0.2)
-          targetY =
+          spotlight.targetX =
+            width / 2 + Math.sin(tick * 0.005 + offset) * (width * 0.2)
+          spotlight.targetY =
             height / 2 + Math.cos(tick * 0.003 + offset) * (height * 0.15)
         }
 
         // Smooth interpolation
-        x = lerp(x, targetX, smoothing)
-        y = lerp(y, targetY, smoothing)
+        spotlight.x = lerp(spotlight.x, spotlight.targetX, smoothing)
+        spotlight.y = lerp(spotlight.y, spotlight.targetY, smoothing)
 
-        return { x, y, targetX, targetY }
+        // Direct DOM update — no setState, no re-render
+        const el = spotlightElRefs.current[i]
+        if (el) {
+          el.style.background = `radial-gradient(${size}px circle at ${spotlight.x}px ${spotlight.y}px, ${colorArray[i]}, transparent 70%)`
+        }
       })
 
-      setPositions(spotlightsRef.current.map((s) => ({ x: s.x, y: s.y })))
       animationRef.current = requestAnimationFrame(animate)
     }
 
@@ -112,7 +120,7 @@ export function SpotlightBackground({
     return () => {
       if (animationRef.current) cancelAnimationFrame(animationRef.current)
     }
-  }, [ambient, smoothing, lerp])
+  }, [ambient, smoothing, lerp, size, colorArray])
 
   // Mouse tracking
   const handleMouseMove = useCallback(
@@ -127,11 +135,10 @@ export function SpotlightBackground({
       lastMouseMoveRef.current = Date.now()
 
       // Update target positions with slight offset for each spotlight
-      spotlightsRef.current = spotlightsRef.current.map((spotlight, i) => ({
-        ...spotlight,
-        targetX: x + (i - (colorArray.length - 1) / 2) * 30,
-        targetY: y + (i - (colorArray.length - 1) / 2) * 20,
-      }))
+      spotlightsRef.current.forEach((spotlight, i) => {
+        spotlight.targetX = x + (i - (colorArray.length - 1) / 2) * 30
+        spotlight.targetY = y + (i - (colorArray.length - 1) / 2) * 20
+      })
     },
     [colorArray.length]
   )
@@ -148,13 +155,20 @@ export function SpotlightBackground({
 
       lastMouseMoveRef.current = Date.now()
 
-      spotlightsRef.current = spotlightsRef.current.map((spotlight, i) => ({
-        ...spotlight,
-        targetX: x + (i - (colorArray.length - 1) / 2) * 30,
-        targetY: y + (i - (colorArray.length - 1) / 2) * 20,
-      }))
+      spotlightsRef.current.forEach((spotlight, i) => {
+        spotlight.targetX = x + (i - (colorArray.length - 1) / 2) * 30
+        spotlight.targetY = y + (i - (colorArray.length - 1) / 2) * 20
+      })
     },
     [colorArray.length]
+  )
+
+  // Ref setter for spotlight layer elements
+  const setSpotlightRef = useCallback(
+    (index: number) => (el: HTMLDivElement | null) => {
+      if (el) spotlightElRefs.current[index] = el
+    },
+    []
   )
 
   return (
@@ -164,17 +178,16 @@ export function SpotlightBackground({
       onMouseMove={handleMouseMove}
       onTouchMove={handleTouchMove}
     >
-      {/* Spotlight layers */}
-      {colorArray.map((color, i) => (
+      {/* Spotlight layers — updated via direct DOM manipulation */}
+      {colorArray.map((_, i) => (
         <div
           key={i}
-          className="pointer-events-none absolute inset-0 transition-opacity duration-300"
+          ref={setSpotlightRef(i)}
+          className="pointer-events-none absolute inset-0"
           style={{
             opacity,
-            background: positions[i]
-              ? `radial-gradient(${size}px circle at ${positions[i].x}px ${positions[i].y}px, ${color}, transparent 70%)`
-              : "transparent",
             filter: `blur(${blur}px)`,
+            willChange: "background",
           }}
         />
       ))}
@@ -190,13 +203,5 @@ export function SpotlightBackground({
         <div className="relative z-10 h-full w-full">{children}</div>
       )}
     </div>
-  )
-}
-
-export default function SpotlightBackgroundDemo() {
-  return (
-    <SpotlightBackground
-      colors={["rgba(120, 119, 198, 0.4)", "rgba(59, 130, 246, 0.3)"]}
-    />
   )
 }

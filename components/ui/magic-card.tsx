@@ -11,6 +11,46 @@ import { useTheme } from "next-themes"
 
 import { cn } from "@/lib/utils"
 
+// ─── Shared Global Listener Registry ─────────────────────────────────────────
+// Instead of each MagicCard instance registering 3 global event listeners,
+// we use a single shared set that all instances subscribe to.
+
+type ResetCallback = (reason: "global") => void
+
+const subscribers = new Set<ResetCallback>()
+let isGlobalListenerAttached = false
+
+function attachGlobalListeners() {
+  if (isGlobalListenerAttached) return
+  isGlobalListenerAttached = true
+
+  const broadcast = () => {
+    subscribers.forEach((cb) => cb("global"))
+  }
+
+  const handlePointerOut = (e: PointerEvent) => {
+    if (!e.relatedTarget) broadcast()
+  }
+  const handleBlur = () => broadcast()
+  const handleVisibility = () => {
+    if (document.visibilityState !== "visible") broadcast()
+  }
+
+  window.addEventListener("pointerout", handlePointerOut)
+  window.addEventListener("blur", handleBlur)
+  document.addEventListener("visibilitychange", handleVisibility)
+}
+
+function subscribe(cb: ResetCallback) {
+  attachGlobalListeners()
+  subscribers.add(cb)
+  return () => {
+    subscribers.delete(cb)
+  }
+}
+
+// ─── Types ───────────────────────────────────────────────────────────────────
+
 interface MagicCardBaseProps {
   children?: React.ReactNode
   className?: string
@@ -53,6 +93,8 @@ type ResetReason = "enter" | "leave" | "global" | "init"
 function isOrbMode(props: MagicCardProps): props is MagicCardOrbProps {
   return props.mode === "orb"
 }
+
+// ─── Component ───────────────────────────────────────────────────────────────
 
 export function MagicCard(props: MagicCardProps) {
   const {
@@ -136,24 +178,9 @@ export function MagicCard(props: MagicCardProps) {
     reset("init")
   }, [reset])
 
+  // Subscribe to shared global listener instead of registering per-instance
   useEffect(() => {
-    const handleGlobalPointerOut = (e: PointerEvent) => {
-      if (!e.relatedTarget) reset("global")
-    }
-    const handleBlur = () => reset("global")
-    const handleVisibility = () => {
-      if (document.visibilityState !== "visible") reset("global")
-    }
-
-    window.addEventListener("pointerout", handleGlobalPointerOut)
-    window.addEventListener("blur", handleBlur)
-    document.addEventListener("visibilitychange", handleVisibility)
-
-    return () => {
-      window.removeEventListener("pointerout", handleGlobalPointerOut)
-      window.removeEventListener("blur", handleBlur)
-      document.removeEventListener("visibilitychange", handleVisibility)
-    }
+    return subscribe(() => reset("global"))
   }, [reset])
 
   return (

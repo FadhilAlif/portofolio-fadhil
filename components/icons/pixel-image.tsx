@@ -81,7 +81,7 @@ export const PixelImage = ({
         priority
         sizes={sizes}
         className={cn(
-          "object-cover transition-all duration-700",
+          "object-cover transition-[filter] duration-700",
           grayscaleAnimation && !visible ? "grayscale" : "grayscale-0"
         )}
       />

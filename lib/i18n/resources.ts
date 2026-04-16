@@ -172,8 +172,8 @@ export const resources = {
         internal: "Internal",
       },
       metadata: {
-        title: "Fadhil Alif - Portfolio",
-        description: "Personal portfolio of Fadhil.",
+        title: "Fadhil Alif Priyatno - Portfolio",
+        description: "Personal portfolio of Fadhil Alif Priyatno.",
       },
     },
   },
@@ -349,8 +349,8 @@ export const resources = {
         internal: "Internal",
       },
       metadata: {
-        title: "Fadhil Alif - Portofolio",
-        description: "Portofolio pribadi Fadhil.",
+        title: "Fadhil Alif Priyatno - Portofolio",
+        description: "Portofolio pribadi Fadhil Alif Priyatno.",
       },
     },
   },

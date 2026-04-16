@@ -231,7 +231,7 @@ export const ProjectCard = memo(function ProjectCard({
   return (
     <div
       className={cn(
-        "group/card relative flex h-full flex-col overflow-hidden rounded-xl border border-border bg-card/50 backdrop-blur-sm transition-all duration-300",
+        "group/card relative flex h-full flex-col overflow-hidden rounded-xl border border-border bg-card/50 backdrop-blur-sm transition-[border-color,box-shadow] duration-300",
         "hover:border-border/80 hover:shadow-lg hover:ring-1 hover:shadow-primary/5 hover:ring-primary/10",
         className
       )}
