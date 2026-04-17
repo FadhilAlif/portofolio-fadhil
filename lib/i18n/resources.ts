@@ -69,6 +69,7 @@ export const resources = {
         noProjects: "No projects found",
         noProjectsHint: "Try selecting a different filter.",
         loadMore: "Load More Projects",
+        viewOnGithub: "More on my GitHub",
       },
       certificatesPage: {
         breadcrumb: "fadhil.dev / certificates",
@@ -245,6 +246,7 @@ export const resources = {
         noProjects: "Tidak ada proyek ditemukan",
         noProjectsHint: "Coba pilih filter yang berbeda.",
         loadMore: "Muat Lebih Banyak Proyek",
+        viewOnGithub: "Selengkapnya di Github Saya",
       },
       certificatesPage: {
         breadcrumb: "fadhil.dev / sertifikat",
