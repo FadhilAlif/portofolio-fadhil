@@ -203,18 +203,30 @@ export function AiChatDialog({ isOpen, onClose }: AiChatDialogProps) {
                 className={`flex w-full ${msg.role === "user" ? "justify-end" : "justify-start"}`}
               >
                 <div
-                  className={`max-w-[85%] rounded-2xl px-4 py-2 text-sm ${
+                  className={`max-w-[85%] overflow-x-auto rounded-2xl px-4 py-2 text-sm break-words ${
                     msg.role === "user"
                       ? "rounded-tr-sm bg-primary text-primary-foreground"
                       : "rounded-tl-sm border border-border bg-muted text-foreground"
                   } `}
                 >
                   {msg.role === "assistant" ? (
-                    <div className="prose prose-sm dark:prose-invert max-w-none [&_li]:my-0 [&_ol]:my-1 [&_p]:m-0 [&_ul]:my-1">
-                      <ReactMarkdown>{msg.content}</ReactMarkdown>
+                    <div className="prose prose-sm dark:prose-invert max-w-none [&_a]:break-all [&_li]:my-0 [&_ol]:my-1 [&_p]:m-0 [&_ul]:my-1">
+                      <ReactMarkdown
+                        components={{
+                          a: ({ node, ...props }) => (
+                            <a
+                              {...props}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            />
+                          ),
+                        }}
+                      >
+                        {msg.content}
+                      </ReactMarkdown>
                     </div>
                   ) : (
-                    msg.content
+                    <p className="m-0 whitespace-pre-wrap">{msg.content}</p>
                   )}
                 </div>
               </div>
