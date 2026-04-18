@@ -32,20 +32,24 @@ Final Thesis: Early Detection Expert System for Diabetes Mellitus Using the Cert
 - **Databases**: PostgreSQL, MySQL, MongoDB, Supabase, Firebase, Prisma ORM
 - **Tools / Cloud**: Git, Docker, Jenkins, Postman, Vercel, Cloudflare, GCP, Figma
 
-## Key Projects
-- **Duwitku App**: A smart, modern finance app built with Flutter. Features receipt scanning, AI auto-categorization (Gemini), seamless Supabase sync, and WhatsApp Bot integration.
-- **WBS (Whistleblowing System) Internal & Public**: Web-based reporting applications for Telkomsigma built with Next.js and Django supporting flexible identity, structured workflows, and dashboards.
-- **PLUSTIX**: Web-based ticketing system for monitoring Pertamina SPBU shifts and operational issues built with Next.js and Tailwind CSS.
-- **Dishcovery**: A mobile app (Flutter, Firebase) that preserves Indonesia's traditional culinary heritage using Gemini AI-powered image recognition to identify traditional dishes from camera photos.
-- **ManganKu App**: Flutter app using TensorFlow Lite and Firebase ML to recognize food, predict nutritional info via Gemini AI, and suggest recipes.
-- **TING.ID SaaS ERP**: A web-based ERP (Vue 3, Pinia, Tailwind CSS) platform covering management, accounting, and inventory with a microservice backend (Flask, Python).
-- **DiabExpert**: Web-based expert system (Laravel, MySQL) using the Certainty Factor method to early detect Type 1/Type 2 Diabetes Mellitus based on user-reported symptoms.
-- **JSON Polish**: A frontend tool (React, Vite) for JSON formatting, validation, syntax highlighting, diff comparison, and auto-fixing.
-- **Apilogy Admin Dashboard**: An internal admin portal built for Telkom Indonesia to manage API Developer/Publisher users using React, Zustand, and TanStack Query.
-- **Cuisine Cash & Agriplant**: React-based web apps built during Alterra Academy bootcamp for restaurant cashiering and farm crop monitoring.
+## Key Projects (Complete Timeline)
+- **Duwitku App (Oct 2025 - Present, Mobile, Public)**: A smart finance app built with Flutter featuring receipt scanning, AI auto-categorization (Gemini), Supabase sync, and WhatsApp Bot integration.
+- **WBS Public - Whistleblowing System (Dec 2025 - Present, Web, Internal at Telkomsigma)**: Public reporting portal for external users with flexible identity options (full, partial, anonymous) and submission tracking.
+- **WBS Internal - Whistleblowing System (Dec 2025 - Present, Web, Internal at Telkomsigma)**: Internal audit platform for validating, managing, and monitoring whistleblowing reports with structured workflow and dashboards.
+- **PLUSTIX - Pertamina (Feb 2026 - Mar 2026, Web, Internal at Telkomsigma)**: Ticketing platform for SPBU shift and operational issue monitoring, with summaries, FAQ, L3 internal tickets, and reporting dashboard.
+- **JSON Polish (Jan 2026, Web, Public)**: JSON formatter and validator with syntax highlighting, diff comparison, auto-fix (quotes, trailing commas, brackets), tabbed editing, and file upload/download.
+- **LSM - Invoice Receipt Module (Sep 2025 - Nov 2025, Web, Internal at Telkomsigma)**: Finance-focused module to track vendor invoice submissions with searchable logs and integrated reporting.
+- **Dishcovery (Sep 2025 - Oct 2025, Mobile, Public)**: Flutter + Firebase app preserving Indonesian culinary heritage using Gemini-powered image recognition from camera photos.
+- **ManganKu App (2024, Mobile, Public)**: Flutter app using TensorFlow Lite and Firebase ML to recognize food, generate nutrition predictions via Gemini AI, and recommend recipes.
+- **TING.ID SaaS ERP (Feb 2025 - Jul 2025, Web, Internal at Horus Technology)**: ERP platform for management, accounting, and inventory with responsive Vue 3 UI and microservice API integration.
+- **DiabExpert (2025, Web, Public)**: Web-based expert system (Laravel, MySQL) using Certainty Factor for early detection of Type 1 and Type 2 Diabetes Mellitus.
+- **Apilogy Admin Dashboard (Feb 2024 - Jun 2024, Web, Internal at Telkom Indonesia)**: Internal dashboard to manage API Developer and Publisher users using React, Zustand, TanStack Query, NestJS, and Docker.
+- **Cuisine Cash (Nov 2023 - Dec 2023, Web, Public)**: Restaurant cashier web app built with React, focused on product management, order processing, and sales reporting.
+- **Agriplant (Oct 2023 - Nov 2023, Web, Public)**: Crop management web app with reminders, planting history, and weather monitoring to support farmers.
+- **Tukangin Landing Page (Sep 2023, Web, Public)**: Responsive landing page for a home services marketplace, built with React and Bootstrap.
 
 ## Professional Certifications (Summary)
-Fadhil holds over 25 recognized certifications in Software Engineering, Mobile Development, AI, and Design. Notable ones include:
+Fadhil holds over 30+ recognized certifications in Software Engineering, Mobile Development, AI, and Design. Notable ones include:
 - **Artificial Intelligence**: "Code Generation and Optimization Using IBM Granite" (IBM), "The Fundamentals of Large Language Model" (Telkom), and Prompt Engineering/AI courses from Dicoding and Google.
 - **Mobile Development (Flutter & Dart)**: "Multi-Platform App Developer" and numerous intermediate/fundamental Flutter & Dart certifications from Dicoding.
 - **Web Development**: "Complete Front-End Engineer Career" (Alterra), REST API Authentication (Dicoding), and Fundamental Frontend Web Dev (Coding Studio).

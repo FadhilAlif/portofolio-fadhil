@@ -297,9 +297,9 @@ export default function Page() {
               staggerDelay={0.12}
               delayChildren={0.1}
             >
-              {skillGroups.map((group) => (
+              {skillGroups.map((group, index) => (
                 <StaggerItem
-                  key={group.title}
+                  key={index}
                   variant="fade-up"
                   className="py-3 first:pt-0 last:pb-0"
                 >

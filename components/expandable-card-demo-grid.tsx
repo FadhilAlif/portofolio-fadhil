@@ -90,6 +90,7 @@ export default function ExpandableCertificateGrid({
                       src={zoomedImage}
                       alt={t("certificateGrid.zoomAlt")}
                       fill
+                      sizes="100vw"
                       className="object-contain"
                     />
                   </motion.div>
@@ -123,7 +124,7 @@ export default function ExpandableCertificateGrid({
                   <motion.div
                     layoutId={`card-${active.id}-${id}`}
                     ref={ref}
-                    className="scrollbar-hide flex max-h-full w-full max-w-[600px] flex-col overflow-hidden overflow-y-auto border border-border bg-card shadow-2xl sm:max-h-[90vh] sm:rounded-3xl dark:bg-neutral-900"
+                    className="scrollbar-hide flex max-h-full w-full max-w-150 flex-col overflow-hidden overflow-y-auto border border-border bg-card shadow-2xl sm:max-h-[90vh] sm:rounded-3xl dark:bg-neutral-900"
                   >
                     <motion.div
                       layoutId={`image-${active.id}-${id}`}
@@ -140,6 +141,7 @@ export default function ExpandableCertificateGrid({
                         fill
                         src={active.image}
                         alt={active.title}
+                        sizes="(max-width: 768px) 100vw, 600px"
                         className="object-cover object-top"
                       />
                     </motion.div>
@@ -264,13 +266,14 @@ export default function ExpandableCertificateGrid({
                 <div className="flex h-full w-full flex-col">
                   <motion.div
                     layoutId={`image-${card.id}-${id}`}
-                    className="relative h-[220px] w-full overflow-hidden bg-muted"
+                    className="relative h-55 w-full overflow-hidden bg-muted"
                   >
                     <Image
                       fill
                       src={card.image}
                       alt={card.title}
-                      className="object-cover object-top transition-transform duration-500 group-hover:scale-105"
+                      sizes="(max-width: 768px) 100vw,(max-width: 1200px) 50vw,33vw"
+                      className="object-cover object-top"
                     />
                   </motion.div>
                   <div className="flex flex-1 flex-col p-5">

@@ -99,38 +99,8 @@ const R2_URL = "https://cdn.fadhildev.my.id/project-avif"
 
 export const projects: ProjectItem[] = [
   {
-    title: "Duwitku App",
-    dates: "Oct 2025 – Present",
-    category: "mobile",
-    role: "Mobile Developer",
-    featured: true,
-    description:
-      "A smart, modern finance app built with Flutter to make expense tracking effortless. Features receipt scanning, AI auto-categorization, seamless Supabase sync, and WhatsApp Bot integration.",
-    tags: ["Flutter", "Dart", "Supabase"],
-    image: `${R2_URL}/duwitku-banner.avif`,
-    video: `https://cdn.fadhildev.my.id/project/Duwitku_DemoVideo.mp4`,
-    href: "https://duwitku-landing.vercel.app/",
-    links: [
-      {
-        type: "Source",
-        href: "https://github.com/FadhilAlif/duwitku",
-        icon: "github",
-      },
-      {
-        type: "Demo",
-        href: "https://www.youtube.com/watch?v=OUzAlu1hCzo",
-        icon: "demo",
-      },
-      {
-        type: "Download",
-        href: "https://github.com/FadhilAlif/duwitku/releases/download/v3.0.0/Duwitku.apk",
-        icon: "download",
-      },
-    ],
-  },
-  {
     title: "WBS Public — Whistleblowing System",
-    dates: "Dec 2025 – Present",
+    dates: "Dec 2025 – Dec 2025",
     association: "Telkomsigma",
     category: ["private", "web"],
     role: "Frontend Engineer",
@@ -185,6 +155,36 @@ export const projects: ProjectItem[] = [
     ],
   },
   {
+    title: "Duwitku App",
+    dates: "Oct 2025 – Dec 2025",
+    category: "mobile",
+    role: "Mobile Developer",
+    featured: true,
+    description:
+      "A smart, modern finance app built with Flutter to make expense tracking effortless. Features receipt scanning, AI auto-categorization, seamless Supabase sync, and WhatsApp Bot integration.",
+    tags: ["Flutter", "Dart", "Supabase"],
+    image: `${R2_URL}/duwitku-banner.avif`,
+    video: `https://cdn.fadhildev.my.id/project/Duwitku_DemoVideo.mp4`,
+    href: "https://duwitku-landing.vercel.app/",
+    links: [
+      {
+        type: "Source",
+        href: "https://github.com/FadhilAlif/duwitku",
+        icon: "github",
+      },
+      {
+        type: "Demo",
+        href: "https://www.youtube.com/watch?v=OUzAlu1hCzo",
+        icon: "demo",
+      },
+      {
+        type: "Download",
+        href: "https://github.com/FadhilAlif/duwitku/releases/download/v3.0.0/Duwitku.apk",
+        icon: "download",
+      },
+    ],
+  },
+  {
     title: "LSM - Invoice Receipt Module",
     dates: "Sep 2025 – Nov 2025",
     association: "Telkomsigma",
@@ -207,6 +207,8 @@ export const projects: ProjectItem[] = [
       "A mobile app that preserves Indonesia's traditional culinary heritage through AI-powered image recognition using Gemini API to identify traditional dishes from camera.",
     tags: ["Flutter", "Dart", "Firebase"],
     image: `${R2_URL}/dishcovery-banner.avif`,
+    video:
+      "https://cdn.fadhildev.my.id/project/Dishcovery_Product_Launch_Video.mp4",
     href: "https://github.com/Dishcovery-Dev",
     links: [
       {
@@ -256,6 +258,7 @@ export const projects: ProjectItem[] = [
       "A web-based ERP platform covering management, accounting, and inventory modules. Built responsive and scalable UI using Vue 3, Pinia, and Tailwind CSS with microservice-based API integration.",
     tags: ["Vue.js", "Pinia", "JavaScript", "Tailwind CSS", "Python", "Flask"],
     image: `${R2_URL}/ting-preview.avif`,
+    href: "https://ting.id",
   },
   {
     title: "DiabExpert",
