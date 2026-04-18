@@ -6,6 +6,7 @@ import {
   LinkedinLogoIcon,
   EnvelopeIcon,
   InstagramLogoIcon,
+  WhatsappLogoIcon,
 } from "@phosphor-icons/react"
 import { cn } from "@/lib/utils"
 import Image from "next/image"
@@ -37,6 +38,11 @@ const socialLinks = [
     label: "Instagram",
     href: "https://www.instagram.com/fdhlalf_",
     icon: InstagramLogoIcon,
+  },
+  {
+    label: "WhatsApp",
+    href: "https://wa.me/6285727304551",
+    icon: WhatsappLogoIcon,
   },
   {
     label: "Email",

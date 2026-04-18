@@ -18,6 +18,7 @@ import useDebounce from "@/hooks/use-debounce"
 import { FilterSearchToolbar } from "@/components/ui/filter-search-toolbar"
 import { useTranslation } from "react-i18next"
 import { getSupportedLanguage } from "@/lib/i18n/config"
+import { GithubLogoIcon } from "@phosphor-icons/react"
 
 const SEARCH_DEBOUNCE_MS = 350
 
@@ -199,18 +200,30 @@ export default function ProjectsPage() {
           </AnimatePresence>
         </div>
 
-        {visibleCount < filtered.length && (
+        {filtered.length > 0 && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="mt-12 flex justify-center pb-8"
           >
-            <button
-              onClick={() => setVisibleCount((prev) => prev + 9)}
-              className="inline-flex cursor-pointer items-center justify-center rounded-full bg-primary/10 px-6 py-3 text-sm font-semibold text-primary transition-colors hover:bg-primary/20 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none"
-            >
-              {t("projectsPage.loadMore")}
-            </button>
+            {visibleCount < filtered.length ? (
+              <button
+                onClick={() => setVisibleCount((prev) => prev + 9)}
+                className="inline-flex cursor-pointer items-center justify-center rounded-full bg-primary/10 px-6 py-3 text-sm font-semibold text-primary transition-colors hover:bg-primary/20 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none"
+              >
+                {t("projectsPage.loadMore")}
+              </button>
+            ) : (
+              <Link
+                href="https://github.com/FadhilAlif?tab=repositories"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex cursor-pointer items-center justify-center rounded-full bg-primary/10 px-6 py-3 text-sm font-semibold text-primary transition-colors hover:bg-primary/20 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none"
+              >
+                {t("projectsPage.viewOnGithub")}{" "}
+                <GithubLogoIcon className="ml-2" />
+              </Link>
+            )}
           </motion.div>
         )}
       </main>

@@ -41,10 +41,10 @@ function ContactInput({
 
   return (
     <div className="flex flex-col gap-1.5">
-      <div className="flex items-center justify-between">
+      <div className="flex items-start justify-between gap-2">
         <label
           htmlFor={id}
-          className="text-xs font-medium tracking-wider text-muted-foreground uppercase"
+          className="shrink-0 pt-0.5 text-xs font-medium tracking-wider text-muted-foreground uppercase"
         >
           {label}
         </label>
@@ -55,10 +55,10 @@ function ContactInput({
               initial={{ opacity: 0, x: 6 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 6 }}
-              className="flex items-center gap-1 text-xs text-destructive"
+              className="flex items-start gap-1 text-right text-xs leading-snug text-destructive"
             >
-              <AlertCircle className="h-3 w-3" />
-              {error}
+              <AlertCircle className="mt-0.5 h-3 w-3 shrink-0" />
+              <span>{error}</span>
             </motion.span>
           )}
         </AnimatePresence>
@@ -128,37 +128,27 @@ function ContactTextarea({
 
   return (
     <div className="flex flex-col gap-1.5">
-      <div className="flex items-center justify-between">
+      <div className="flex items-start justify-between gap-2">
         <label
           htmlFor={id}
-          className="text-xs font-medium tracking-wider text-muted-foreground uppercase"
+          className="shrink-0 pt-0.5 text-xs font-medium tracking-wider text-muted-foreground uppercase"
         >
           {label}
         </label>
-        <div className="flex items-center gap-2">
-          <AnimatePresence mode="wait">
-            {hasError && (
-              <motion.span
-                key="error"
-                initial={{ opacity: 0, x: 6 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 6 }}
-                className="flex items-center gap-1 text-xs text-destructive"
-              >
-                <AlertCircle className="h-3 w-3" />
-                {error}
-              </motion.span>
-            )}
-          </AnimatePresence>
-          <span
-            className={cn(
-              "text-xs tabular-nums transition-colors",
-              isNearLimit ? "text-amber-500" : "text-muted-foreground/50"
-            )}
-          >
-            {charCount}/{maxChars}
-          </span>
-        </div>
+        <AnimatePresence mode="wait">
+          {hasError && (
+            <motion.span
+              key="error"
+              initial={{ opacity: 0, x: 6 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 6 }}
+              className="flex items-start gap-1 text-right text-xs leading-snug text-destructive"
+            >
+              <AlertCircle className="mt-0.5 h-3 w-3 shrink-0" />
+              <span>{error}</span>
+            </motion.span>
+          )}
+        </AnimatePresence>
       </div>
 
       <div
@@ -191,6 +181,16 @@ function ContactTextarea({
           {...textareaProps}
         />
       </div>
+      <div className="flex justify-end">
+        <span
+          className={cn(
+            "text-xs tabular-nums transition-colors",
+            isNearLimit ? "text-amber-500" : "text-muted-foreground/50"
+          )}
+        >
+          {charCount}/{maxChars}
+        </span>
+      </div>
     </div>
   )
 }
@@ -217,7 +217,7 @@ interface ContactFormProps {
 type FocusedField = "name" | "email" | "message" | null
 
 export function ContactForm({ className }: ContactFormProps) {
-  const { t, i18n } = useTranslation()
+  const { t } = useTranslation()
   const [submitStatus, setSubmitStatus] = useState<
     "idle" | "success" | "error"
   >("idle")
@@ -235,7 +235,7 @@ export function ContactForm({ className }: ContactFormProps) {
         messageMax: t("contactForm.validation.messageMax"),
         botDetected: t("contactForm.validation.botDetected"),
       }),
-    [i18n.resolvedLanguage, t]
+    [t]
   )
 
   const {
@@ -260,7 +260,7 @@ export function ContactForm({ className }: ContactFormProps) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...data,
-          lang: getSupportedLanguage(i18n.resolvedLanguage),
+          lang: getSupportedLanguage(),
         }),
       })
 

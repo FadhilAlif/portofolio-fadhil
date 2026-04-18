@@ -209,7 +209,7 @@ const englishContent: AboutContent = {
       gallery: [
         {
           id: "telkom-1",
-          title: "Telkom Indonesia Fadhil",
+          title: "Telkom Indonesia",
           description:
             "My picture during the internship, representing my role and experience at Telkom Indonesia.",
           imageUrl: `${WORK_MEDIA_BASE}/Telkom%20Indonesia-Fadhil.avif`,
@@ -417,7 +417,7 @@ const indonesianContent: AboutContent = {
       gallery: [
         {
           id: "telkom-1",
-          title: "Telkom Indonesia Fadhil",
+          title: "Telkom Indonesia",
           description:
             "Foto saya selama masa magang yang merepresentasikan peran dan pengalaman di Telkom Indonesia.",
           imageUrl: `${WORK_MEDIA_BASE}/Telkom%20Indonesia-Fadhil.avif`,

@@ -5,10 +5,9 @@ import {
   PaperPlaneRightIcon,
   XIcon,
   CircleNotchIcon,
-  ArrowClockwiseIcon,
   SparkleIcon,
 } from "@phosphor-icons/react"
-import { useCallback, useEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { AnimatePresence, motion } from "motion/react"
 import ReactMarkdown from "react-markdown"
 import { useTranslation } from "react-i18next"
@@ -26,6 +25,18 @@ interface AiChatDialogProps {
 }
 
 const MAX_QUESTIONS = 3
+const VISIBLE_SUGGESTIONS = 3
+
+// ── Helpers ────────────────────────────────────────────────
+/** Fisher-Yates shuffle — returns a new array */
+function shuffle<T>(arr: T[]): T[] {
+  const a = [...arr]
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[a[i], a[j]] = [a[j], a[i]]
+  }
+  return a
+}
 
 // ── Component ──────────────────────────────────────────────
 export function AiChatDialog({ isOpen, onClose }: AiChatDialogProps) {
@@ -39,6 +50,31 @@ export function AiChatDialog({ isOpen, onClose }: AiChatDialogProps) {
 
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
+
+  // ── Suggestion badges: show 3 at a time, shuffle on "load more" ──
+  const allSuggestions = useMemo(
+    () => t("chat.suggestions", { returnObjects: true }) as string[],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [t, i18n.resolvedLanguage]
+  )
+  const [visibleSuggestions, setVisibleSuggestions] = useState<string[]>([])
+
+  // Initialize visible suggestions when allSuggestions changes
+  useEffect(() => {
+    setVisibleSuggestions(shuffle(allSuggestions).slice(0, VISIBLE_SUGGESTIONS))
+  }, [allSuggestions])
+
+  const handleLoadMoreSuggestions = useCallback(() => {
+    setVisibleSuggestions((prev) => {
+      // Pick 3 that are NOT currently showing (if possible)
+      const rest = allSuggestions.filter((s) => !prev.includes(s))
+      if (rest.length >= VISIBLE_SUGGESTIONS) {
+        return shuffle(rest).slice(0, VISIBLE_SUGGESTIONS)
+      }
+      // Fallback: just reshuffle all
+      return shuffle(allSuggestions).slice(0, VISIBLE_SUGGESTIONS)
+    })
+  }, [allSuggestions])
 
   // Initialize session on first open
   useEffect(() => {
@@ -58,15 +94,6 @@ export function AiChatDialog({ isOpen, onClose }: AiChatDialogProps) {
       setTimeout(() => inputRef.current?.focus(), 300)
     }
   }, [isOpen])
-
-  // Reset session
-  const handleNewSession = useCallback(() => {
-    setSessionId(crypto.randomUUID())
-    setMessages([])
-    setRemaining(MAX_QUESTIONS)
-    setError(null)
-    setInput("")
-  }, [])
 
   // Send message (supports direct text for badge clicks)
   const handleSend = async (e?: React.FormEvent, directMessage?: string) => {
@@ -123,9 +150,6 @@ export function AiChatDialog({ isOpen, onClose }: AiChatDialogProps) {
   }
 
   const isLimitReached = remaining <= 0
-  const suggestionBadges = t("chat.suggestions", {
-    returnObjects: true,
-  }) as string[]
 
   return (
     <AnimatePresence>
@@ -147,52 +171,22 @@ export function AiChatDialog({ isOpen, onClose }: AiChatDialogProps) {
                 {remaining}/{MAX_QUESTIONS}
               </span>
             </div>
-            <div className="flex items-center gap-1">
-              <button
-                onClick={handleNewSession}
-                aria-label={t("chat.newSessionLabel")}
-                title={t("chat.newSessionTitle")}
-                className="rounded-md p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-              >
-                <ArrowClockwiseIcon className="h-4 w-4" />
-              </button>
-              <button
-                onClick={onClose}
-                aria-label={t("chat.closeChatLabel")}
-                className="rounded-md p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-              >
-                <XIcon className="h-4 w-4" />
-              </button>
-            </div>
+            <button
+              onClick={onClose}
+              aria-label={t("chat.closeChatLabel")}
+              className="rounded-md p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            >
+              <XIcon className="h-4 w-4" />
+            </button>
           </div>
 
           {/* Chat Messages */}
           <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
-            {/* Welcome message + suggestion badges */}
+            {/* Welcome message */}
             {messages.length === 0 && (
-              <div className="flex flex-col gap-3">
-                <div className="flex w-full justify-start">
-                  <div className="max-w-[85%] rounded-2xl rounded-tl-sm border border-border bg-muted px-4 py-2 text-sm text-foreground">
-                    {t("chat.welcome", { count: MAX_QUESTIONS })}
-                  </div>
-                </div>
-
-                {/* Suggestion Badges */}
-                <div className="flex flex-wrap gap-2 px-1">
-                  {suggestionBadges.map((suggestion) => (
-                    <motion.button
-                      key={suggestion}
-                      initial={{ opacity: 0, y: 8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.25, delay: 0.1 }}
-                      onClick={() => handleSend(undefined, suggestion)}
-                      disabled={isLoading}
-                      className="group flex items-center gap-1.5 rounded-full border border-border bg-background px-3 py-1.5 text-xs font-medium text-muted-foreground transition-all hover:border-primary/40 hover:bg-primary/5 hover:text-primary disabled:pointer-events-none disabled:opacity-50"
-                    >
-                      <SparkleIcon className="h-3 w-3 text-primary/60 transition-colors group-hover:text-primary" />
-                      {suggestion}
-                    </motion.button>
-                  ))}
+              <div className="flex w-full justify-start">
+                <div className="max-w-[85%] rounded-2xl rounded-tl-sm border border-border bg-muted px-4 py-2 text-sm text-foreground">
+                  {t("chat.welcome", { count: MAX_QUESTIONS })}
                 </div>
               </div>
             )}
@@ -203,18 +197,30 @@ export function AiChatDialog({ isOpen, onClose }: AiChatDialogProps) {
                 className={`flex w-full ${msg.role === "user" ? "justify-end" : "justify-start"}`}
               >
                 <div
-                  className={`max-w-[85%] rounded-2xl px-4 py-2 text-sm ${
+                  className={`max-w-[85%] overflow-x-auto rounded-2xl px-4 py-2 text-sm break-words ${
                     msg.role === "user"
                       ? "rounded-tr-sm bg-primary text-primary-foreground"
                       : "rounded-tl-sm border border-border bg-muted text-foreground"
                   } `}
                 >
                   {msg.role === "assistant" ? (
-                    <div className="prose prose-sm dark:prose-invert max-w-none [&_li]:my-0 [&_ol]:my-1 [&_p]:m-0 [&_ul]:my-1">
-                      <ReactMarkdown>{msg.content}</ReactMarkdown>
+                    <div className="prose prose-sm dark:prose-invert max-w-none [&_a]:break-all [&_li]:my-0 [&_ol]:my-1 [&_p]:m-0 [&_ul]:my-1">
+                      <ReactMarkdown
+                        components={{
+                          a: ({ node, ...props }) => (
+                            <a
+                              {...props}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            />
+                          ),
+                        }}
+                      >
+                        {msg.content}
+                      </ReactMarkdown>
                     </div>
                   ) : (
-                    msg.content
+                    <p className="m-0 whitespace-pre-wrap">{msg.content}</p>
                   )}
                 </div>
               </div>
@@ -234,6 +240,48 @@ export function AiChatDialog({ isOpen, onClose }: AiChatDialogProps) {
               </div>
             )}
 
+            {/* Suggestion Badges — always visible when not loading & not rate-limited */}
+            {!isLoading && !isLimitReached && (
+              <div className="flex flex-wrap items-center gap-2 px-1">
+                <AnimatePresence mode="popLayout">
+                  {visibleSuggestions.map((suggestion) => (
+                    <motion.button
+                      key={suggestion}
+                      layout
+                      initial={{ opacity: 0, scale: 0.85 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.85 }}
+                      transition={{ duration: 0.2 }}
+                      onClick={() => {
+                        handleSend(undefined, suggestion)
+                        // Auto-shuffle to new suggestions for next question
+                        handleLoadMoreSuggestions()
+                      }}
+                      disabled={isLoading}
+                      className="group flex items-center gap-1.5 rounded-full border border-border bg-background px-3 py-1.5 text-xs font-medium text-muted-foreground transition-all hover:border-primary/40 hover:bg-primary/5 hover:text-primary disabled:pointer-events-none disabled:opacity-50"
+                    >
+                      <SparkleIcon className="h-3 w-3 text-primary/60 transition-colors group-hover:text-primary" />
+                      {suggestion}
+                    </motion.button>
+                  ))}
+                </AnimatePresence>
+
+                {/* Load more suggestions */}
+                <motion.button
+                  layout
+                  onClick={handleLoadMoreSuggestions}
+                  title={t("chat.loadMoreSuggestions")}
+                  aria-label={t("chat.loadMoreSuggestions")}
+                  className="group flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-border bg-background text-muted-foreground transition-all hover:border-primary/40 hover:bg-primary/5 hover:text-primary"
+                >
+                  <SparkleIcon
+                    className="h-3.5 w-3.5 transition-transform group-hover:rotate-45"
+                    weight="fill"
+                  />
+                </motion.button>
+              </div>
+            )}
+
             {/* Error message */}
             {error && (
               <div className="flex w-full justify-start">
@@ -247,13 +295,7 @@ export function AiChatDialog({ isOpen, onClose }: AiChatDialogProps) {
             {isLimitReached && !error && (
               <div className="flex w-full justify-center">
                 <div className="rounded-xl bg-muted px-4 py-2 text-center text-xs text-muted-foreground">
-                  {t("chat.sessionLimit")}{" "}
-                  <button
-                    onClick={handleNewSession}
-                    className="font-medium text-primary underline-offset-2 hover:underline"
-                  >
-                    {t("chat.startNewSession")}
-                  </button>
+                  {t("chat.sessionLimit")}
                 </div>
               </div>
             )}
