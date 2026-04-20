@@ -1,20 +1,24 @@
 "use client"
 
-import Script from "next/script"
+import { useEffect } from "react"
+import Clarity from "@microsoft/clarity"
+
+declare global {
+  interface Window {
+    __clarityInitialized?: boolean
+  }
+}
 
 export default function MicrosoftAnalytics() {
-  const CLARITY_ID = process.env.NEXT_PUBLIC_CLARITY_PROJECT_ID
-  if (!CLARITY_ID) return null
+  const clarityProjectId = process.env.NEXT_PUBLIC_CLARITY_PROJECT_ID?.trim()
 
-  return (
-    <Script id="clarity-script" strategy="afterInteractive">
-      {`
-        (function(c,l,a,r,i,t,y){
-          c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-          t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-          y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-        })(window, document, "clarity", "script", "${CLARITY_ID}");
-      `}
-    </Script>
-  )
+  useEffect(() => {
+    if (!clarityProjectId) return
+    if (window.__clarityInitialized) return
+
+    Clarity.init(clarityProjectId)
+    window.__clarityInitialized = true
+  }, [clarityProjectId])
+
+  return null
 }
