@@ -35,6 +35,8 @@ import { getCertificates } from "@/lib/certificates-data"
 import { getExperienceSummary } from "@/utils/experience-summary"
 import { useTranslation } from "react-i18next"
 import { getSupportedLanguage } from "@/lib/i18n/config"
+import { CLARITY_EVENTS, setClarityTag, trackClarityEvent } from "@/lib/clarity"
+import ClarityScrollDepthTracker from "@/app/metrics/ClarityScrollDepthTracker"
 
 const GitHubCalendar = dynamic(
   () => import("react-github-calendar").then((mod) => mod.GitHubCalendar),
@@ -95,8 +97,24 @@ export default function Page() {
       ? ["rgba(120, 119, 198, 0.12)", "rgba(59, 130, 246, 0.08)"]
       : ["rgba(120, 119, 198, 0.35)", "rgba(59, 130, 246, 0.25)"]
 
+  const trackDownloadCvClick = () => {
+    setClarityTag("download_asset", "cv")
+    trackClarityEvent(CLARITY_EVENTS.downloadCvClick)
+  }
+
+  const trackContactButtonClick = (source: "hero" | "cta") => {
+    setClarityTag("contact_button_source", source)
+    trackClarityEvent(CLARITY_EVENTS.contactButtonClick)
+  }
+
+  const trackSocialLinkClick = (platform: "email" | "linkedin" | "github") => {
+    setClarityTag("social_platform", platform)
+    trackClarityEvent(CLARITY_EVENTS.socialLinkClick)
+  }
+
   return (
     <div className="relative flex min-h-svh flex-col bg-background text-foreground">
+      <ClarityScrollDepthTracker />
       <SpotlightBackground
         className="fixed inset-0 z-0 bg-background"
         colors={spotlightColors}
@@ -139,6 +157,7 @@ export default function Page() {
                 <StaggerItem variant="fade-up">
                   <a
                     href="mailto:fadhil.alifp@gmail.com"
+                    onClick={() => trackSocialLinkClick("email")}
                     className="flex items-center gap-1.5 transition-colors hover:text-foreground"
                   >
                     <EnvelopeIcon className="h-4 w-4" /> fadhil.alifp@gmail.com
@@ -149,6 +168,7 @@ export default function Page() {
                     href="https://www.linkedin.com/in/fadhilalifpriyatno"
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={() => trackSocialLinkClick("linkedin")}
                     className="flex items-center gap-1.5 transition-colors hover:text-foreground"
                   >
                     <LinkedinLogoIcon className="h-4 w-4" /> LinkedIn
@@ -159,6 +179,7 @@ export default function Page() {
                     href="https://github.com/fadhilalif"
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={() => trackSocialLinkClick("github")}
                     className="flex items-center gap-1.5 transition-colors hover:text-foreground"
                   >
                     <GithubLogoIcon className="h-4 w-4" /> GitHub
@@ -174,7 +195,11 @@ export default function Page() {
 
               <AnimatedSection variant="fade-up" delay={0.5} duration={0.7}>
                 <div className="mt-8 flex flex-wrap items-center justify-center gap-4 md:justify-start">
-                  <Link href="/contact" passHref>
+                  <Link
+                    href="/contact"
+                    passHref
+                    onClick={() => trackContactButtonClick("hero")}
+                  >
                     <Button
                       variant="outline"
                       className="h-11 rounded-full border-border bg-transparent px-6 text-foreground hover:cursor-pointer hover:bg-muted"
@@ -187,6 +212,7 @@ export default function Page() {
                     href="https://cdn.fadhildev.my.id/personal/CV-Fadhil%20Alif%20Priyatno-2026.pdf"
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={trackDownloadCvClick}
                   >
                     <HoverBorderGradient
                       containerClassName="rounded-full"
@@ -553,7 +579,10 @@ export default function Page() {
                   {t("home.availableBadge")}
                 </div>
 
-                <Link href="/contact">
+                <Link
+                  href="/contact"
+                  onClick={() => trackContactButtonClick("cta")}
+                >
                   <HoverBorderGradient
                     containerClassName="rounded-full"
                     as="div"

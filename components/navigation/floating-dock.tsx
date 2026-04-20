@@ -12,6 +12,7 @@ import { useIsMobile } from "@/hooks/use-mobile"
 import { TranslateIcon } from "@phosphor-icons/react"
 import { useTranslation } from "react-i18next"
 import { getSupportedLanguage } from "@/lib/i18n/config"
+import { CLARITY_EVENTS, setClarityTag, trackClarityEvent } from "@/lib/clarity"
 
 export function FloatingDock() {
   const { t, i18n } = useTranslation()
@@ -35,6 +36,10 @@ export function FloatingDock() {
   }, [])
 
   const handleNavigation = (path: string) => {
+    if (path === "/contact") {
+      setClarityTag("contact_button_source", "dock")
+      trackClarityEvent(CLARITY_EVENTS.contactButtonClick)
+    }
     router.push(path)
   }
 

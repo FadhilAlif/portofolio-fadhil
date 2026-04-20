@@ -11,6 +11,7 @@ import {
 import { cn } from "@/lib/utils"
 import Image from "next/image"
 import { useTranslation } from "react-i18next"
+import { CLARITY_EVENTS, setClarityTag, trackClarityEvent } from "@/lib/clarity"
 
 // ─── Nav Links ───────────────────────────────────────────────────────────────
 
@@ -84,6 +85,16 @@ export function Footer({ className }: FooterProps) {
   const { t } = useTranslation()
   const currentYear = new Date().getFullYear()
 
+  const handleContactNavClick = () => {
+    setClarityTag("contact_button_source", "footer_nav")
+    trackClarityEvent(CLARITY_EVENTS.contactButtonClick)
+  }
+
+  const handleSocialClick = (platform: string) => {
+    setClarityTag("social_platform", platform)
+    trackClarityEvent(CLARITY_EVENTS.socialLinkClick)
+  }
+
   return (
     <footer
       className={cn(
@@ -105,6 +116,9 @@ export function Footer({ className }: FooterProps) {
               <Link
                 key={link.labelKey}
                 href={link.href}
+                onClick={
+                  link.href === "/contact" ? handleContactNavClick : undefined
+                }
                 className="text-sm text-muted-foreground transition-colors duration-200 hover:text-foreground"
               >
                 {t(link.labelKey)}
@@ -134,6 +148,7 @@ export function Footer({ className }: FooterProps) {
                       ? "noopener noreferrer"
                       : undefined
                   }
+                  onClick={() => handleSocialClick(social.label.toLowerCase())}
                   aria-label={social.label}
                   className="group flex h-8 w-8 items-center justify-center rounded-lg border border-border/60 bg-card/50 text-muted-foreground transition-all duration-200 hover:border-border hover:bg-card hover:text-foreground"
                 >

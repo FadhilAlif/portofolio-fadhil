@@ -14,6 +14,7 @@ import { Footer } from "@/components/section/footer"
 import { AnimatedSection } from "@/components/section/animated-section"
 import { SpotlightBackground } from "@/components/ui/spotlight"
 import { useTranslation } from "react-i18next"
+import { CLARITY_EVENTS, setClarityTag, trackClarityEvent } from "@/lib/clarity"
 
 // ─── Contact Info Items ───────────────────────────────────────────────────────
 
@@ -59,6 +60,16 @@ const socialLinks = [
 
 export default function ContactPage() {
   const { t } = useTranslation()
+
+  const handleSocialClick = (platform: string) => {
+    setClarityTag("social_platform", platform)
+    trackClarityEvent(CLARITY_EVENTS.socialLinkClick)
+  }
+
+  const handleEmailClick = () => {
+    setClarityTag("social_platform", "email")
+    trackClarityEvent(CLARITY_EVENTS.socialLinkClick)
+  }
 
   return (
     <div className="relative flex min-h-svh flex-col bg-background text-foreground">
@@ -119,6 +130,11 @@ export default function ContactPage() {
                     {item.href ? (
                       <a
                         href={item.href}
+                        onClick={
+                          item.href.startsWith("mailto:")
+                            ? handleEmailClick
+                            : undefined
+                        }
                         className="group flex items-center gap-2 text-sm font-medium text-foreground transition-colors hover:text-primary"
                       >
                         <item.icon className="h-4 w-4 text-muted-foreground transition-colors group-hover:text-primary" />
@@ -149,6 +165,7 @@ export default function ContactPage() {
                       href={s.href}
                       target="_blank"
                       rel="noopener noreferrer"
+                      onClick={() => handleSocialClick(s.label.toLowerCase())}
                       aria-label={s.label}
                       className="group flex h-9 w-9 items-center justify-center rounded-lg border border-border/60 bg-card/50 text-muted-foreground transition-all duration-200 hover:border-primary/40 hover:bg-card hover:text-primary"
                     >
