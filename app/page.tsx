@@ -281,9 +281,9 @@ export default function Page() {
             as="section"
             className="flex w-full flex-col gap-6"
           >
-            <h3 className="text-2xl font-semibold tracking-tight text-foreground">
+            <h2 className="text-2xl font-semibold tracking-tight text-foreground">
               {t("home.sectionExperience")}
-            </h3>
+            </h2>
             <WorkSection items={experiences} />
           </AnimatedSection>
 
@@ -295,9 +295,9 @@ export default function Page() {
             as="section"
             className="flex w-full flex-col gap-6 border-t border-border pt-12"
           >
-            <h3 className="text-2xl font-semibold tracking-tight text-foreground">
+            <h2 className="text-2xl font-semibold tracking-tight text-foreground">
               {t("home.sectionEducation")}
-            </h3>
+            </h2>
             <EducationSection items={educations} />
           </AnimatedSection>
 
@@ -310,9 +310,9 @@ export default function Page() {
             className="flex w-full flex-col gap-6 border-t border-border pt-12"
           >
             <div>
-              <h3 className="text-2xl font-semibold tracking-tight text-foreground">
+              <h2 className="text-2xl font-semibold tracking-tight text-foreground">
                 {t("home.sectionSkills")}
-              </h3>
+              </h2>
               <p className="mt-1 text-sm text-muted-foreground">
                 {t("home.skillsDescription")}
               </p>
@@ -345,9 +345,9 @@ export default function Page() {
           className="mt-16 flex w-full flex-col gap-6 border-t border-border pt-12"
         >
           <div>
-            <h3 className="text-2xl font-semibold tracking-tight text-foreground">
+            <h2 className="text-2xl font-semibold tracking-tight text-foreground">
               {t("home.sectionProjects")}
-            </h3>
+            </h2>
             <p className="mt-1 text-sm text-muted-foreground">
               {t("home.projectsDescription")}
             </p>
@@ -395,9 +395,9 @@ export default function Page() {
           className="mt-16 flex w-full flex-col gap-6 border-t border-border pt-12"
         >
           <div>
-            <h3 className="text-2xl font-semibold tracking-tight text-foreground">
+            <h2 className="text-2xl font-semibold tracking-tight text-foreground">
               {t("home.sectionCertificates")}
-            </h3>
+            </h2>
             <p className="mt-1 text-sm text-muted-foreground">
               {t("home.certificatesDescription")}
             </p>
@@ -458,9 +458,9 @@ export default function Page() {
           className="mt-16 flex w-full flex-col gap-6 border-t border-border pt-12"
         >
           <div>
-            <h3 className="text-2xl font-semibold tracking-tight text-foreground">
+            <h2 className="text-2xl font-semibold tracking-tight text-foreground">
               {t("home.sectionStats")}
-            </h3>
+            </h2>
             <p className="mt-1 text-sm text-muted-foreground">
               {t("home.statsDescription")}
             </p>
@@ -562,9 +562,9 @@ export default function Page() {
                   />
                 </div>
 
-                <h3 className="text-2xl font-semibold tracking-tight text-foreground md:text-3xl">
+                <h2 className="text-2xl font-semibold tracking-tight text-foreground md:text-3xl">
                   {t("home.letsWorkTogether")}
-                </h3>
+                </h2>
 
                 <p className="max-w-md text-sm leading-relaxed text-muted-foreground md:text-base">
                   {t("home.ctaDescription")}
