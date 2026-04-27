@@ -100,7 +100,7 @@ const R2_URL = "https://cdn.fadhildev.my.id/project-avif"
 export const projects: ProjectItem[] = [
   {
     title: "WBS Public — Whistleblowing System",
-    dates: "Dec 2025 – Dec 2025",
+    dates: "Dec 2025 – Apr 2026",
     association: "Telkomsigma",
     category: ["private", "web"],
     role: "Frontend Engineer",
@@ -108,19 +108,19 @@ export const projects: ProjectItem[] = [
     isInternal: true,
     description:
       "A Public WBS that enables external users to securely submit reports with flexible identity options (full, partial, or anonymous). It ensures structured reporting while allowing users to track the status of their submissions.",
-    tags: ["Next.js", "TypeScript", "Tailwind CSS", "Django"],
+    tags: ["Next.js", "TypeScript", "Tailwind CSS"],
     image: `${R2_URL}/wbs-public-preview.avif`,
   },
   {
     title: "WBS Internal — Whistleblowing System",
-    dates: "Dec 2025 – Present",
+    dates: "Dec 2025 – Apr 2026",
     association: "Telkomsigma",
     category: ["private", "web"],
     role: "Frontend Engineer",
     isInternal: true,
     description:
       "An internal WBS for the Internal Audit team to manage, validate, and monitor whistleblowing reports end-to-end. It centralizes data from multiple sources, supports structured workflows, and provides dashboards for effective monitoring and decision-making.",
-    tags: ["Next.js", "TypeScript", "Tailwind CSS", "Django"],
+    tags: ["Next.js", "TypeScript", "Tailwind CSS"],
     image: `${R2_URL}/wbs-internal-preview.avif`,
   },
   {
@@ -131,7 +131,7 @@ export const projects: ProjectItem[] = [
     role: "Frontend Engineer",
     isInternal: true,
     description:
-      "A web-based ticketing system for monitoring SPBU shifts and operational issues, featuring Ticket Summary, FAQ, L3 internal tickets, reporting, and a dashboard with filters, insights, and downloadable reports.",
+      "Enhanced web-based ticketing system for monitoring SPBU shifts and operational issues, featuring Ticket Summary, FAQ, L3 internal tickets, reporting, and a dashboard with filters, insights, and downloadable reports.",
     tags: ["Next.js", "TypeScript", "Tailwind CSS"],
     image: `${R2_URL}/plustix-preview.avif`,
   },
@@ -141,7 +141,7 @@ export const projects: ProjectItem[] = [
     category: "web",
     role: "Full-Stack Engineer",
     description:
-      "A modern JSON formatting & validation tool with syntax highlighting, diff comparison, auto-fix (quotes, trailing commas, brackets), tabbed editing, file upload/download, and dark/light theme.",
+      "A modern JSON formatting & validation tool for my personal use with syntax highlighting, diff comparison, auto-fix (quotes, trailing commas, brackets), tabbed editing, file upload/download, and dark/light theme.",
     tags: ["React", "Vite", "TypeScript", "Tailwind CSS"],
     image: `${R2_URL}/json-polish-preview.avif`,
     href: "https://json-polish.vercel.app/",

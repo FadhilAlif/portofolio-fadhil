@@ -51,6 +51,40 @@ const R2_URL = "https://cdn.fadhildev.my.id/certificate-avif"
 // Note: Replace the placeholder images with the actual AVIF/PNG versions of your certificates
 export const certificates: CertificateItem[] = [
   {
+    id: "cert-google-ai",
+    title: "Google AI Professional",
+    issuer: "Google",
+    issuedDate: "Apr 2026",
+    credentialId: "CDI1V9Q4JN7P",
+    image: `${R2_URL}/Google%20AI%20Professional.avif`,
+    credentialUrl:
+      "https://www.coursera.org/account/accomplishments/specialization/CDI1V9Q4JN7P",
+    skills: ["AI Prompting", "Generative AI"],
+    category: "ai",
+  },
+  {
+    id: "cert-generative-ai",
+    title: "Belajar Pengunaan Generative AI",
+    issuer: "Dicoding",
+    issuedDate: "Apr 2026",
+    credentialId: "QLZ99VKV7Z5D",
+    image: `${R2_URL}/Belajar%20Pengunaan%20Gen%20AI.avif`,
+    credentialUrl: "https://www.dicoding.com/certificates/QLZ99VKV7Z5D",
+    skills: ["Generative AI"],
+    category: "ai",
+  },
+  {
+    id: "cert-ai-productivity",
+    title: "AI Praktis untuk Produktivitas",
+    issuer: "Dicoding",
+    issuedDate: "Apr 2026",
+    credentialId: "81P2ONE3YZOY",
+    image: `${R2_URL}/AI%20Praktis%20untuk%20Produktivitas.avif`,
+    credentialUrl: "https://www.dicoding.com/certificates/81P2ONE3YZOY",
+    skills: ["AI Prompting"],
+    category: "ai",
+  },
+  {
     id: "cert-conduct-ux-research ",
     title: "Conduct UX Research and Test Early Concepts",
     issuer: "Google",
