@@ -23,12 +23,14 @@ const SHARED_SKILL_GROUPS: SkillGroup[] = [
     skills: [
       { label: "TypeScript", iconId: "ts" },
       { label: "JavaScript", iconId: "js" },
+      { label: "C#", iconId: "cs" },
       { label: "Golang", iconId: "go" },
       { label: "PHP", iconId: "php" },
       { label: "Python", iconId: "python" },
       { label: "Dart", iconId: "dart" },
       { label: "Java", iconId: "java" },
       { label: "C", iconId: "c" },
+      { label: "Bash", iconId: "bash" },
       { label: "HTML", iconId: "html" },
       { label: "CSS", iconId: "css" },
     ],
@@ -50,6 +52,7 @@ const SHARED_SKILL_GROUPS: SkillGroup[] = [
       { label: "Material UI", iconId: "mui" },
       { label: "Bootstrap", iconId: "bootstrap" },
       { label: "Three.js", iconId: "threejs" },
+      { label: ".NET", iconId: "dotnet" },
     ],
   },
   {
@@ -67,6 +70,7 @@ const SHARED_SKILL_GROUPS: SkillGroup[] = [
     title: "Other Tools & Platforms",
     skills: [
       { label: "Node.js", iconId: "nodejs" },
+      { label: "Bun", iconId: "bun" },
       { label: "Docker", iconId: "docker" },
       { label: "Git", iconId: "git" },
       { label: "GitHub", iconId: "github" },
