@@ -1,454 +1,482 @@
-# AGENT.md — Fadhil Alif Priyatno Portfolio
+﻿# AGENT.md — AI Agent Guide for portofolio-fadhil
 
-> Panduan lengkap untuk AI-assisted coding pada project portfolio pribadi **Fadhil Alif Priyatno**.
-
----
-
-## 📋 Project Overview
-
-| Field         | Value                                                                                                                        |
-| ------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| **Nama**      | `portofolio-fadhil`                                                                                                          |
-| **Versi**     | `0.0.1`                                                                                                                      |
-| **Tipe**      | Personal Portfolio Website                                                                                                   |
-| **Pemilik**   | Fadhil Alif Priyatno — Full-Stack Engineer                                                                                   |
-| **Deskripsi** | Website portfolio pribadi yang menampilkan profil, pengalaman kerja, edukasi, skill, proyek, sertifikat, dan halaman kontak. |
-| **Status**    | 🟡 Active Development — beberapa halaman masih berupa placeholder                                                            |
+> This document provides comprehensive guidance for AI agents working on this project. Read it thoroughly before making any changes.
 
 ---
 
-## 🛠️ Tech Stack
+## 1. Project Overview
 
-### Core Framework
+| Field       | Value                                                                                                                                        |
+| ----------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Name**    | portofolio-fadhil                                                                                                                            |
+| **Version** | 0.0.1                                                                                                                                        |
+| **Type**    | Personal Portfolio Website                                                                                                                   |
+| **Owner**   | Fadhil Alif Priyatno — Full-Stack Engineer                                                                                                   |
+| **Desc**    | Website portfolio pribadi yang menampilkan profil, pengalaman kerja, edukasi, skill, proyek, sertifikat, dan halaman kontak                  |
+| **Status**  | 🟢 Production Ready — semua halaman utama sudah terimplementasi                                                                              |
+| **Domain**  | https://fadhildev.my.id                                                                                                                      |
 
-- **Next.js 16** (`^16.1.6`) — App Router, React Server Components enabled
+---
+
+## 2. Tech Stack
+
+### Core
+- **Next.js 16** (`^16.1.6`) with App Router and Turbopack
 - **React 19** (`^19.2.4`)
-- **TypeScript 5** (`^5.9.3`) — strict mode enabled
-- **Turbopack** — digunakan sebagai bundler dev (`next dev --turbopack`)
+- **TypeScript 5** (`^5.9.3`)
 
 ### Styling
-
-- **Tailwind CSS v4** (`^4.1.18`) — menggunakan `@tailwindcss/postcss` plugin
-- **tw-animate-css** (`^1.4.0`) — animasi utility classes
-- **shadcn/ui** (`^4.0.2`) — component library, style `radix-lyra`, base color `neutral`
-- **CSS Variables** — design tokens via oklch color space di `globals.css`
-- **Custom variant**: `@custom-variant dark (&:is(.dark *))` (class-based dark mode)
+- **Tailwind CSS v4** (`^4.1.18`) — CSS-first configuration, `@import "tailwindcss"`
+- **tw-animate-css** (`^1.4.0`) — animation utilities
+- **shadcn/ui** (`^4.0.2`) — style: `radix-lyra`, base color: `neutral`, CSS Variables with `oklch`
+- **radix-ui** (`^1.4.3`) — accessible primitives
+- **Custom dark variant** — `@variant dark (&:is(.dark *))` in `globals.css`
 
 ### Animation
-
-- **Framer Motion / Motion** (`^12.35.2`) — tersedia via dua package:
-  - `framer-motion` — digunakan di `dock.tsx`, `ai-chat-dialog.tsx`, `template.tsx`
-  - `motion` (alias) — digunakan di `apple-cards-carousel.tsx`, `apple-hello-effect.tsx`
-  - ⚠️ **PENTING**: Kedua package ini ada duplikasi. Saat membuat komponen baru, preferensikan `motion/react` untuk konsistensi.
+- **Motion** (`^12.38.0`) — NOT framer-motion. All imports from `motion/react`
 
 ### State Management
+- **Zustand** (`^5.0.11`) — lightweight state
+- **TanStack Query** (`^5.90.21`) — server state caching
+- **nuqs** (`^2.8.9`) — URL state management
 
-- **Zustand** (`^5.0.11`) — global state management (contoh store tersedia di `stores/index.ts`)
-- **TanStack Query** (`^5.90.21`) — server state / data fetching, stale time 30 detik
-- **nuqs** (`^2.8.9`) — URL search params state management
+### i18n
+- **react-i18next** (`^17.0.2`)
+- Languages: EN + ID, default EN
+- Persistence: `localStorage` key `i18nextLng`
 
-### Data Fetching
+### Forms
+- **react-hook-form** (`^7.71.2`)
+- **@hookform/resolvers** (`^5.2.2`)
+- **Zod** (`^4.3.6`) — schema validation
 
-- **Axios** (`^1.13.6`) — HTTP client dengan error handling utility
-- **TanStack Query** — caching & revalidation layer
+### AI / Backend
+- **@google/genai** (`^1.46.0`) — primary Gemini SDK
+- **@google/generative-ai** (`^0.24.1`) — legacy Gemini SDK
+- **@supabase/supabase-js** (`^2.100.0`) — database client
+- **@supabase/ssr** (`^0.9.0`) — SSR utilities
+- **supabase** (`^2.83.0`) — CLI
+- **resend** (`^6.9.3`) — email delivery
 
 ### Icons
-
-- **Phosphor Icons** (`@phosphor-icons/react ^2.1.10`) — icon library utama, sesuai config shadcn
-- **Lucide React** (`^0.577.0`) — icon library sekunder, digunakan di navigation & UI
-- **Tabler Icons** (`@tabler/icons-react ^3.40.0`) — digunakan di carousel component
+- **Phosphor Icons** (`@phosphor-icons/react` `^2.1.10`)
+- **Lucide React** (`^0.577.0`)
+- **Tabler Icons** (`@tabler/icons-react` `^3.40.0`)
 
 ### Theming
+- Custom dark mode via `useDarkMode` + `useThemeAnimation` hooks
+- `next-themes` used only for `resolvedTheme` in `page.tsx`
 
-- **Custom dark mode system** — TIDAK menggunakan `next-themes` untuk rendering (meskipun package terinstall)
-- Tema dikelola oleh custom hooks:
-  - `useDarkMode` — read/write localStorage, apply `.dark` class ke `<html>`
-  - `useThemeAnimation` — toggle tema dengan View Transitions API (circular clip-path animation)
-- **Hotkey**: Tekan `D` untuk toggle dark/light mode
-- **`next-themes`**: Hanya `useTheme()` digunakan di `skill-category.tsx` untuk `resolvedTheme`
-  - ⚠️ **Potensi konflik**: `ThemeProvider` custom dan `next-themes` bisa out of sync. Perlu perhatian khusus.
+### Analytics
+- **@vercel/analytics** (`^2.0.1`)
+- **@vercel/speed-insights** (`^2.0.0`)
+- **@microsoft/clarity** (`^1.0.2`)
 
 ### Utilities
-
-- **clsx** + **tailwind-merge** — digabung dalam fungsi `cn()` di `lib/utils.ts`
-- **class-variance-authority (cva)** — component variant styling
-- **react-markdown** — rendering markdown content
-- **shiki** — syntax highlighting (terinstall, belum terlihat penggunaannya)
-- **sonner** — toast notifications
+- `clsx` + `tailwind-merge` → `cn()` utility
+- `cva` — class variance authority
+- `react-markdown` — markdown rendering
+- `shiki` (`^4.0.2`) — syntax highlighting
+- `sonner` (`^2.0.7`) — toast notifications
+- `react-dropzone` (`^15.0.0`) — file uploads
+- `react-github-calendar` (`^5.0.5`) — GitHub contribution graph
 
 ### Code Quality
-
-- **ESLint** — `eslint-config-next` (core-web-vitals + typescript)
-- **Prettier** — semi: false, double quotes, trailing comma es5, `prettier-plugin-tailwindcss`
-- **TypeScript** — strict mode, path alias `@/*`
+- **ESLint** with `eslint-config-next`
+- **Prettier**: no semicolons, double quotes, trailing comma ES5, tabWidth 2, printWidth 80
 
 ---
 
-## 📁 Project Structure
+## 3. Project Structure
 
 ```
 portofolio-fadhil/
-├── app/                          # Next.js App Router
-│   ├── layout.tsx                # Root layout: fonts, providers, floating dock
-│   ├── template.tsx              # Page transition wrapper (framer-motion fade+blur)
-│   ├── page.tsx                  # Homepage: Hero, Experience, Education, Skills
-│   ├── loading.tsx               # Global loading spinner
-│   ├── globals.css               # Design tokens, Tailwind config, view-transition styles
-│   ├── contact/page.tsx          # 🟡 Contact page (placeholder form)
-│   ├── projects/page.tsx         # 🟡 Projects page (placeholder cards)
-│   └── certificates/page.tsx     # 🟡 Certificates page (placeholder data)
-│
+├── app/
+│   ├── layout.tsx                    # Root layout with providers
+│   ├── template.tsx                  # Page transition wrapper
+│   ├── page.tsx                      # Home page (About)
+│   ├── loading.tsx                   # Global loading UI
+│   ├── globals.css                   # Tailwind v4 + CSS variables + dark variant
+│   ├── favicon.ico
+│   ├── robots.ts                     # Dynamic robots.txt
+│   ├── sitemap.ts                    # Dynamic sitemap
+│   ├── api/
+│   │   ├── chat/route.ts             # AI Chat API (Gemini + Supabase)
+│   │   └── contact/route.ts          # Contact form API (Resend email)
+│   ├── contact/
+│   │   ├── layout.tsx
+│   │   └── page.tsx
+│   ├── projects/
+│   │   ├── layout.tsx
+│   │   └── page.tsx
+│   ├── certificates/
+│   │   ├── layout.tsx
+│   │   └── page.tsx
+│   └── metrics/
+│       ├── ClarityScrollDepthTracker.tsx
+│       └── MicrosoftAnalytics.tsx
 ├── components/
-│   ├── theme-provider.tsx        # Custom ThemeProvider + keyboard shortcut (D key)
-│   ├── chat/
-│   │   └── ai-chat-dialog.tsx    # Mock AI chat dialog (non-functional AI)
-│   ├── icons/
-│   │   └── pixel-image.tsx       # Animated pixelated image reveal component
-│   ├── navigation/
-│   │   └── floating-dock.tsx     # macOS-style dock navigation (bottom-fixed)
-│   ├── section/
-│   │   └── work-section.tsx      # Accordion-based work experience section
-│   └── ui/                       # Reusable UI components
-│       ├── accordion.tsx         # Radix accordion primitive
-│       ├── apple-cards-carousel.tsx  # Apple-style card carousel with modal
-│       ├── apple-hello-effect.tsx    # SVG handwriting animation (signature)
-│       ├── badge.tsx             # Badge component
-│       ├── button.tsx            # Button component (shadcn)
-│       ├── code-editor.tsx       # Code editor component
-│       ├── dock.tsx              # macOS dock UI (magnification effect)
-│       ├── dropzone.tsx          # File dropzone
-│       ├── loading-spinner.tsx   # Full-screen loading spinner
-│       ├── project-card.tsx      # Project card with image, tags, links
-│       ├── skill-category.tsx    # Skill icons grid (skillicons.dev API)
-│       ├── sonner.tsx            # Toast notification wrapper
-│       ├── spinner.tsx           # Spinner animation variants
-│       ├── spotlight.tsx         # Interactive spotlight background effect
-│       ├── theme-toggle.tsx      # Theme toggle button
-│       └── tooltip.tsx           # Tooltip component
-│
-├── hooks/
-│   ├── use-boolean.tsx           # Boolean state with toggle/set utilities
-│   ├── use-dark-mode.tsx         # Dark mode with localStorage persistence
-│   ├── use-debounce.ts           # Generic debounce hook
-│   ├── use-debounce-search.ts    # Debounced search with URL sync
-│   ├── use-mobile.ts             # Mobile viewport detection
-│   ├── use-outside-click.ts      # Click outside detection
-│   ├── use-read-local-storage.tsx # Read localStorage with SSR safety
-│   └── use-theme-animation.ts    # View Transitions API theme toggle
-│
-├── lib/
-│   ├── react-query.tsx           # TanStack Query provider
-│   ├── root-provider.tsx         # Combined providers wrapper
-│   └── utils.ts                  # cn() utility (clsx + tailwind-merge)
-│
-├── stores/
-│   └── index.ts                  # Zustand store (example counter)
-│
+│   ├── theme-provider.tsx
+│   ├── i18n-provider.tsx
+│   ├── chat/                         # AI Chat components
+│   ├── email/                        # Email template components
+│   ├── icons/                        # Icon wrapper components
+│   ├── navigation/                   # Dock, nav items
+│   ├── section/                      # 6 files:
+│   │   ├── animated-section.tsx
+│   │   ├── contact-form.tsx
+│   │   ├── education-section.tsx
+│   │   ├── footer.tsx
+│   │   ├── photo-gallery.tsx
+│   │   └── work-section.tsx
+│   └── ui/                           # 22 files:
+│       ├── accordion.tsx
+│       ├── apple-cards-carousel.tsx
+│       ├── auto-carousel.tsx
+│       ├── badge.tsx
+│       ├── button.tsx
+│       ├── code-editor.tsx
+│       ├── dock.tsx
+│       ├── dropzone.tsx
+│       ├── filter-search-toolbar.tsx
+│       ├── hover-border-gradient.tsx
+│       ├── images-badge.tsx
+│       ├── loading-spinner.tsx
+│       ├── magic-card.tsx
+│       ├── project-card.tsx
+│       ├── skill-category.tsx
+│       ├── sonner.tsx
+│       ├── spinner.tsx
+│       ├── spotlight.tsx
+│       ├── tech-icon.tsx
+│       ├── theme-toggle.tsx
+│       ├── tooltip.tsx
+│       └── typing-animation.tsx
+├── hooks/                            # 8 files:
+│   ├── use-boolean.ts
+│   ├── use-dark-mode.ts
+│   ├── use-debounce-search.ts
+│   ├── use-debounce.ts
+│   ├── use-mobile.ts
+│   ├── use-outside-click.ts
+│   ├── use-read-local-storage.ts
+│   └── use-theme-animation.ts
+├── lib/                              # 11 files + dir:
+│   ├── about-data.ts
+│   ├── certificates-data.ts
+│   ├── clarity.ts
+│   ├── contact-schema.ts
+│   ├── i18n/                         # i18n resources
+│   ├── knowledge-base.ts
+│   ├── projects-data.ts
+│   ├── react-query.ts
+│   ├── root-provider.tsx
+│   ├── skill-icons.ts
+│   └── utils.ts
 ├── types/
-│   └── index.ts                  # Shared types (Pagination, ResponseMessage, etc.)
-│
 ├── utils/
-│   ├── handleAxiosError.ts       # Axios error handler with toast notifications
-│   └── sanitizeData.ts           # Data & URL sanitization utilities
-│
 ├── public/
-│   └── assets/
-│       ├── fadhil-photo-profie.png   # Profile photo
-│       ├── fadhil-background-bw.png  # Background image
-│       └── company-logo/             # Company logos for experience section
-│
-├── packages/                     # Monorepo packages (empty, placeholder)
-│   ├── eslint-config/
-│   └── ui/
-│
+├── packages/                         # Monorepo skeleton (empty)
 ├── package.json
 ├── tsconfig.json
-├── postcss.config.mjs
-├── next.config.mjs
-├── eslint.config.mjs
-├── components.json               # shadcn configuration
+├── next.config.ts
+├── components.json
 ├── .prettierrc
-└── .gitignore
+├── .env.example
+└── AGENT.md                          # This file
 ```
 
 ---
 
-## 🏗️ Architecture & Patterns
+## 4. Architecture & Patterns
 
 ### Provider Tree
 
 ```
-<html>
-  <body>
-    <Suspense fallback={<LoadingSpinner />}>
-      <RootProvider>
-        ├── TanstackQueryProvider    (React Query)
-        │   └── ThemeProvider        (Custom dark mode context)
-        │       └── NuqsAdapter      (URL state management)
-        │           ├── {children}   (Page content)
-        │           ├── <Toaster />  (Sonner notifications)
-        │           └── <FloatingDock /> (Navigation)
-      </RootProvider>
-    </Suspense>
-  </body>
-</html>
+RootLayout
+├── TanstackQueryProvider
+│   └── I18nProvider
+│       └── ThemeProvider
+│           └── NuqsAdapter
+│               ├── {children}
+│               └── Toaster
+├── FloatingDock (outside NuqsAdapter)
+├── Analytics (Vercel)
+├── MicrosoftAnalytics (Clarity)
+└── SpeedInsights (Vercel)
 ```
 
 ### Page Transitions
 
-Semua halaman di-wrap oleh `app/template.tsx` yang menambahkan transisi fade+blur menggunakan `framer-motion`:
-
-```tsx
-initial={{ opacity: 0, y: 30, filter: "blur(4px)" }}
-animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-exit={{ opacity: 0, y: 30, filter: "blur(4px)" }}
-```
+Motion-based fade + blur transition in `template.tsx`:
+- `opacity`: 0 → 1
+- `y`: 30 → 0
+- `filter: blur`: 4px → 0
 
 ### Navigation
 
-- **Floating Dock** — fixed bottom-center, macOS-style dengan magnetic magnification
-- Halaman: `/` (About), `/projects`, `/certificates`, `/contact`
-- Fitur tambahan di dock: **AI Chat** (mock) dan **Theme Toggle**
-- Navigasi menggunakan `next/navigation` (`useRouter().push()`)
+Floating Dock with 7 items:
+1. About (home)
+2. Projects
+3. Certificates
+4. Contact
+5. AI Chat
+6. Language Toggle (flag icon)
+7. Theme Toggle (sun/moon)
 
 ### Dark Mode Flow
 
-1. `useDarkMode` hook membaca localStorage key `portfolio-theme`
-2. Default: dark mode (`defaultValue: true`)
-3. Toggle menggunakan `useThemeAnimation` yang memanfaatkan **View Transitions API**
-4. Animasi berupa circular clip-path expand dari posisi klik
-5. Fallback: langsung set class jika browser tidak support View Transitions
+- `useDarkMode` reads `localStorage` key `portfolio-theme`
+- Default theme: `dark`
+- Toggle uses View Transitions API with circular clip-path animation
+- `useThemeAnimation` handles the transition timing
+- CSS variant: `@variant dark (&:is(.dark *))`
 
-### Component Naming Conventions
+### i18n Flow
 
-- **UI primitives**: `components/ui/*.tsx` — reusable, tidak terikat business logic
-- **Section components**: `components/section/*.tsx` — section-level page building blocks
-- **Navigation**: `components/navigation/*.tsx`
-- **Icons/Illustrations**: `components/icons/*.tsx`
-- **Feature components**: `components/chat/*.tsx`, dll.
+- `I18nProvider` detects language from `localStorage` key `i18nextLng` or `navigator.language`
+- Default: `en`
+- Supported: `en`, `id`
+- Toggle via dock flag icon
+- Resources loaded from `lib/i18n/`
 
----
+### AI Chat Architecture
 
-## 📝 Coding Conventions
-
-### TypeScript
-
-- Strict mode enabled
-- Gunakan `interface` untuk props dan object shapes
-- Export named types bersama component file
-- Path alias: `@/*` dari root project
-
-### React
-
-- Semua komponen interaktif HARUS memiliki `"use client"` di baris pertama
-- Server Components digunakan di pages yang tidak butuh client-side interactivity
-- Prefer functional components + hooks
-- Gunakan `cn()` untuk conditional classNames
-
-### Styling
-
-- **SELALU gunakan Tailwind CSS** untuk styling — hindari inline styles kecuali untuk dynamic values
-- Design tokens didefinisikan sebagai CSS variables di `globals.css` (oklch color space)
-- Gunakan semantic token names: `bg-background`, `text-foreground`, `border-border`, dll.
-- Responsive: mobile-first (`className="text-sm md:text-lg"`)
-- Dark mode: gunakan Tailwind `dark:` variant
-
-### File Organization
-
-- Satu komponen per file (boleh ada sub-components internal)
-- Tiap file UI component boleh punya section `// Demo` di akhir file untuk testing isolasi
-- Hooks di folder `hooks/`, PREFIX `use-` dengan kebab-case
-- Types centralized di `types/index.ts`, atau co-located di file component
-
-### Formatting (Prettier)
-
-```json
-{
-  "endOfLine": "lf",
-  "semi": false, // ⚠️ TANPA semicolon
-  "singleQuote": false, // Double quotes
-  "tabWidth": 2,
-  "trailingComma": "es5",
-  "printWidth": 80
-}
+```
+Client (AiChatDialog)
+  → POST /api/chat
+    → Gemini API (fallback chain: gemini-3-flash → gemini-2.5-flash → gemini-1.5-flash)
+    → Supabase chat_logs (persist conversation)
+  → Rate limit: 3 questions/session (UUID-based)
+  → System prompt from lib/knowledge-base.ts
 ```
 
+### Contact Form Architecture
+
+```
+Client (ContactForm)
+  → POST /api/contact
+    → Resend email delivery
+  → Rate limit: 3/hour per IP (in-memory Map)
+  → Zod validation via contact-schema.ts
+  → Honeypot field for spam protection
+```
+
+### Data Architecture
+
+- Static data in `lib/*-data.ts` files
+- Bilingual content (EN/ID keys)
+- CDN via Cloudflare R2: `https://cdn.fadhildev.my.id/`
+- Image format: AVIF preferred
+
 ---
 
-## ⚙️ Available Scripts
+## 5. Coding Conventions
 
-| Command             | Description                                   |
-| ------------------- | --------------------------------------------- |
-| `npm run dev`       | Start dev server dengan Turbopack             |
-| `npm run build`     | Production build                              |
-| `npm start`         | Start production server                       |
-| `npm run lint`      | Run ESLint                                    |
-| `npm run format`    | Format semua `.ts`, `.tsx` files via Prettier |
-| `npm run typecheck` | TypeScript type checking tanpa emit           |
+- **TypeScript strict mode** enabled
+- Use `interface` for props (not `type`)
+- `"use client"` directive for interactive components
+- `cn()` utility for className merging (from `lib/utils.ts`)
+- Tailwind CSS always — no inline styles
+- Semantic tokens for colors (e.g., `bg-background`, `text-foreground`)
+- Mobile-first responsive design
+- `dark:` variant for dark mode styling
+- One component per file
+- Hooks in `hooks/` directory with `use-` prefix
+- **Prettier config**: no semicolons, double quotes, tabWidth 2, trailingComma es5, printWidth 80
 
 ---
 
-## 🎨 Design System
+## 6. Available Scripts
 
-### Color Tokens (oklch)
+| Script        | Command                        | Description                     |
+| ------------- | ------------------------------ | ------------------------------- |
+| `dev`         | `next dev --turbopack`         | Start dev server with Turbopack |
+| `build`       | `next build`                   | Production build                |
+| `start`       | `next start`                   | Start production server         |
+| `lint`        | `next lint`                    | Run ESLint                      |
+| `format`      | `prettier --write .`           | Format code with Prettier       |
+| `typecheck`   | `tsc --noEmit`                 | TypeScript type checking        |
 
-- **Light mode**: Background putih, foreground hitam, desain clean & minimal
-- **Dark mode**: Background `oklch(0.145 0 0)` (almost black), foreground putih
-- Semua warna menggunakan **oklch color space** untuk perceptual uniformity
-- Primary color: monochrome (dark in light mode, light in dark mode)
+---
 
-### Typography
+## 7. Design System
 
-- **Sans**: Geist (`--font-sans`)
-- **Mono**: JetBrains Mono (`--font-mono`) — digunakan sebagai default body font
-- Font loaded via `next/font/google`
+### Colors
+- `oklch` color space via CSS custom properties
+- Base color: `neutral`
+- Dark variant via `@variant dark`
+
+### Fonts
+- **Sans**: Geist (via `next/font/google`)
+- **Mono**: JetBrains Mono (via `next/font/google`)
+- **Signature**: Caveat (via `next/font/google`)
 
 ### Border Radius
-
-- Base: `0.625rem`, dengan computed variants (sm, md, lg, xl, 2xl, 3xl, 4xl)
+- Base: `0.625rem`
 
 ### Animations
-
-- View Transition API untuk theme switching
-- Framer Motion untuk page transitions, dock magnification, carousel
-- Custom pixel-fade animation untuk profile image
-- SVG path animation untuk signature effect
-- Spotlight background dengan mouse-following gradient
-
----
-
-## 🔧 Key Components Reference
-
-### `SpotlightBackground`
-
-Background interaktif dengan gradient yang mengikuti posisi mouse. Mendukung ambient drift saat tidak ada aktivitas mouse.
-
-### `PixelImage`
-
-Komponen gambar dengan efek pixelated reveal animation. Mendukung configurable grid, grayscale animation, dan replay.
-
-### `FadhilSignatureEffect`
-
-Animasi SVG tulisan tangan "Fadhil" menggunakan clip-path reveal animation.
-
-### `Dock` / `DockItem` / `DockIcon` / `DockLabel`
-
-Komponen dock macOS-style dengan efek magnetic magnification. Menggunakan `useMotionValue` dan `useSpring` dari framer-motion.
-
-### `WorkSection`
-
-Section pengalaman kerja menggunakan Radix Accordion. Setiap item menampilkan logo perusahaan, role, period, dan deskripsi expandable.
-
-### `SkillCategory`
-
-Menampilkan skill icons menggunakan API `skillicons.dev`. Auto-switch antara light/dark theme icons.
-
-### `ProjectCard`
-
-Card komponen untuk menampilkan project dengan image/video, tags, links, dan markdown description.
-
-### `AiChatDialog`
-
-Dialog chat AI mock (belum terintegrasi dengan backend AI). Fixed position di bottom-left.
+- View Transitions API (theme toggle)
+- Motion (page transitions, scroll reveals)
+- Pixel-fade effect (PixelImage component)
+- SVG path animations
+- Spotlight hover effect
+- Scroll-triggered animations
+- Typing animation
+- Auto-carousel
 
 ---
 
-## 🚧 Known Issues & TODOs
+## 8. Key Components Reference
 
-### Incomplete Pages
-
-- `app/projects/page.tsx` — masih dummy placeholder data
-- `app/certificates/page.tsx` — masih dummy placeholder data
-- `app/contact/page.tsx` — form belum diimplementasi, links masih `#`
-
-### Technical Debt
-
-1. **Duplikasi motion packages**: `framer-motion` dan `motion` terinstall bersamaan. Idealnya unified ke satu package.
-2. **Theme system conflict**: `next-themes` terinstall tetapi `ThemeProvider` custom digunakan. `skill-category.tsx` menggunakan `useTheme()` dari `next-themes` yang bisa konflik dengan custom theme management.
-3. **Monorepo skeleton**: Folder `packages/eslint-config` dan `packages/ui` kosong (hanya ada node_modules), kemungkinan leftover dari setup awal.
-4. **Store example**: `stores/index.ts` masih berisi counter example, belum ada actual store.
-5. **Education logo placeholder**: `edu.logo` menggunakan `placehold.co`, perlu diganti dengan asset asli.
-6. **Image tag imports**: Beberapa komponen menggunakan `<img>` dengan eslint-disable instead of `next/image`.
-7. **No testing**: Belum ada test setup (unit tests, e2e tests).
+| Component              | Description                                                                  |
+| ---------------------- | ---------------------------------------------------------------------------- |
+| SpotlightBackground    | Mouse-following radial gradient spotlight effect                             |
+| PixelImage             | Image with pixelated fade-in animation on load                               |
+| Dock                   | macOS-style floating dock navigation bar                                     |
+| AiChatDialog           | AI chat interface with streaming responses, rate limiting, session tracking  |
+| ContactForm            | Form with Zod validation, honeypot spam protection, Resend integration       |
+| WorkSection            | Timeline display of work experience with animated entries                    |
+| EducationSection       | Education history with animated cards                                        |
+| SkillCategory          | Skill group display with TechIcon badges                                     |
+| ProjectCard            | Project showcase card with image, tags, links                                |
+| AutoCarousel           | Auto-scrolling carousel for certificates                                     |
+| FilterSearchToolbar    | Search + filter bar with nuqs URL state                                      |
+| MagicCard              | Card with mouse-following gradient border effect                             |
+| TypingAnimation        | Text typing effect animation                                                 |
+| AnimatedSection        | Scroll-triggered reveal animation wrapper                                    |
+| Footer                 | Site footer with links and copyright                                         |
 
 ---
 
-## 🧩 Adding New Features — Quick Guide
+## 9. External Dependencies & APIs
 
-### Menambahkan halaman baru
+| Service              | Purpose                                    | URL                                    |
+| -------------------- | ------------------------------------------ | -------------------------------------- |
+| skillicons.dev       | Skill badge images                         | https://skillicons.dev                 |
+| Google Fonts         | Geist, JetBrains Mono, Caveat fonts        | https://fonts.google.com               |
+| Cloudflare R2        | CDN for images and assets                  | https://cdn.fadhildev.my.id/           |
+| Google Gemini API    | AI Chat Assistant                          | https://ai.google.dev                  |
+| Supabase             | Chat logs database                         | https://supabase.com                   |
+| Resend               | Email delivery for contact form            | https://resend.com                     |
+| Vercel Analytics     | Usage analytics                            | https://vercel.com/analytics           |
+| Vercel Speed Insights| Performance monitoring                     | https://vercel.com/speed-insights      |
+| Microsoft Clarity    | Session recording and heatmaps             | https://clarity.microsoft.com          |
+| GitHub API           | Contribution calendar data                 | https://api.github.com                 |
 
-1. Buat folder di `app/[nama-halaman]/page.tsx`
-2. Tambahkan navigation item di `components/navigation/floating-dock.tsx`
-3. Jika butuh client interactivity, tambahkan `"use client"` di baris pertama
+---
 
-### Menambahkan komponen UI baru
+## 10. Important File Paths
 
-1. Buat file di `components/ui/[nama-komponen].tsx`
-2. Gunakan `cn()` dari `@/lib/utils` untuk className merging
-3. Export types beserta component
-4. Opsional: tambahkan `// Demo` section di akhir file
+| File                          | Path                                          |
+| ----------------------------- | --------------------------------------------- |
+| Root layout                   | `app/layout.tsx`                              |
+| Page transitions              | `app/template.tsx`                            |
+| Global styles                 | `app/globals.css`                             |
+| AI Chat API                   | `app/api/chat/route.ts`                       |
+| Contact API                   | `app/api/contact/route.ts`                    |
+| Provider tree                 | `lib/root-provider.tsx`                       |
+| Utility functions             | `lib/utils.ts`                                |
+| Knowledge base (AI prompt)    | `lib/knowledge-base.ts`                       |
+| Contact validation schema     | `lib/contact-schema.ts`                       |
+| About page data               | `lib/about-data.ts`                           |
+| Projects data                 | `lib/projects-data.ts`                        |
+| Certificates data             | `lib/certificates-data.ts`                    |
+| Skill icons mapping           | `lib/skill-icons.ts`                          |
+| Dark mode hook                | `hooks/use-dark-mode.ts`                      |
+| Theme animation hook          | `hooks/use-theme-animation.ts`                |
+| i18n provider                 | `components/i18n-provider.tsx`                |
+| Theme provider                | `components/theme-provider.tsx`               |
+| Floating Dock                 | `components/navigation/`                      |
+| AI Chat dialog                | `components/chat/`                            |
+| Contact form                  | `components/section/contact-form.tsx`         |
+| shadcn/ui config              | `components.json`                             |
+| Prettier config               | `.prettierrc`                                 |
+| Environment example           | `.env.example`                                |
 
-### Menambahkan shadcn component
+---
 
+## 11. Known Issues & TODOs
+
+### Theme System Conflict
+- `next-themes` and custom dark mode (`useDarkMode`) coexist with overlapping responsibilities
+- `next-themes` is only used for `resolvedTheme` in `page.tsx`
+- Consider consolidating into a single theme system
+
+### Monorepo Skeleton
+- `packages/` directory exists but is empty
+- No actual monorepo packages configured
+- Either remove or populate with shared packages
+
+### Store Example
+- Zustand store example exists but may not be actively used
+- Review and clean up unused state management code
+
+### Image Tag Imports
+- Some images use direct `<img>` tags instead of Next.js `<Image>` component
+- Consider migrating to `<Image>` for optimization
+
+### No Testing
+- No test framework configured (no Jest, Vitest, Playwright)
+- Consider adding unit and integration tests
+
+### Legacy Google AI SDK
+- Both `@google/genai` (new) and `@google/generative-ai` (legacy) are installed
+- Plan migration to use only `@google/genai`
+
+---
+
+## 12. Adding New Features Quick Guide
+
+### Add a New Page
+1. Create directory under `app/` (e.g., `app/blog/`)
+2. Add `layout.tsx` and `page.tsx`
+3. Add navigation item to Floating Dock in `components/navigation/`
+4. Add i18n translations in `lib/i18n/`
+
+### Add a UI Component
+1. Create file in `components/ui/your-component.tsx`
+2. Use `"use client"` if interactive
+3. Use `cn()` for className merging
+4. Export as default
+
+### Add a shadcn/ui Component
 ```bash
-npx shadcn@latest add [component-name]
+npx shadcn@latest add <component-name>
 ```
 
-Config mengacu ke `components.json` — output ke `components/ui/`
+### Add a Hook
+1. Create file in `hooks/use-your-hook.ts`
+2. Prefix with `use-`
+3. Follow existing hook patterns
 
-### Menambahkan custom hook
+### Add Data / Content
+1. Create or update file in `lib/*-data.ts`
+2. Use bilingual structure: `{ en: "...", id: "..." }`
+3. Reference from components via imports
 
-1. Buat file di `hooks/use-[nama].ts`
-2. Prefix dengan `use-` (kebab-case)
-3. Tambahkan `"use client"` jika hook menggunakan browser APIs
-
-### Menambahkan data/konten baru
-
-- Data statis (experience, skills, education) didefinisikan langsung di page file (`app/page.tsx`)
-- Untuk data dinamis, gunakan TanStack Query + Axios pattern yang sudah ada
-
----
-
-## 🔑 Important File Paths
-
-| Purpose              | Path                                      |
-| -------------------- | ----------------------------------------- |
-| Homepage             | `app/page.tsx`                            |
-| Root layout          | `app/layout.tsx`                          |
-| Global styles        | `app/globals.css`                         |
-| Combined providers   | `lib/root-provider.tsx`                   |
-| Theme provider       | `components/theme-provider.tsx`           |
-| Navigation dock      | `components/navigation/floating-dock.tsx` |
-| Theme animation hook | `hooks/use-theme-animation.ts`            |
-| Dark mode hook       | `hooks/use-dark-mode.tsx`                 |
-| Utility: cn()        | `lib/utils.ts`                            |
-| Shared types         | `types/index.ts`                          |
-| shadcn config        | `components.json`                         |
-| TypeScript config    | `tsconfig.json`                           |
-| Prettier config      | `.prettierrc`                             |
-| ESLint config        | `eslint.config.mjs`                       |
+### Add an API Route
+1. Create `app/api/your-route/route.ts`
+2. Export async function `GET`, `POST`, etc.
+3. Add rate limiting if needed
+4. Add Zod validation for input
 
 ---
 
-## 🌐 External Dependencies & APIs
+## 13. Tips for AI Agents
 
-| Service        | Usage                                    |
-| -------------- | ---------------------------------------- |
-| skillicons.dev | Rendering skill/tech stack icons         |
-| placehold.co   | Placeholder images (education logo)      |
-| Google Fonts   | Geist + JetBrains Mono (via `next/font`) |
-
----
-
-## 💡 Tips for AI Agents
-
-1. **Selalu gunakan `"use client"`** untuk komponen yang menggunakan hooks, event handlers, atau browser APIs.
-2. **Jangan tambahkan semicolons** — project menggunakan Prettier tanpa semi.
-3. **Gunakan `cn()`** dari `@/lib/utils` untuk class merging, BUKAN string concatenation.
-4. **Import animasi dari `motion/react`** untuk konsistensi (bukan `framer-motion`).
-5. **Perhatikan theming**: Gunakan CSS variable tokens (`bg-background`, `text-foreground`) bukan hardcoded colors.
-6. **Path alias `@/*`** tersedia — hindari relative imports yang panjang.
-7. **Tailwind v4 syntax**: Project menggunakan `@import "tailwindcss"` dan `@theme inline` block, bukan `tailwind.config.js`.
-8. **Saat menambahkan page baru**: Selalu update dock navigation agar page accessible.
-9. **Data statis**: Experience, skills, education data langsung di `app/page.tsx` — tidak ada CMS atau database.
-10. **Monorepo packages**: Folder `packages/` bisa diabaikan — tidak aktif digunakan.
+1. **Always add `"use client"`** for components with interactivity (hooks, events, state)
+2. **No semicolons** — Prettier enforces this. Do not add them
+3. **Use `cn()`** from `lib/utils.ts` for all className merging
+4. **Import from `motion/react`** — NOT `framer-motion`
+5. **CSS variables** — use semantic tokens like `bg-background`, `text-foreground`, `border-border`
+6. **Path alias** — use `@/` for imports (e.g., `@/lib/utils`)
+7. **Tailwind v4** — uses `@import "tailwindcss"` not `@tailwind` directives
+8. **Dock navigation** — new pages need a Dock item in `components/navigation/`
+9. **Static data** — keep content in `lib/*-data.ts` files, not hardcoded in components
+10. **Monorepo packages** — `packages/` is empty skeleton, do not reference it
+11. **i18n** — all user-facing text must support EN and ID via `useTranslation()`
+12. **Images** — prefer AVIF format, use Cloudflare R2 CDN URLs
+13. **API routes** — always add rate limiting and input validation
+14. **Analytics** — do not remove Vercel Analytics, Speed Insights, or Clarity
+15. **SEO** — update `robots.ts` and `sitemap.ts` when adding new pages
