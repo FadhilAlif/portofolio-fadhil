@@ -20,6 +20,7 @@ const SKILL_SLUG_MAP: Readonly<Record<string, string>> = {
   rust: "rust",
   java: "java",
   "c#": "cs",
+  cs: "cs",
   "c++": "cpp",
   c: "c",
 
@@ -71,6 +72,8 @@ const SKILL_SLUG_MAP: Readonly<Record<string, string>> = {
   ruby: "ruby",
   rails: "rails",
   pinia: "pinia",
+  "dotnet": "dotnet",
+  ".net": "dotnet",
 
   // ── Mobile ───────────────────────────────────────────────────────────────────
   flutter: "flutter",
@@ -111,6 +114,7 @@ const SKILL_SLUG_MAP: Readonly<Record<string, string>> = {
   postman: "postman",
   linux: "linux",
   bash: "bash",
+  bun: "bun",
   jenkins: "jenkins",
 
   // ── Design ───────────────────────────────────────────────────────────────────
