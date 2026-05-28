@@ -197,7 +197,7 @@ export function AiChatDialog({ isOpen, onClose }: AiChatDialogProps) {
                 className={`flex w-full ${msg.role === "user" ? "justify-end" : "justify-start"}`}
               >
                 <div
-                  className={`max-w-[85%] overflow-x-auto rounded-2xl px-4 py-2 text-sm break-words ${
+                  className={`max-w-[85%] overflow-x-auto rounded-2xl px-4 py-2 text-sm wrap-break-word ${
                     msg.role === "user"
                       ? "rounded-tr-sm bg-primary text-primary-foreground"
                       : "rounded-tl-sm border border-border bg-muted text-foreground"

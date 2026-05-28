@@ -1,6 +1,6 @@
 ﻿# Fadhil Alif Priyatno — Portfolio
 
-Personal portfolio website showcasing projects, certificates, and professional experience. Built with Next.js 16, React 19, and TypeScript.
+Fadhil Alif Priyatno's personal portfolio website showcasing projects, certificates, and professional experience.
 
 **Live Site**: https://fadhildev.my.id
 

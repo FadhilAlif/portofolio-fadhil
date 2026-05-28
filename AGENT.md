@@ -9,7 +9,7 @@
 | Field       | Value                                                                                                                                        |
 | ----------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Name**    | portofolio-fadhil                                                                                                                            |
-| **Version** | 0.0.1                                                                                                                                        |
+| **Version** | 1.0.0                                                                                                                                       |
 | **Type**    | Personal Portfolio Website                                                                                                                   |
 | **Owner**   | Fadhil Alif Priyatno — Full-Stack Engineer                                                                                                   |
 | **Desc**    | Website portfolio pribadi yang menampilkan profil, pengalaman kerja, edukasi, skill, proyek, sertifikat, dan halaman kontak                  |

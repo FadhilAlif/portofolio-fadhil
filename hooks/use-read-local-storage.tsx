@@ -1,9 +1,11 @@
-import { Database, RefreshCw } from "lucide-react"
 import * as React from "react"
 
 // ============================================================================
 
-interface UseReadLocalStorageOptions<T, InitializeWithValue extends boolean | undefined> {
+interface UseReadLocalStorageOptions<
+  T,
+  InitializeWithValue extends boolean | undefined,
+> {
   deserializer?: (value: string) => T
   initializeWithValue: InitializeWithValue
 }
@@ -13,16 +15,16 @@ const IS_SERVER = typeof window === "undefined"
 // SSR version
 export function useReadLocalStorage<T>(
   key: string,
-  options: UseReadLocalStorageOptions<T, false>,
+  options: UseReadLocalStorageOptions<T, false>
 ): T | null | undefined
 // CSR version
 export function useReadLocalStorage<T>(
   key: string,
-  options?: Partial<UseReadLocalStorageOptions<T, true>>,
+  options?: Partial<UseReadLocalStorageOptions<T, true>>
 ): T | null
 export function useReadLocalStorage<T>(
   key: string,
-  options: Partial<UseReadLocalStorageOptions<T, boolean>> = {},
+  options: Partial<UseReadLocalStorageOptions<T, boolean>> = {}
 ): T | null | undefined {
   let { initializeWithValue = true } = options
   if (IS_SERVER) {
@@ -30,7 +32,7 @@ export function useReadLocalStorage<T>(
   }
 
   const deserializer = React.useCallback<(value: string) => T | null>(
-    value => {
+    (value) => {
       if (options.deserializer) {
         return options.deserializer(value)
       }
@@ -48,7 +50,7 @@ export function useReadLocalStorage<T>(
 
       return parsed as T
     },
-    [options],
+    [options]
   )
 
   const readValue = React.useCallback((): T | null => {
