@@ -9,11 +9,19 @@ import { env } from "@/lib/env"
 const resend = new Resend(env.RESEND_API_KEY)
 
 import { Redis } from "@upstash/redis"
+import { Ratelimit } from "@upstash/ratelimit"
 
 const kv = new Redis({
-  url: process.env.KV_REST_API_URL || "",
-  token: process.env.KV_REST_API_TOKEN || "",
+  url: process.env.UPSTASH_REDIS_REST_URL || "",
+  token: process.env.UPSTASH_REDIS_REST_TOKEN || "",
 })
+
+const ratelimit = new Ratelimit({
+  redis: kv,
+  limiter: Ratelimit.slidingWindow(3, "1 h"),
+  ephemeralCache: new Map(),
+})
+
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>()
 const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000 // 1 hour
 const RATE_LIMIT_MAX = 3
@@ -45,21 +53,15 @@ const CONTACT_TEXT = {
 } as const
 
 async function checkRateLimit(ip: string): Promise<{ allowed: boolean; retryAfter: number }> {
-  // Use Vercel KV if available, otherwise fallback to in-memory map
-  if (process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN) {
+  if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) {
     try {
-      const key = `ratelimit:contact:${ip}`
-      const count = await kv.incr(key)
-      if (count === 1) {
-        await kv.expire(key, Math.floor(RATE_LIMIT_WINDOW_MS / 1000))
+      const { success, reset } = await ratelimit.limit(`ratelimit:contact:${ip}`)
+      return { 
+        allowed: success, 
+        retryAfter: success ? 0 : Math.max(0, Math.ceil((reset - Date.now()) / 1000)) 
       }
-      if (count > RATE_LIMIT_MAX) {
-        const ttl = await kv.ttl(key)
-        return { allowed: false, retryAfter: Math.max(0, ttl) }
-      }
-      return { allowed: true, retryAfter: 0 }
     } catch (error) {
-      console.warn("[contact/rate-limit] Vercel KV failed, falling back to memory", error)
+      console.warn("[contact/rate-limit] Upstash Ratelimit failed, falling back to memory", error)
     }
   }
 
