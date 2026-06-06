@@ -1,4 +1,5 @@
 import type { AppLanguage } from "@/lib/i18n/config"
+import { siteConfig } from "@/lib/site-config"
 
 export type CertificateCategory = "web" | "mobile" | "ai" | "design" | "others"
 
@@ -46,7 +47,7 @@ export interface CertificateItem {
   featured?: boolean
 }
 
-const R2_URL = "https://cdn.fadhildev.my.id/certificate-avif"
+const R2_URL = `${siteConfig.cdnUrl}/certificate-avif`
 
 // Note: Replace the placeholder images with the actual AVIF/PNG versions of your certificates
 export const certificates: CertificateItem[] = [
@@ -85,7 +86,7 @@ export const certificates: CertificateItem[] = [
     category: "ai",
   },
   {
-    id: "cert-conduct-ux-research ",
+    id: "cert-conduct-ux-research",
     title: "Conduct UX Research and Test Early Concepts",
     issuer: "Google",
     issuedDate: "Mar 2026",
@@ -446,7 +447,7 @@ export const certificates: CertificateItem[] = [
     title: "Fundamental Front-End Web Development II",
     issuer: "Coding Studio",
     issuedDate: "Dec 2023",
-    credentialId: "19731",
+    credentialId: "19731-2",
     credentialUrl: `${R2_URL}/CodingStudio_Fundamental-Front-End-Web-Development%20(2).avif`,
     image: `${R2_URL}/CodingStudio_Fundamental-Front-End-Web-Development%20(2).avif`,
     category: "web",

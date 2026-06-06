@@ -55,6 +55,7 @@ function ContactInput({
               initial={{ opacity: 0, x: 6 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 6 }}
+              role="alert"
               className="flex items-start gap-1 text-right text-xs leading-snug text-destructive"
             >
               <AlertCircle className="mt-0.5 h-3 w-3 shrink-0" />
@@ -142,6 +143,7 @@ function ContactTextarea({
               initial={{ opacity: 0, x: 6 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 6 }}
+              role="alert"
               className="flex items-start gap-1 text-right text-xs leading-snug text-destructive"
             >
               <AlertCircle className="mt-0.5 h-3 w-3 shrink-0" />
@@ -320,6 +322,7 @@ export function ContactForm({ className }: ContactFormProps) {
               initial={{ opacity: 0, scale: 0.92 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.92 }}
+              role="status"
               className="flex min-h-[340px] flex-col items-center justify-center gap-4 text-center"
             >
               <motion.div
@@ -415,6 +418,7 @@ export function ContactForm({ className }: ContactFormProps) {
                     initial={{ opacity: 0, y: -6 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -6 }}
+                    role="alert"
                     className="flex items-start gap-2.5 rounded-lg border border-destructive/25 bg-destructive/8 px-4 py-3 text-sm text-destructive"
                   >
                     <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />

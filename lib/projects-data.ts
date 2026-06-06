@@ -4,13 +4,13 @@
 // Sorted: newest → oldest
 // ─────────────────────────────────────────────────────────────────────────────
 
+import { siteConfig } from "@/lib/site-config"
 import type { AppLanguage } from "@/lib/i18n/config"
 
 export type ProjectCategory = "web" | "mobile" | "private"
 
 export type ProjectRole =
   | "Full-Stack Engineer"
-  | "Fullstack Engineer"
   | "Frontend Engineer"
   | "Backend Engineer"
   | "Mobile Developer"
@@ -95,7 +95,7 @@ export function getCategories(
 // ─── Projects Array ───────────────────────────────────────────────────────────
 // Sorted newest → oldest. Replace image/video values with actual R2 URLs.
 
-const R2_URL = "https://cdn.fadhildev.my.id/project-avif"
+const R2_URL = `${siteConfig.cdnUrl}/project-avif`
 
 export const projects: ProjectItem[] = [
   {
@@ -164,7 +164,7 @@ export const projects: ProjectItem[] = [
       "A smart, modern finance app built with Flutter to make expense tracking effortless. Features receipt scanning, AI auto-categorization, seamless Supabase sync, and WhatsApp Bot integration.",
     tags: ["Flutter", "Dart", "Supabase"],
     image: `${R2_URL}/duwitku-banner.avif`,
-    video: `https://cdn.fadhildev.my.id/project/Duwitku_DemoVideo.mp4`,
+    video: `${siteConfig.cdnUrl}/project/Duwitku_DemoVideo.mp4`,
     href: "https://duwitku-landing.vercel.app/",
     links: [
       {
@@ -208,7 +208,7 @@ export const projects: ProjectItem[] = [
     tags: ["Flutter", "Dart", "Firebase"],
     image: `${R2_URL}/dishcovery-banner.avif`,
     video:
-      "https://cdn.fadhildev.my.id/project/Dishcovery_Product_Launch_Video.mp4",
+      `${siteConfig.cdnUrl}/project/Dishcovery_Product_Launch_Video.mp4`,
     href: "https://github.com/Dishcovery-Dev",
     links: [
       {
@@ -279,24 +279,6 @@ export const projects: ProjectItem[] = [
       },
     ],
   },
-  // {
-  //   title: "Stargram",
-  //   dates: "2025",
-  //   category: "web",
-  //   role: "Fullstack Engineer",
-  //   description:
-  //     "A full-stack social media app — photo uploads, comments, social media links, user auth, and a home feed. Frontend in Vue 3 + PrimeVue, backend in Express.js + Sequelize with JWT auth.",
-  //   tags: ["Vue.js", "Pinia", "Express.js", "MySQL", "Sequelize"],
-  //   image: `${R2_URL}/stargram-preview.avif`,
-  //   href: "https://github.com/FadhilAlif/Stargram-app",
-  //   links: [
-  //     {
-  //       type: "Source",
-  //       href: "https://github.com/FadhilAlif/Stargram-app",
-  //       icon: "github",
-  //     },
-  //   ],
-  // },
   {
     title: "Apilogy Admin Dashboard",
     dates: "Feb 2024 – Jun 2024",

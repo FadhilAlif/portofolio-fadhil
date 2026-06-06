@@ -2,11 +2,25 @@ import { NextRequest, NextResponse } from "next/server"
 import { Resend } from "resend"
 import { contactSchema } from "@/lib/contact-schema"
 
+import { env } from "@/lib/env"
+
 // ─── Resend client ────────────────────────────────────────────────────────────
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+const resend = new Resend(env.RESEND_API_KEY)
 
-// ─── Simple in-memory rate limiter ───────────────────────────────────────────
+import { Redis } from "@upstash/redis"
+import { Ratelimit } from "@upstash/ratelimit"
+
+const kv = new Redis({
+  url: process.env.UPSTASH_REDIS_REST_URL || "",
+  token: process.env.UPSTASH_REDIS_REST_TOKEN || "",
+})
+
+const ratelimit = new Ratelimit({
+  redis: kv,
+  limiter: Ratelimit.slidingWindow(3, "1 h"),
+  ephemeralCache: new Map(),
+})
 
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>()
 const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000 // 1 hour
@@ -38,12 +52,29 @@ const CONTACT_TEXT = {
   },
 } as const
 
-function checkRateLimit(ip: string): { allowed: boolean; retryAfter: number } {
+async function checkRateLimit(ip: string): Promise<{ allowed: boolean; retryAfter: number }> {
+  if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) {
+    try {
+      const { success, reset } = await ratelimit.limit(`ratelimit:contact:${ip}`)
+      return { 
+        allowed: success, 
+        retryAfter: success ? 0 : Math.max(0, Math.ceil((reset - Date.now()) / 1000)) 
+      }
+    } catch (error) {
+      console.warn("[contact/rate-limit] Upstash Ratelimit failed, falling back to memory", error)
+    }
+  }
+
+  // Fallback: In-memory rate limiting
   const now = Date.now()
   const entry = rateLimitMap.get(ip)
 
   if (!entry || now > entry.resetAt) {
     rateLimitMap.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS })
+    // Cleanup expired entries
+    for (const [k, v] of Array.from(rateLimitMap.entries())) {
+      if (now > v.resetAt) rateLimitMap.delete(k)
+    }
     return { allowed: true, retryAfter: 0 }
   }
   if (entry.count >= RATE_LIMIT_MAX) {
@@ -152,7 +183,7 @@ function buildEmailHtml(
             <td style="background:#0d0d0d;padding:20px 40px;text-align:center;border-top:1px solid rgba(255,255,255,0.06);">
               <p style="margin:0;font-size:11px;color:rgba(255,255,255,0.25);">
                 Sent from the contact form at
-                <a href="https://fadhil.dev" style="color:rgba(255,255,255,0.4);text-decoration:none;">fadhil.dev</a>
+                <a href="https://fadhildev.my.id" style="color:rgba(255,255,255,0.4);text-decoration:none;">fadhildev.my.id</a>
               </p>
             </td>
           </tr>
@@ -175,7 +206,7 @@ export async function POST(request: NextRequest) {
       request.headers.get("x-real-ip") ??
       "unknown"
 
-    const { allowed, retryAfter } = checkRateLimit(ip)
+    const { allowed, retryAfter } = await checkRateLimit(ip)
     const fallbackLanguage = resolveLanguage(
       request.headers.get("accept-language") ?? undefined
     )
@@ -230,7 +261,7 @@ export async function POST(request: NextRequest) {
       timeZone: "Asia/Jakarta",
     }).format(new Date())
 
-    const toEmail = process.env.CONTACT_EMAIL_TO ?? "fadhil.alifp@gmail.com"
+    const toEmail = env.CONTACT_EMAIL_TO
     const html = buildEmailHtml(name, email, message, sentAt)
 
     const { data, error } = await resend.emails.send({

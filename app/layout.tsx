@@ -10,6 +10,7 @@ import { FloatingDock } from "@/components/navigation/floating-dock"
 import { Analytics } from "@vercel/analytics/next"
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import MicrosoftAnalytics from "@/app/metrics/MicrosoftAnalytics"
+import { siteConfig } from "@/lib/site-config"
 
 const fontSans = Geist({
   subsets: ["latin"],
@@ -28,7 +29,7 @@ const caveat = Caveat({
 })
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://fadhildev.my.id"),
+  metadataBase: new URL(siteConfig.url),
   title: {
     default: "Fadhil Alif Priyatno - Software Engineer Portfolio",
     template: "%s | Fadhil Alif Priyatno",
@@ -47,9 +48,9 @@ export const metadata: Metadata = {
     "Next.js",
     "TypeScript",
   ],
-  authors: [{ name: "Fadhil Alif Priyatno", url: "https://fadhildev.my.id" }],
-  creator: "Fadhil Alif Priyatno",
-  publisher: "Fadhil Alif Priyatno",
+  authors: [{ name: siteConfig.name, url: siteConfig.url }],
+  creator: siteConfig.name,
+  publisher: siteConfig.name,
   formatDetection: {
     email: false,
     address: false,
@@ -59,7 +60,7 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     alternateLocale: ["id_ID"],
-    url: "https://fadhildev.my.id",
+    url: siteConfig.url,
     siteName: "Fadhil Alif Priyatno Portfolio",
     title: "Fadhil Alif Priyatno - Software Engineer Portfolio",
     description:
@@ -96,11 +97,7 @@ export const metadata: Metadata = {
     apple: "/apple-touch-icon.png",
   },
   alternates: {
-    canonical: "https://fadhildev.my.id",
-    languages: {
-      en: "https://fadhildev.my.id/en",
-      id: "https://fadhildev.my.id/id",
-    },
+    canonical: siteConfig.url,
   },
   verification: {
     google: "vijfrsNyDum5NYcLzBxljEgHvpAqACdRY6s59eRZDdE",
@@ -124,19 +121,26 @@ export default function RootLayout({
       )}
     >
       <body>
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:p-4 bg-background text-foreground"
+        >
+          Skip to content
+        </a>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "Person",
-              name: "Fadhil Alif Priyatno",
-              url: "https://fadhildev.my.id",
+              name: siteConfig.name,
+              url: siteConfig.url,
+              // Note: There is a typo in the filename on the CDN/public folder ('profie' instead of 'profile')
               image: "https://fadhildev.my.id/assets/fadhil-photo-profie.avif",
               sameAs: [
-                "https://www.linkedin.com/in/fadhilalifpriyatno",
-                "https://github.com/fadhilalif",
-                "https://www.instagram.com/fdhlalf_",
+                siteConfig.linkedin.url,
+                siteConfig.github.url,
+                siteConfig.instagram.url,
               ],
               jobTitle: "Software Engineer",
               worksFor: {
@@ -148,7 +152,7 @@ export default function RootLayout({
                 addressLocality: "Yogyakarta",
                 addressCountry: "ID",
               },
-              email: "mailto:fadhil.alifp@gmail.com",
+              email: `mailto:${siteConfig.email}`,
             }),
           }}
         />
@@ -159,13 +163,13 @@ export default function RootLayout({
               "@context": "https://schema.org",
               "@type": "WebSite",
               name: "Fadhil Alif Priyatno Portfolio",
-              url: "https://fadhildev.my.id",
+              url: siteConfig.url,
               description:
                 "Personal portfolio showcasing projects, certificates, and professional experience.",
               inLanguage: ["en", "id"],
               author: {
                 "@type": "Person",
-                name: "Fadhil Alif Priyatno",
+                name: siteConfig.name,
               },
             }),
           }}

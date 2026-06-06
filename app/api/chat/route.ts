@@ -1,9 +1,16 @@
 import { GoogleGenAI } from "@google/genai"
 import { createClient } from "@supabase/supabase-js"
 import { FADHIL_KNOWLEDGE_BASE } from "@/lib/knowledge-base"
+import { env } from "@/lib/env"
+import { Redis } from "@upstash/redis"
+import { Ratelimit } from "@upstash/ratelimit"
+import crypto from "crypto"
+
+import { z } from "zod"
 
 // ── Constants ──────────────────────────────────────────────
 const MAX_QUESTIONS_PER_SESSION = 3
+const MAX_MESSAGE_LENGTH = 2000
 
 // Fallback chain: try each model in order if the previous one is rate-limited
 const GEMINI_MODELS = [
@@ -13,11 +20,11 @@ const GEMINI_MODELS = [
 ] as const
 
 // ── Clients ────────────────────────────────────────────────
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY! })
+const ai = new GoogleGenAI({ apiKey: env.GEMINI_API_KEY })
 
 const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
+  env.NEXT_PUBLIC_SUPABASE_URL,
+  env.SUPABASE_SERVICE_ROLE_KEY,
   {
     auth: {
       autoRefreshToken: false,
@@ -26,10 +33,31 @@ const supabaseAdmin = createClient(
   }
 )
 
-// ── Helpers ────────────────────────────────────────────────
-const UUID_REGEX =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+const kv = new Redis({
+  url: process.env.UPSTASH_REDIS_REST_URL || "",
+  token: process.env.UPSTASH_REDIS_REST_TOKEN || "",
+})
 
+const ipRatelimit = new Ratelimit({
+  redis: kv,
+  limiter: Ratelimit.slidingWindow(10, "1 h"),
+  ephemeralCache: new Map(),
+})
+
+// ── Validation ─────────────────────────────────────────────
+const chatMessageSchema = z.object({
+  role: z.enum(["user", "assistant"]),
+  content: z.string().max(MAX_MESSAGE_LENGTH).trim(),
+})
+
+const chatRequestSchema = z.object({
+  session_id: z.string().uuid(),
+  message: z.string().min(1).max(MAX_MESSAGE_LENGTH).trim(),
+  history: z.array(chatMessageSchema).max(20).default([]),
+  lang: z.string().optional(),
+})
+
+// ── Helpers ────────────────────────────────────────────────
 type SupportedLanguage = "en" | "id"
 
 function resolveLanguage(value?: string): SupportedLanguage {
@@ -40,7 +68,7 @@ function resolveLanguage(value?: string): SupportedLanguage {
 const CHAT_TEXT = {
   en: {
     invalidSession: "Invalid or missing session_id",
-    messageRequired: "Message is required",
+    messageRequired: "Message is required and must be valid",
     rateLimitCheckFailed: "Failed to check rate limit",
     rateLimitReached: "Rate limit reached",
     rateLimitMessage:
@@ -52,7 +80,7 @@ const CHAT_TEXT = {
   },
   id: {
     invalidSession: "session_id tidak valid atau tidak ditemukan",
-    messageRequired: "Pesan wajib diisi",
+    messageRequired: "Pesan wajib diisi dan harus valid",
     rateLimitCheckFailed: "Gagal memeriksa batas pertanyaan",
     rateLimitReached: "Batas pertanyaan tercapai",
     rateLimitMessage:
@@ -74,133 +102,212 @@ function interpolate(
   })
 }
 
-interface ChatMessage {
-  role: "user" | "assistant"
-  content: string
-}
-
 // ── POST Handler ───────────────────────────────────────────
 export async function POST(request: Request) {
   try {
-    // 1. Parse & validate request body
-    const body = await request.json()
-    const { session_id, message, history, lang } = body as {
-      session_id: string
-      message: string
-      history: ChatMessage[]
-      lang?: string
+    const ip = request.headers.get("x-forwarded-for")?.split(",")[0].trim() || request.headers.get("x-real-ip") || "unknown"
+
+    // 1. Global IP Rate Limiting
+    if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) {
+      try {
+        const { success } = await ipRatelimit.limit(`ratelimit:chat_ip:${ip}`)
+        if (!success) {
+          return Response.json({ error: CHAT_TEXT.en.rateLimitReached }, { status: 429 })
+        }
+      } catch (error) {
+        console.warn("[Chat] IP ratelimit failed", error)
+      }
     }
-    const language = resolveLanguage(lang)
+
+    // 2. Parse & validate request body
+    let body: unknown
+    try {
+      body = await request.json()
+    } catch {
+      return Response.json({ error: "Invalid JSON" }, { status: 400 })
+    }
+
+    const parsed = chatRequestSchema.safeParse(body)
+    const language = resolveLanguage(
+      typeof body === "object" && body !== null && "lang" in body
+        ? String((body as { lang?: string }).lang)
+        : undefined
+    )
     const text = CHAT_TEXT[language]
 
-    if (!session_id || !UUID_REGEX.test(session_id)) {
-      return Response.json({ error: text.invalidSession }, { status: 400 })
+    if (!parsed.success) {
+      const isSessionError = parsed.error.issues.some(i => i.path.includes("session_id"))
+      if (isSessionError) {
+        return Response.json({ error: text.invalidSession }, { status: 400 })
+      }
+      return Response.json({ error: text.messageRequired, issues: parsed.error.flatten().fieldErrors }, { status: 400 })
     }
 
-    if (!message || typeof message !== "string" || !message.trim()) {
-      return Response.json({ error: text.messageRequired }, { status: 400 })
+    const { session_id, message, history } = parsed.data
+
+    // 3. Redis Session Counters (Strictly by IP)
+    let count = 0
+    if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) {
+      try {
+        const quotaKey = `chat_quota:${ip}`
+        count = await kv.incr(quotaKey)
+        if (count === 1) {
+          await kv.expire(quotaKey, 3600) // 1 hour expiration
+        }
+        if (count > MAX_QUESTIONS_PER_SESSION) {
+          return Response.json(
+            {
+              error: text.rateLimitReached,
+              message: interpolate(text.rateLimitMessage, {
+                max: MAX_QUESTIONS_PER_SESSION,
+              }),
+              remaining: 0,
+            },
+            { status: 429 }
+          )
+        }
+      } catch (error) {
+        console.warn("[Chat] Session counter failed", error)
+        // Fallback to Supabase count
+        const { count: sbCount } = await supabaseAdmin
+          .from("chat_logs")
+          .select("id", { count: "exact", head: true })
+          .eq("session_id", session_id)
+          .eq("role", "user")
+        count = (sbCount ?? 0) + 1
+      }
+    } else {
+      const { count: sbCount } = await supabaseAdmin
+        .from("chat_logs")
+        .select("id", { count: "exact", head: true })
+        .eq("session_id", session_id)
+        .eq("role", "user")
+      count = (sbCount ?? 0) + 1
+      
+      if (count > MAX_QUESTIONS_PER_SESSION) {
+        return Response.json({ error: text.rateLimitReached, message: interpolate(text.rateLimitMessage, { max: MAX_QUESTIONS_PER_SESSION }), remaining: 0 }, { status: 429 })
+      }
     }
 
-    // 2. Rate-limit check: count user messages in this session
-    const { count, error: countError } = await supabaseAdmin
-      .from("chat_logs")
-      .select("id", { count: "exact", head: true })
-      .eq("session_id", session_id)
-      .eq("role", "user")
+    // 4. Ephemeral Chat Memory
+    type ChatMessage = z.infer<typeof chatMessageSchema>
+    let actualHistory: ChatMessage[] = history
+    const historyKey = `chat_history:${session_id}`
 
-    if (countError) {
-      console.error("Supabase count error:", countError)
-      return Response.json(
-        { error: text.rateLimitCheckFailed },
-        { status: 500 }
-      )
+    if (process.env.UPSTASH_REDIS_REST_URL) {
+      try {
+        const stored = await kv.lrange(historyKey, 0, -1)
+        if (stored && stored.length > 0) {
+          actualHistory = stored.map(s => typeof s === 'string' ? JSON.parse(s) : s) as ChatMessage[]
+        }
+      } catch (e) {
+        console.warn("[Chat] Failed to fetch ephemeral memory", e)
+      }
     }
 
-    if ((count ?? 0) >= MAX_QUESTIONS_PER_SESSION) {
-      return Response.json(
-        {
-          error: text.rateLimitReached,
-          message: interpolate(text.rateLimitMessage, {
-            max: MAX_QUESTIONS_PER_SESSION,
-          }),
-          remaining: 0,
-        },
-        { status: 429 }
-      )
-    }
-
-    // 3. Build conversation contents for Gemini
+    // Build conversation contents for Gemini
     const contents = [
-      // Include previous conversation history for context
-      ...(Array.isArray(history)
-        ? history.map((msg: ChatMessage) => ({
+      ...(Array.isArray(actualHistory)
+        ? actualHistory.map((msg: ChatMessage) => ({
             role: msg.role === "assistant" ? "model" : "user",
             parts: [{ text: msg.content }],
           }))
         : []),
-      // Current user message
       {
         role: "user",
         parts: [{ text: message }],
       },
     ]
 
-    // 4. Call Gemini API with fallback chain
-    let aiResponse: string = text.noAiResponse
-    let lastError: unknown = null
+    // 5. LLM Response Caching
+    const hash = crypto.createHash('sha256').update(JSON.stringify(contents)).digest('hex')
+    const cacheKey = `chat_cache:${hash}`
+    let aiResponse: string | null = null
 
-    for (const model of GEMINI_MODELS) {
+    if (process.env.UPSTASH_REDIS_REST_URL) {
       try {
-        const response = await ai.models.generateContent({
-          model,
-          contents,
-          config: {
-            systemInstruction: FADHIL_KNOWLEDGE_BASE,
-            temperature: 0.7,
-            maxOutputTokens: 1024,
-          },
-        })
-
-        aiResponse = response.text ?? text.noAiResponse
-        lastError = null
-        console.log(`[Chat] Successfully used model: ${model}`)
-        break // success — stop trying fallback models
-      } catch (err: unknown) {
-        lastError = err
-        const shouldTryNext =
-          err instanceof Error &&
-          (err.message?.includes("429") ||
-            err.message?.includes("403") ||
-            err.message?.includes("RESOURCE_EXHAUSTED") ||
-            err.message?.includes("PERMISSION_DENIED") ||
-            err.message?.toLowerCase().includes("rate limit") ||
-            err.message?.toLowerCase().includes("quota") ||
-            err.message?.toLowerCase().includes("denied access"))
-
-        if (shouldTryNext) {
-          console.warn(
-            `[Chat] Model ${model} unavailable (${err.message?.slice(0, 60)}), trying next fallback...`
-          )
-          continue
+        const cachedResponse = await kv.get<string>(cacheKey)
+        if (cachedResponse) {
+          console.log("[Chat] Cache hit!")
+          aiResponse = cachedResponse
         }
-
-        // Other unexpected error — don't try fallback, just throw
-        throw err
+      } catch (e) {
+        console.warn("[Chat] Cache fetch failed", e)
       }
     }
 
-    if (lastError) {
-      // All models exhausted
-      console.error("All Gemini models rate-limited:", lastError)
-      return Response.json(
-        {
-          error: text.allModelsUnavailable,
-        },
-        { status: 503 }
-      )
+    if (!aiResponse) {
+      // Call Gemini API with fallback chain
+      let lastError: unknown = null
+      aiResponse = text.noAiResponse
+
+      for (const model of GEMINI_MODELS) {
+        try {
+          const response = await ai.models.generateContent({
+            model,
+            contents,
+            config: {
+              systemInstruction: FADHIL_KNOWLEDGE_BASE,
+              temperature: 0.7,
+              maxOutputTokens: 1024,
+            },
+          })
+
+          aiResponse = response.text ?? text.noAiResponse
+          lastError = null
+          console.log(`[Chat] Successfully used model: ${model}`)
+          break
+        } catch (err: unknown) {
+          lastError = err
+          const shouldTryNext =
+            err instanceof Error &&
+            (err.message?.includes("429") ||
+              err.message?.includes("403") ||
+              err.message?.includes("RESOURCE_EXHAUSTED") ||
+              err.message?.includes("PERMISSION_DENIED") ||
+              err.message?.toLowerCase().includes("rate limit") ||
+              err.message?.toLowerCase().includes("quota") ||
+              err.message?.toLowerCase().includes("denied access"))
+
+          if (shouldTryNext) {
+            console.warn(
+              `[Chat] Model ${model} unavailable (${err.message?.slice(0, 60)}), trying next fallback...`
+            )
+            continue
+          }
+          throw err
+        }
+      }
+
+      if (lastError) {
+        console.error("All Gemini models rate-limited:", lastError)
+        return Response.json({ error: text.allModelsUnavailable }, { status: 503 })
+      }
+
+      // Save to Cache
+      if (process.env.UPSTASH_REDIS_REST_URL) {
+        try {
+          await kv.set(cacheKey, aiResponse, { ex: 86400 }) // Cache for 1 day
+        } catch (e) {
+          console.warn("[Chat] Cache set failed", e)
+        }
+      }
     }
 
-    // 5. Log both messages to Supabase
+    // 6. Save Ephemeral Memory & Log to Supabase
+    if (process.env.UPSTASH_REDIS_REST_URL) {
+      try {
+        const p = kv.pipeline()
+        p.rpush(historyKey, JSON.stringify({ role: "user", content: message.trim() }))
+        p.rpush(historyKey, JSON.stringify({ role: "assistant", content: aiResponse }))
+        p.ltrim(historyKey, -40, -1) // Keep max 20 pairs
+        p.expire(historyKey, 3600) // 1 hour memory expiration
+        await p.exec()
+      } catch (e) {
+        console.warn("[Chat] Ephemeral memory update failed", e)
+      }
+    }
+
     const { error: insertError } = await supabaseAdmin
       .from("chat_logs")
       .insert([
@@ -210,11 +317,10 @@ export async function POST(request: Request) {
 
     if (insertError) {
       console.error("Supabase insert error:", insertError)
-      // Still return the AI response even if logging fails
     }
 
-    // 6. Return response with remaining question count
-    const remaining = MAX_QUESTIONS_PER_SESSION - ((count ?? 0) + 1)
+    // 7. Return response
+    const remaining = MAX_QUESTIONS_PER_SESSION - count
 
     return Response.json({
       response: aiResponse,
