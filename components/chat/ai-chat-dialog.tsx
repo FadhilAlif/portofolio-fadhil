@@ -21,6 +21,7 @@ interface ChatMessage {
   role: "user" | "assistant"
   content: string
   error?: boolean
+  isNew?: boolean
 }
 
 interface AiChatDialogProps {
@@ -41,6 +42,39 @@ function shuffle<T>(arr: T[]): T[] {
     ;[a[i], a[j]] = [a[j], a[i]]
   }
   return a
+}
+
+// ── Typewriter Component ───────────────────────────────────
+function TypewriterMarkdown({ content, onComplete }: { content: string, onComplete?: () => void }) {
+  const [displayedContent, setDisplayedContent] = useState("")
+
+  useEffect(() => {
+    let i = 0
+    const interval = setInterval(() => {
+      i += 8 // Reveal 8 characters at a time for a fast, snappy typing effect
+      if (i >= content.length) {
+        setDisplayedContent(content)
+        clearInterval(interval)
+        onComplete?.()
+      } else {
+        setDisplayedContent(content.slice(0, i))
+      }
+    }, 15) // Update every 15ms
+
+    return () => clearInterval(interval)
+  }, [content, onComplete])
+
+  return (
+    <ReactMarkdown
+      components={{
+        a: ({ node, ...props }) => (
+          <a {...props} target="_blank" rel="noopener noreferrer" />
+        ),
+      }}
+    >
+      {displayedContent}
+    </ReactMarkdown>
+  )
 }
 
 // ── Component ──────────────────────────────────────────────
@@ -174,7 +208,7 @@ export function AiChatDialog({ isOpen, onClose }: AiChatDialogProps) {
       // Add AI response
       setMessages((prev) => [
         ...prev,
-        { id: crypto.randomUUID(), role: "assistant", content: data.response },
+        { id: crypto.randomUUID(), role: "assistant", content: data.response, isNew: true },
       ])
       setRemaining(data.remaining ?? remaining - 1)
     } catch {
@@ -244,19 +278,28 @@ export function AiChatDialog({ isOpen, onClose }: AiChatDialogProps) {
                 >
                   {msg.role === "assistant" ? (
                     <div className="prose prose-sm dark:prose-invert max-w-none [&_a]:break-all [&_li]:my-0 [&_ol]:my-1 [&_p]:m-0 [&_ul]:my-1">
-                      <ReactMarkdown
-                        components={{
-                          a: ({ node, ...props }) => (
-                            <a
-                              {...props}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            />
-                          ),
-                        }}
-                      >
-                        {msg.content}
-                      </ReactMarkdown>
+                      {msg.isNew ? (
+                        <TypewriterMarkdown 
+                          content={msg.content} 
+                          onComplete={() => {
+                            setMessages(prev => prev.map(m => m.id === msg.id ? { ...m, isNew: false } : m))
+                          }}
+                        />
+                      ) : (
+                        <ReactMarkdown
+                          components={{
+                            a: ({ node, ...props }) => (
+                              <a
+                                {...props}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              />
+                            ),
+                          }}
+                        >
+                          {msg.content}
+                        </ReactMarkdown>
+                      )}
                     </div>
                   ) : (
                     <p className="m-0 whitespace-pre-wrap">{msg.content}</p>
