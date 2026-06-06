@@ -97,10 +97,6 @@ export const metadata: Metadata = {
   },
   alternates: {
     canonical: "https://fadhildev.my.id",
-    languages: {
-      en: "https://fadhildev.my.id/en",
-      id: "https://fadhildev.my.id/id",
-    },
   },
   verification: {
     google: "vijfrsNyDum5NYcLzBxljEgHvpAqACdRY6s59eRZDdE",
@@ -132,6 +128,7 @@ export default function RootLayout({
               "@type": "Person",
               name: "Fadhil Alif Priyatno",
               url: "https://fadhildev.my.id",
+              // Note: There is a typo in the filename on the CDN/public folder ('profie' instead of 'profile')
               image: "https://fadhildev.my.id/assets/fadhil-photo-profie.avif",
               sameAs: [
                 "https://www.linkedin.com/in/fadhilalifpriyatno",

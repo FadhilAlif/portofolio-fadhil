@@ -10,7 +10,6 @@ export type ProjectCategory = "web" | "mobile" | "private"
 
 export type ProjectRole =
   | "Full-Stack Engineer"
-  | "Fullstack Engineer"
   | "Frontend Engineer"
   | "Backend Engineer"
   | "Mobile Developer"
@@ -279,24 +278,6 @@ export const projects: ProjectItem[] = [
       },
     ],
   },
-  // {
-  //   title: "Stargram",
-  //   dates: "2025",
-  //   category: "web",
-  //   role: "Fullstack Engineer",
-  //   description:
-  //     "A full-stack social media app — photo uploads, comments, social media links, user auth, and a home feed. Frontend in Vue 3 + PrimeVue, backend in Express.js + Sequelize with JWT auth.",
-  //   tags: ["Vue.js", "Pinia", "Express.js", "MySQL", "Sequelize"],
-  //   image: `${R2_URL}/stargram-preview.avif`,
-  //   href: "https://github.com/FadhilAlif/Stargram-app",
-  //   links: [
-  //     {
-  //       type: "Source",
-  //       href: "https://github.com/FadhilAlif/Stargram-app",
-  //       icon: "github",
-  //     },
-  //   ],
-  // },
   {
     title: "Apilogy Admin Dashboard",
     dates: "Feb 2024 – Jun 2024",

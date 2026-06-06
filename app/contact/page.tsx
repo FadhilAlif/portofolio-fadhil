@@ -179,13 +179,6 @@ export default function ContactPage() {
               </div>
 
               {/* Availability badge */}
-              {/* <div className="inline-flex w-fit items-center gap-2 rounded-full border border-emerald-500/25 bg-emerald-500/10 px-4 py-2 text-xs font-medium text-emerald-600 dark:text-emerald-400">
-                <span className="relative flex h-2 w-2">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-                  <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
-                </span>
-                {t("contactPage.availableBadge")}
-              </div> */}
             </AnimatedSection>
           </div>
 

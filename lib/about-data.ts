@@ -519,7 +519,3 @@ const aboutByLanguage: Record<AppLanguage, AboutContent> = {
 export function getAboutData(language: AppLanguage): AboutContent {
   return aboutByLanguage[language] ?? aboutByLanguage.en
 }
-
-export const experiences = englishContent.experiences
-export const educations = englishContent.educations
-export const skillGroups = englishContent.skillGroups

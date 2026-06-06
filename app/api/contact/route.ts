@@ -152,7 +152,7 @@ function buildEmailHtml(
             <td style="background:#0d0d0d;padding:20px 40px;text-align:center;border-top:1px solid rgba(255,255,255,0.06);">
               <p style="margin:0;font-size:11px;color:rgba(255,255,255,0.25);">
                 Sent from the contact form at
-                <a href="https://fadhil.dev" style="color:rgba(255,255,255,0.4);text-decoration:none;">fadhil.dev</a>
+                <a href="https://fadhildev.my.id" style="color:rgba(255,255,255,0.4);text-decoration:none;">fadhildev.my.id</a>
               </p>
             </td>
           </tr>

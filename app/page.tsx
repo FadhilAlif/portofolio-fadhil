@@ -250,27 +250,6 @@ export default function Page() {
         </section>
 
         {/* ── Code Editor Section ──────────────────────────────────────── */}
-        {/*<AnimatedSection
-          variant="scale-in"
-          delay={0.1}
-          duration={0.8}
-          as="section"
-          className="mb-12"
-        >
-          <CodeEditor
-            lang="typescript"
-            title="about-me.ts"
-            copyButton
-            cursor
-            writing
-            inView
-            duration={8}
-            delay={0.3}
-            className="h-85 shadow-lg shadow-border/20 sm:h-100 md:h-112 lg:h-125"
-          >
-            {aboutCode}
-          </CodeEditor>
-        </AnimatedSection>*/}
 
         {/* ── Dynamic Content Columns ──────────────────────────────────── */}
         <div className="mt-12 grid w-full grid-cols-1 gap-12">

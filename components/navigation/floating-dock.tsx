@@ -31,8 +31,7 @@ export function FloatingDock() {
 
   // Avoid hydration mismatch
   useEffect(() => {
-    const timer = setTimeout(() => setMounted(true), 0)
-    return () => clearTimeout(timer)
+    setMounted(true)
   }, [])
 
   const handleNavigation = (path: string) => {
