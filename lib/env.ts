@@ -6,6 +6,9 @@ const envSchema = z.object({
   NEXT_PUBLIC_SUPABASE_URL: z.string().url(),
   SUPABASE_SERVICE_ROLE_KEY: z.string().min(1),
   CONTACT_EMAIL_TO: z.string().email().optional().default("fadhil.alifp@gmail.com"),
+  SPOTIFY_CLIENT_ID: z.string().min(1),
+  SPOTIFY_CLIENT_SECRET: z.string().min(1),
+  SPOTIFY_REFRESH_TOKEN: z.string().min(1),
 })
 
 export const env = envSchema.parse({
@@ -14,4 +17,7 @@ export const env = envSchema.parse({
   NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
   SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY,
   CONTACT_EMAIL_TO: process.env.CONTACT_EMAIL_TO,
+  SPOTIFY_CLIENT_ID: process.env.SPOTIFY_CLIENT_ID,
+  SPOTIFY_CLIENT_SECRET: process.env.SPOTIFY_CLIENT_SECRET,
+  SPOTIFY_REFRESH_TOKEN: process.env.SPOTIFY_REFRESH_TOKEN,
 })

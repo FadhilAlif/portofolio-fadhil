@@ -14,6 +14,8 @@ import { useTranslation } from "react-i18next"
 import { CLARITY_EVENTS, setClarityTag, trackClarityEvent } from "@/lib/clarity"
 import { siteConfig } from "@/lib/site-config"
 
+import { SpotifyWidget } from "@/components/ui/spotify-widget"
+
 // ─── Nav Links ───────────────────────────────────────────────────────────────
 
 const navLinks = [
@@ -126,6 +128,11 @@ export function Footer({ className }: FooterProps) {
               </Link>
             ))}
           </nav>
+
+          {/* Spotify Now Playing Widget */}
+          <div className="flex w-full justify-center">
+            <SpotifyWidget className="w-full max-w-[280px]" />
+          </div>
 
           {/* Dashed divider */}
           <div className="w-full border-t border-dashed border-border/40" />

@@ -139,3 +139,12 @@
 ::view-transition-old(root) {
   z-index: 1;
 }
+
+@keyframes music-bar {
+  0% {
+    height: 10%;
+  }
+  100% {
+    height: 100%;
+  }
+}
