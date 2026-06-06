@@ -105,8 +105,8 @@ function interpolate(
 // ── POST Handler ───────────────────────────────────────────
 export async function POST(request: Request) {
   try {
-    const ip = request.headers.get("x-forwarded-for")?.split(",")[0].trim() || request.headers.get("x-real-ip") || "unknown"
-
+    const forwardedFor = request.headers.get("x-forwarded-for")
+    const ip = request.headers.get("x-real-ip") || (forwardedFor ? forwardedFor.split(",").pop()?.trim() : null) || "unknown"
     // 1. Global IP Rate Limiting
     if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) {
       try {

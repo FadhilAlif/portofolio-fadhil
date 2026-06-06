@@ -10,14 +10,17 @@ import { useTranslation } from "react-i18next"
 import { getSupportedLanguage } from "@/lib/i18n/config"
 import ClarityScrollDepthTracker from "@/app/metrics/ClarityScrollDepthTracker"
 
+import dynamic from "next/dynamic"
 import { HeroSection } from "@/components/home/hero-section"
-import { ExperienceSection } from "@/components/home/experience-section"
-import { EducationSection } from "@/components/home/education-section"
-import { SkillsSection } from "@/components/home/skills-section"
-import { ProjectsSection } from "@/components/home/projects-section"
-import { CertificatesSection } from "@/components/home/certificates-section"
-import { StatsSection } from "@/components/home/stats-section"
-import { ContactCtaSection } from "@/components/home/contact-cta-section"
+
+// Dynamically import below-the-fold sections to reduce initial bundle size
+const ExperienceSection = dynamic(() => import("@/components/home/experience-section").then(mod => ({ default: mod.ExperienceSection })))
+const EducationSection = dynamic(() => import("@/components/home/education-section").then(mod => ({ default: mod.EducationSection })))
+const SkillsSection = dynamic(() => import("@/components/home/skills-section").then(mod => ({ default: mod.SkillsSection })))
+const ProjectsSection = dynamic(() => import("@/components/home/projects-section").then(mod => ({ default: mod.ProjectsSection })))
+const CertificatesSection = dynamic(() => import("@/components/home/certificates-section").then(mod => ({ default: mod.CertificatesSection })))
+const StatsSection = dynamic(() => import("@/components/home/stats-section").then(mod => ({ default: mod.StatsSection })))
+const ContactCtaSection = dynamic(() => import("@/components/home/contact-cta-section").then(mod => ({ default: mod.ContactCtaSection })))
 
 export default function HomeClient() {
   const { i18n } = useTranslation()

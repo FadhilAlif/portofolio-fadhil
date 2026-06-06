@@ -604,16 +604,16 @@ Client (ContactForm)
 
 > Low-effort, high-impact cleanup.
 
-| Task | Description | Effort |
+| Task | Description | Status |
 |------|-------------|--------|
-| Remove unused deps | Uninstall `@google/generative-ai`, `shiki`, `zustand`, `@supabase/ssr`, `axios`, `react-dropzone`, `@tabler/icons-react`. Move `supabase` CLI to devDeps | 🟢 Low |
-| Delete dead code | Remove commented-out CodeEditor, availability badge, Stargram project. Delete `handleAxiosError.ts`, `apple-cards-carousel.tsx`, `dropzone.tsx`, `expandable-card-demo-grid.tsx`, `images-badge-demo.tsx`. Remove unused exports from `about-data.ts`. Delete empty `packages/` dir | 🟢 Low |
-| Remove unused CSS vars | Delete sidebar + chart variables from `globals.css` | 🟢 Low |
-| Fix data integrity | Trim trailing space in cert ID, fix duplicate credential IDs, fix image filename typo | 🟢 Low |
-| Fix hydration workaround | Replace `setTimeout` with `useEffect` in `floating-dock.tsx` | 🟢 Low |
-| Fix domain inconsistency | Standardize to `fadhildev.my.id` everywhere | 🟢 Low |
-| Fix alternates.languages | Remove invalid `/en` and `/id` alternates from layout metadata | 🟢 Low |
-| Remove dead exit animation | Remove `exit` prop from `template.tsx` or add `AnimatePresence` | 🟢 Low |
+| Remove unused deps | Uninstall `@google/generative-ai`, `shiki`, `zustand`, `@supabase/ssr`, `axios`, `react-dropzone`, `@tabler/icons-react`. Move `supabase` CLI to devDeps | ✅ Done |
+| Delete dead code | Remove commented-out CodeEditor, availability badge, Stargram project. Delete `handleAxiosError.ts`, `apple-cards-carousel.tsx`, `dropzone.tsx`, `expandable-card-demo-grid.tsx`, `images-badge-demo.tsx`. Remove unused exports from `about-data.ts`. Delete empty `packages/` dir | ✅ Done |
+| Remove unused CSS vars | Delete sidebar + chart variables from `globals.css` | ✅ Done |
+| Fix data integrity | Trim trailing space in cert ID, fix duplicate credential IDs, fix image filename typo | ✅ Done |
+| Fix hydration workaround | Replace `setTimeout` with `useEffect` in `floating-dock.tsx` | ✅ Done |
+| Fix domain inconsistency | Standardize to `fadhildev.my.id` everywhere | ✅ Done |
+| Fix alternates.languages | Remove invalid `/en` and `/id` alternates from layout metadata | ✅ Done |
+| Remove dead exit animation | Remove `exit` prop from `template.tsx` or add `AnimatePresence` | ✅ Done |
 
 ### Sprint 2 — Architecture (Day 3-7)
 
@@ -632,15 +632,15 @@ Client (ContactForm)
 
 > Harden the application and improve accessibility.
 
-| Task | Description | Effort |
+| Task | Description | Effort/Status |
 |------|-------------|--------|
 | Security headers | Add CSP, X-Frame-Options, X-Content-Type-Options, Referrer-Policy to `next.config.mjs` `headers()` | 🟡 Medium |
-| Chat input validation | Add message length limit (2000 chars), validate/sanitize history array, add Zod schema | 🟡 Medium |
-| Persistent rate limiter | Move contact form rate limiting from in-memory Map to Supabase or Vercel KV | 🟡 Medium |
+| Chat input validation | Added Upstash Redis ephemeral memory limit, Typewriter effect for simulated typing speed to prevent rapid firing | ✅ Done |
+| Persistent rate limiter | Implemented Upstash Redis rate limiting for global API IP shielding and strictly 3 questions per IP per hour. | ✅ Done |
 | Scope image patterns | Replace `**.r2.dev` wildcards with specific bucket hostnames | 🟢 Low |
 | Accessibility pass | Add `aria-label` to social links, `role="dialog"` + focus trap to chat, `aria-live` to filter results, skip-to-content link | 🟡 Medium |
 | Consolidate icon libraries | Remove `@tabler/icons-react`, keep Phosphor (primary) + Lucide (shadcn) | 🟢 Low |
-| Chat UX improvements | Add retry mechanism, message IDs for keys, input length limit with counter | 🟡 Medium |
+| Chat UX improvements | Replaced SSE with Typewriter frontend simulation, added localStorage session persistence, implemented Semantic LLM caching | ✅ Done |
 
 ### Sprint 4+ — New Features (Week 2+)
 
@@ -652,9 +652,7 @@ Client (ContactForm)
 | Resume/CV page | Web-native resume with print CSS, always up-to-date from `about-data.ts` | 🟡 Medium | P1 |
 | Command palette (⌘K) | `cmdk` library for keyboard-driven navigation, search, toggles | 🟡 Medium | P1 |
 | Project case studies | Dynamic route `app/projects/[slug]/page.tsx` with MDX, problem/process/solution format | 🔴 High | P1 |
-| Deep GitHub integration | Pinned repos with live stats, recent commits, language breakdown via GraphQL API | 🟡 Medium | P2 |
-| Spotify integration | "Currently Playing" widget via Spotify Web API + OAuth token refresh | 🟡 Medium | P2 |
-| Guestbook | Visitor messages via Supabase with GitHub OAuth or anonymous + rate limiting | 🟡 Medium | P2 |
+| Spotify integration | "Currently Playing" widget via Spotify Web API + OAuth token refresh | ❌ Cancelled (Need Pro Subscription) | P2 |
 | Testing infrastructure | Vitest (unit), Testing Library (component), Playwright (E2E) | 🔴 High | P2 |
 | Micro-interactions | Loading skeletons, scroll progress bar, hover card previews, 404 page, easter eggs | 🟡 Medium | P3 |
 | Public stats page | Lighthouse scores, visitor count, chat stats, uptime | 🟡 Medium | P3 |
@@ -745,6 +743,7 @@ content/
 | 6 | Remove `next-themes` in favor of custom hooks | Keep both, fully migrate to next-themes | Custom hooks already handle View Transitions API which next-themes cannot do |
 | 7 | Zod for env validation | Manual checks, `t3-env` | Already using Zod in the project, consistent tooling |
 | 8 | `cmdk` for command palette | `kbar`, custom implementation | Built by Vercel team, pairs with shadcn/ui, well-maintained |
+| 9 | Cancel Spotify Integration | Keep it with mock data | Spotify Web API now strictly requires a Premium Subscription to access the player APIs. Removing the feature entirely is cleaner. |
 
 ---
 
