@@ -145,14 +145,14 @@ export async function POST(request: Request) {
 
     const { session_id, message, history } = parsed.data
 
-    // 3. Redis Session Counters
+    // 3. Redis Session Counters (Strictly by IP)
     let count = 0
     if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) {
       try {
-        const sessionKey = `chat_session:${session_id}`
-        count = await kv.incr(sessionKey)
+        const quotaKey = `chat_quota:${ip}`
+        count = await kv.incr(quotaKey)
         if (count === 1) {
-          await kv.expire(sessionKey, 3600) // 1 hour expiration
+          await kv.expire(quotaKey, 3600) // 1 hour expiration
         }
         if (count > MAX_QUESTIONS_PER_SESSION) {
           return Response.json(

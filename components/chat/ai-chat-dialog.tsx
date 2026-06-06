@@ -115,10 +115,17 @@ export function AiChatDialog({ isOpen, onClose }: AiChatDialogProps) {
     })
   }, [allSuggestions])
 
-  // Initialize session on first open
+  // Initialize session from localStorage or create new
   useEffect(() => {
     if (isOpen && !sessionId) {
-      setSessionId(crypto.randomUUID())
+      const stored = localStorage.getItem("chat_session_id")
+      if (stored) {
+        setSessionId(stored)
+      } else {
+        const newId = crypto.randomUUID()
+        localStorage.setItem("chat_session_id", newId)
+        setSessionId(newId)
+      }
     }
   }, [isOpen, sessionId])
 
