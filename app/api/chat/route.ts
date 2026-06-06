@@ -3,8 +3,11 @@ import { createClient } from "@supabase/supabase-js"
 import { FADHIL_KNOWLEDGE_BASE } from "@/lib/knowledge-base"
 import { env } from "@/lib/env"
 
+import { z } from "zod"
+
 // ── Constants ──────────────────────────────────────────────
 const MAX_QUESTIONS_PER_SESSION = 3
+const MAX_MESSAGE_LENGTH = 2000
 
 // Fallback chain: try each model in order if the previous one is rate-limited
 const GEMINI_MODELS = [
@@ -27,10 +30,20 @@ const supabaseAdmin = createClient(
   }
 )
 
-// ── Helpers ────────────────────────────────────────────────
-const UUID_REGEX =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+// ── Validation ─────────────────────────────────────────────
+const chatMessageSchema = z.object({
+  role: z.enum(["user", "assistant"]),
+  content: z.string().max(MAX_MESSAGE_LENGTH).trim(),
+})
 
+const chatRequestSchema = z.object({
+  session_id: z.string().uuid(),
+  message: z.string().min(1).max(MAX_MESSAGE_LENGTH).trim(),
+  history: z.array(chatMessageSchema).max(20).default([]),
+  lang: z.string().optional(),
+})
+
+// ── Helpers ────────────────────────────────────────────────
 type SupportedLanguage = "en" | "id"
 
 function resolveLanguage(value?: string): SupportedLanguage {
@@ -41,7 +54,7 @@ function resolveLanguage(value?: string): SupportedLanguage {
 const CHAT_TEXT = {
   en: {
     invalidSession: "Invalid or missing session_id",
-    messageRequired: "Message is required",
+    messageRequired: "Message is required and must be valid",
     rateLimitCheckFailed: "Failed to check rate limit",
     rateLimitReached: "Rate limit reached",
     rateLimitMessage:
@@ -53,7 +66,7 @@ const CHAT_TEXT = {
   },
   id: {
     invalidSession: "session_id tidak valid atau tidak ditemukan",
-    messageRequired: "Pesan wajib diisi",
+    messageRequired: "Pesan wajib diisi dan harus valid",
     rateLimitCheckFailed: "Gagal memeriksa batas pertanyaan",
     rateLimitReached: "Batas pertanyaan tercapai",
     rateLimitMessage:
@@ -75,32 +88,34 @@ function interpolate(
   })
 }
 
-interface ChatMessage {
-  role: "user" | "assistant"
-  content: string
-}
-
 // ── POST Handler ───────────────────────────────────────────
 export async function POST(request: Request) {
   try {
     // 1. Parse & validate request body
-    const body = await request.json()
-    const { session_id, message, history, lang } = body as {
-      session_id: string
-      message: string
-      history: ChatMessage[]
-      lang?: string
+    let body: unknown
+    try {
+      body = await request.json()
+    } catch {
+      return Response.json({ error: "Invalid JSON" }, { status: 400 })
     }
-    const language = resolveLanguage(lang)
+
+    const parsed = chatRequestSchema.safeParse(body)
+    const language = resolveLanguage(
+      typeof body === "object" && body !== null && "lang" in body
+        ? String((body as { lang?: string }).lang)
+        : undefined
+    )
     const text = CHAT_TEXT[language]
 
-    if (!session_id || !UUID_REGEX.test(session_id)) {
-      return Response.json({ error: text.invalidSession }, { status: 400 })
+    if (!parsed.success) {
+      const isSessionError = parsed.error.issues.some(i => i.path.includes("session_id"))
+      if (isSessionError) {
+        return Response.json({ error: text.invalidSession }, { status: 400 })
+      }
+      return Response.json({ error: text.messageRequired, issues: parsed.error.flatten().fieldErrors }, { status: 400 })
     }
 
-    if (!message || typeof message !== "string" || !message.trim()) {
-      return Response.json({ error: text.messageRequired }, { status: 400 })
-    }
+    const { session_id, message, history } = parsed.data
 
     // 2. Rate-limit check: count user messages in this session
     const { count, error: countError } = await supabaseAdmin
@@ -131,6 +146,7 @@ export async function POST(request: Request) {
     }
 
     // 3. Build conversation contents for Gemini
+    type ChatMessage = z.infer<typeof chatMessageSchema>
     const contents = [
       // Include previous conversation history for context
       ...(Array.isArray(history)

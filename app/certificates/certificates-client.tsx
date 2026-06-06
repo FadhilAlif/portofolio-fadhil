@@ -105,7 +105,7 @@ export default function CertificatesPage() {
         </Link>
       </header>
 
-      <main className="relative z-10 mx-auto flex w-full max-w-6xl flex-1 flex-col px-6 pb-8">
+      <main id="main-content" className="relative z-10 mx-auto flex w-full max-w-6xl flex-1 flex-col px-6 pb-8">
         {/* ── Section Header ───────────────────────────────────────────── */}
         <AnimatedSection
           variant="fade-up"
@@ -134,6 +134,10 @@ export default function CertificatesPage() {
             searchPlaceholder={t("certificatesPage.searchPlaceholder")}
           />
         </AnimatedSection>
+
+        <div aria-live="polite" className="sr-only">
+          {filtered.length} {t("certificatesPage.resultsFound", { defaultValue: "results found" })}
+        </div>
 
         {/* ── Certificate Grid ──────────────────────────────────────────── */}
         <div>

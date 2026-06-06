@@ -41,7 +41,7 @@ export default function HomeClient() {
         ambient={true}
       />
 
-      <main className="relative z-10 mx-auto flex w-full max-w-6xl flex-1 flex-col px-6 pb-8">
+      <main id="main-content" className="relative z-10 mx-auto flex w-full max-w-6xl flex-1 flex-col px-6 pb-8">
         <HeroSection />
         
         <div className="mt-12 grid w-full grid-cols-1 gap-12">

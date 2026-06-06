@@ -8,8 +8,12 @@ import { env } from "@/lib/env"
 
 const resend = new Resend(env.RESEND_API_KEY)
 
-// ─── Simple in-memory rate limiter ───────────────────────────────────────────
+import { Redis } from "@upstash/redis"
 
+const kv = new Redis({
+  url: process.env.KV_REST_API_URL || "",
+  token: process.env.KV_REST_API_TOKEN || "",
+})
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>()
 const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000 // 1 hour
 const RATE_LIMIT_MAX = 3
@@ -40,12 +44,35 @@ const CONTACT_TEXT = {
   },
 } as const
 
-function checkRateLimit(ip: string): { allowed: boolean; retryAfter: number } {
+async function checkRateLimit(ip: string): Promise<{ allowed: boolean; retryAfter: number }> {
+  // Use Vercel KV if available, otherwise fallback to in-memory map
+  if (process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN) {
+    try {
+      const key = `ratelimit:contact:${ip}`
+      const count = await kv.incr(key)
+      if (count === 1) {
+        await kv.expire(key, Math.floor(RATE_LIMIT_WINDOW_MS / 1000))
+      }
+      if (count > RATE_LIMIT_MAX) {
+        const ttl = await kv.ttl(key)
+        return { allowed: false, retryAfter: Math.max(0, ttl) }
+      }
+      return { allowed: true, retryAfter: 0 }
+    } catch (error) {
+      console.warn("[contact/rate-limit] Vercel KV failed, falling back to memory", error)
+    }
+  }
+
+  // Fallback: In-memory rate limiting
   const now = Date.now()
   const entry = rateLimitMap.get(ip)
 
   if (!entry || now > entry.resetAt) {
     rateLimitMap.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS })
+    // Cleanup expired entries
+    for (const [k, v] of Array.from(rateLimitMap.entries())) {
+      if (now > v.resetAt) rateLimitMap.delete(k)
+    }
     return { allowed: true, retryAfter: 0 }
   }
   if (entry.count >= RATE_LIMIT_MAX) {
@@ -177,7 +204,7 @@ export async function POST(request: NextRequest) {
       request.headers.get("x-real-ip") ??
       "unknown"
 
-    const { allowed, retryAfter } = checkRateLimit(ip)
+    const { allowed, retryAfter } = await checkRateLimit(ip)
     const fallbackLanguage = resolveLanguage(
       request.headers.get("accept-language") ?? undefined
     )

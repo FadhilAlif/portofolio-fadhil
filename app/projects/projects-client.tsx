@@ -128,7 +128,7 @@ export default function ProjectsPage() {
         </Link>
       </header>
 
-      <main className="relative z-10 mx-auto flex w-full max-w-6xl flex-1 flex-col px-6 pb-8">
+      <main id="main-content" className="relative z-10 mx-auto flex w-full max-w-6xl flex-1 flex-col px-6 pb-8">
         <AnimatedSection
           variant="fade-up"
           duration={0.6}
@@ -161,6 +161,10 @@ export default function ProjectsPage() {
             searchPlaceholder={t("projectsPage.searchPlaceholder")}
           />
         </AnimatedSection>
+
+        <div aria-live="polite" className="sr-only">
+          {filtered.length} {t("projectsPage.resultsFound", { defaultValue: "results found" })}
+        </div>
 
         <div className="grid w-full auto-rows-fr grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <AnimatePresence mode="popLayout">

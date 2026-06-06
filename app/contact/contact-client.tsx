@@ -91,7 +91,7 @@ export default function ContactPage() {
         </Link>
       </header>
 
-      <main className="relative z-10 mx-auto flex w-full max-w-5xl flex-1 flex-col items-center justify-center px-6 pt-10 pb-20">
+      <main id="main-content" className="relative z-10 mx-auto flex w-full max-w-5xl flex-1 flex-col items-center justify-center px-6 pt-10 pb-20">
         <div className="grid w-full grid-cols-1 items-center gap-12 lg:grid-cols-2 lg:gap-16">
           {/* Left — Hero & contact info */}
           <div className="flex flex-col gap-12">

@@ -6,6 +6,8 @@ import {
   XIcon,
   CircleNotchIcon,
   SparkleIcon,
+  WarningCircleIcon,
+  ArrowClockwiseIcon,
 } from "@phosphor-icons/react"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { AnimatePresence, motion } from "motion/react"
@@ -15,8 +17,10 @@ import { getSupportedLanguage } from "@/lib/i18n/config"
 
 // ── Types ──────────────────────────────────────────────────
 interface ChatMessage {
+  id: string
   role: "user" | "assistant"
   content: string
+  error?: boolean
 }
 
 interface AiChatDialogProps {
@@ -26,6 +30,7 @@ interface AiChatDialogProps {
 
 const MAX_QUESTIONS = 3
 const VISIBLE_SUGGESTIONS = 3
+const MAX_CHARS = 2000
 
 // ── Helpers ────────────────────────────────────────────────
 /** Fisher-Yates shuffle — returns a new array */
@@ -95,22 +100,50 @@ export function AiChatDialog({ isOpen, onClose }: AiChatDialogProps) {
     }
   }, [isOpen])
 
+  // Focus trap
+  useEffect(() => {
+    if (!isOpen) return
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onClose()
+      }
+    }
+    window.addEventListener("keydown", handleKeyDown)
+    return () => window.removeEventListener("keydown", handleKeyDown)
+  }, [isOpen, onClose])
+
   // Send message (supports direct text for badge clicks)
-  const handleSend = async (e?: React.FormEvent, directMessage?: string) => {
+  const handleSend = async (e?: React.FormEvent, directMessage?: string, retryId?: string) => {
     e?.preventDefault()
-    const userMessage = (directMessage ?? input).trim()
+    let userMessage = directMessage
+    
+    if (retryId) {
+      const msg = messages.find(m => m.id === retryId)
+      if (msg) userMessage = msg.content
+    } else {
+      userMessage = userMessage ?? input.trim()
+    }
+    
     if (!userMessage || isLoading || remaining <= 0 || !sessionId) return
 
     setInput("")
     setError(null)
-
-    // Optimistically add user message
-    const updatedMessages: ChatMessage[] = [
-      ...messages,
-      { role: "user", content: userMessage },
-    ]
-    setMessages(updatedMessages)
     setIsLoading(true)
+
+    // Remove old errored message if retrying
+    let historyToSend = messages
+    if (retryId) {
+      setMessages(prev => prev.filter(m => m.id !== retryId))
+      historyToSend = messages.filter(m => m.id !== retryId && !m.error)
+    }
+
+    const newMessageId = crypto.randomUUID()
+    
+    // Optimistically add user message
+    setMessages(prev => [
+      ...prev.filter(m => !m.error || m.role !== "user"), // remove previous errors
+      { id: newMessageId, role: "user", content: userMessage as string },
+    ])
 
     try {
       const res = await fetch("/api/chat", {
@@ -119,7 +152,7 @@ export function AiChatDialog({ isOpen, onClose }: AiChatDialogProps) {
         body: JSON.stringify({
           session_id: sessionId,
           message: userMessage,
-          history: messages, // send previous messages as context
+          history: historyToSend.map(m => ({ role: m.role, content: m.content })),
           lang: getSupportedLanguage(i18n.resolvedLanguage),
         }),
       })
@@ -133,17 +166,20 @@ export function AiChatDialog({ isOpen, onClose }: AiChatDialogProps) {
         } else {
           setError(t("chat.unknownError"))
         }
+        // Mark the user message as errored
+        setMessages(prev => prev.map(m => m.id === newMessageId ? { ...m, error: true } : m))
         return
       }
 
       // Add AI response
       setMessages((prev) => [
         ...prev,
-        { role: "assistant", content: data.response },
+        { id: crypto.randomUUID(), role: "assistant", content: data.response },
       ])
       setRemaining(data.remaining ?? remaining - 1)
     } catch {
       setError(t("chat.connectionError"))
+      setMessages(prev => prev.map(m => m.id === newMessageId ? { ...m, error: true } : m))
     } finally {
       setIsLoading(false)
     }
@@ -155,6 +191,9 @@ export function AiChatDialog({ isOpen, onClose }: AiChatDialogProps) {
     <AnimatePresence>
       {isOpen && (
         <motion.div
+          role="dialog"
+          aria-modal="true"
+          aria-label={t("chat.title")}
           initial={{ opacity: 0, y: 20, scale: 0.95 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 20, scale: 0.95 }}
@@ -191,15 +230,15 @@ export function AiChatDialog({ isOpen, onClose }: AiChatDialogProps) {
               </div>
             )}
 
-            {messages.map((msg, i) => (
+            {messages.map((msg) => (
               <div
-                key={i}
-                className={`flex w-full ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+                key={msg.id}
+                className={`flex w-full ${msg.role === "user" ? "justify-end" : "justify-start"} flex-col items-${msg.role === "user" ? "end" : "start"}`}
               >
                 <div
                   className={`max-w-[85%] overflow-x-auto rounded-2xl px-4 py-2 text-sm wrap-break-word ${
                     msg.role === "user"
-                      ? "rounded-tr-sm bg-primary text-primary-foreground"
+                      ? msg.error ? "rounded-tr-sm bg-destructive/10 border border-destructive text-destructive" : "rounded-tr-sm bg-primary text-primary-foreground"
                       : "rounded-tl-sm border border-border bg-muted text-foreground"
                   } `}
                 >
@@ -223,6 +262,14 @@ export function AiChatDialog({ isOpen, onClose }: AiChatDialogProps) {
                     <p className="m-0 whitespace-pre-wrap">{msg.content}</p>
                   )}
                 </div>
+                {msg.error && msg.role === "user" && (
+                  <button 
+                    onClick={() => handleSend(undefined, undefined, msg.id)}
+                    className="mt-1 flex items-center gap-1 text-xs text-muted-foreground hover:text-primary transition-colors"
+                  >
+                    <ArrowClockwiseIcon className="h-3 w-3" /> Retry
+                  </button>
+                )}
               </div>
             ))}
 
@@ -285,7 +332,8 @@ export function AiChatDialog({ isOpen, onClose }: AiChatDialogProps) {
             {/* Error message */}
             {error && (
               <div className="flex w-full justify-start">
-                <div className="max-w-[85%] rounded-2xl rounded-tl-sm border border-destructive/30 bg-destructive/10 px-4 py-2 text-sm text-destructive">
+                <div className="max-w-[85%] rounded-2xl rounded-tl-sm border border-destructive/30 bg-destructive/10 px-4 py-2 text-sm text-destructive flex items-center gap-2">
+                  <WarningCircleIcon className="h-4 w-4 shrink-0" />
                   {error}
                 </div>
               </div>
@@ -304,11 +352,12 @@ export function AiChatDialog({ isOpen, onClose }: AiChatDialogProps) {
           </div>
 
           {/* Input Area */}
-          <div className="border-t border-border bg-background p-3">
+          <div className="border-t border-border bg-background p-3 flex flex-col gap-1">
             <form onSubmit={handleSend} className="relative flex items-center">
               <input
                 ref={inputRef}
                 type="text"
+                maxLength={MAX_CHARS}
                 placeholder={
                   isLimitReached
                     ? t("chat.placeholderLimitReached")
@@ -323,11 +372,14 @@ export function AiChatDialog({ isOpen, onClose }: AiChatDialogProps) {
                 type="submit"
                 aria-label={t("chat.sendMessageLabel")}
                 disabled={!input.trim() || isLoading || isLimitReached}
-                className="absolute right-1.5 rounded-full bg-primary p-1.5 text-primary-foreground disabled:cursor-not-allowed disabled:opacity-50"
+                className="absolute right-1.5 rounded-full bg-primary p-1.5 text-primary-foreground disabled:cursor-not-allowed disabled:opacity-50 transition-opacity hover:opacity-90"
               >
                 <PaperPlaneRightIcon className="h-4 w-4" />
               </button>
             </form>
+            <div className={`text-[10px] text-right px-2 ${input.length >= MAX_CHARS ? 'text-destructive' : 'text-muted-foreground/60'}`}>
+              {input.length}/{MAX_CHARS}
+            </div>
           </div>
         </motion.div>
       )}
