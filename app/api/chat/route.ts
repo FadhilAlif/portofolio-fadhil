@@ -1,6 +1,7 @@
 import { GoogleGenAI } from "@google/genai"
 import { createClient } from "@supabase/supabase-js"
 import { FADHIL_KNOWLEDGE_BASE } from "@/lib/knowledge-base"
+import { env } from "@/lib/env"
 
 // ── Constants ──────────────────────────────────────────────
 const MAX_QUESTIONS_PER_SESSION = 3
@@ -13,11 +14,11 @@ const GEMINI_MODELS = [
 ] as const
 
 // ── Clients ────────────────────────────────────────────────
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY! })
+const ai = new GoogleGenAI({ apiKey: env.GEMINI_API_KEY })
 
 const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
+  env.NEXT_PUBLIC_SUPABASE_URL,
+  env.SUPABASE_SERVICE_ROLE_KEY,
   {
     auth: {
       autoRefreshToken: false,

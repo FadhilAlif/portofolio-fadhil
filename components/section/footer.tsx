@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils"
 import Image from "next/image"
 import { useTranslation } from "react-i18next"
 import { CLARITY_EVENTS, setClarityTag, trackClarityEvent } from "@/lib/clarity"
+import { siteConfig } from "@/lib/site-config"
 
 // ─── Nav Links ───────────────────────────────────────────────────────────────
 
@@ -27,27 +28,27 @@ const navLinks = [
 const socialLinks = [
   {
     label: "GitHub",
-    href: "https://github.com/fadhilalif",
+    href: siteConfig.github.url,
     icon: GithubLogoIcon,
   },
   {
     label: "LinkedIn",
-    href: "https://www.linkedin.com/in/fadhilalifpriyatno",
+    href: siteConfig.linkedin.url,
     icon: LinkedinLogoIcon,
   },
   {
     label: "Instagram",
-    href: "https://www.instagram.com/fdhlalf_",
+    href: siteConfig.instagram.url,
     icon: InstagramLogoIcon,
   },
   {
     label: "WhatsApp",
-    href: "https://wa.me/6285727304551",
+    href: `https://wa.me/${siteConfig.whatsapp.number}`,
     icon: WhatsappLogoIcon,
   },
   {
     label: "Email",
-    href: "mailto:fadhil.alifp@gmail.com",
+    href: `mailto:${siteConfig.email}`,
     icon: EnvelopeIcon,
   },
 ]

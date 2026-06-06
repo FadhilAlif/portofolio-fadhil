@@ -1,10 +1,11 @@
 import { type EducationItem } from "@/components/section/education-section"
 import { type WorkItem } from "@/components/section/work-section"
 import { type SkillCategoryItem } from "@/components/ui/skill-category"
-import type { AppLanguage } from "@/lib/i18n/config"
+import { type AppLanguage } from "@/lib/i18n/config"
+import { siteConfig } from "@/lib/site-config"
 
-const WORK_MEDIA_BASE = "https://cdn.fadhildev.my.id/work-avif"
-const EDU_MEDIA_BASE = "https://cdn.fadhildev.my.id/edu-avif"
+const WORK_MEDIA_BASE = `${siteConfig.cdnUrl}/work-avif`
+const EDU_MEDIA_BASE = `${siteConfig.cdnUrl}/edu-avif`
 
 export type SkillGroup = {
   title: string

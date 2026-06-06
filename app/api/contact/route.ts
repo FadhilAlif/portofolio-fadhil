@@ -2,9 +2,11 @@ import { NextRequest, NextResponse } from "next/server"
 import { Resend } from "resend"
 import { contactSchema } from "@/lib/contact-schema"
 
+import { env } from "@/lib/env"
+
 // ─── Resend client ────────────────────────────────────────────────────────────
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+const resend = new Resend(env.RESEND_API_KEY)
 
 // ─── Simple in-memory rate limiter ───────────────────────────────────────────
 
@@ -230,7 +232,7 @@ export async function POST(request: NextRequest) {
       timeZone: "Asia/Jakarta",
     }).format(new Date())
 
-    const toEmail = process.env.CONTACT_EMAIL_TO ?? "fadhil.alifp@gmail.com"
+    const toEmail = env.CONTACT_EMAIL_TO
     const html = buildEmailHtml(name, email, message, sentAt)
 
     const { data, error } = await resend.emails.send({

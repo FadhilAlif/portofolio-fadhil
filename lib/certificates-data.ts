@@ -1,4 +1,5 @@
 import type { AppLanguage } from "@/lib/i18n/config"
+import { siteConfig } from "@/lib/site-config"
 
 export type CertificateCategory = "web" | "mobile" | "ai" | "design" | "others"
 
@@ -46,7 +47,7 @@ export interface CertificateItem {
   featured?: boolean
 }
 
-const R2_URL = "https://cdn.fadhildev.my.id/certificate-avif"
+const R2_URL = `${siteConfig.cdnUrl}/certificate-avif`
 
 // Note: Replace the placeholder images with the actual AVIF/PNG versions of your certificates
 export const certificates: CertificateItem[] = [
