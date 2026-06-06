@@ -103,6 +103,7 @@ function buildEmailHtml(
       .replace(/</g, "&lt;")
       .replace(/>/g, "&gt;")
       .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;")
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -201,9 +202,10 @@ function buildEmailHtml(
 export async function POST(request: NextRequest) {
   try {
     // ── 1. Rate limit ────────────────────────────────────────────────────────
+    const forwardedFor = request.headers.get("x-forwarded-for")
     const ip =
-      request.headers.get("x-forwarded-for")?.split(",")[0].trim() ??
       request.headers.get("x-real-ip") ??
+      (forwardedFor ? forwardedFor.split(",").pop()?.trim() : null) ??
       "unknown"
 
     const { allowed, retryAfter } = await checkRateLimit(ip)
