@@ -9,7 +9,8 @@ import LoadingSpinner from "@/components/ui/loading-spinner"
 import { FloatingDock } from "@/components/navigation/floating-dock"
 import { Analytics } from "@vercel/analytics/next"
 import { SpeedInsights } from "@vercel/speed-insights/next"
-import MicrosoftAnalytics from "@/app/metrics/MicrosoftAnalytics"
+import dynamic from "next/dynamic"
+const MicrosoftAnalytics = dynamic(() => import("@/app/metrics/MicrosoftAnalytics"), { ssr: false })
 import { siteConfig } from "@/lib/site-config"
 
 const fontSans = Geist({

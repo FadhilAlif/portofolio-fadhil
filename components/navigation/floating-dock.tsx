@@ -5,7 +5,8 @@ import { User, FolderGit2, Award, Mail, Bot, Sun, Moon } from "lucide-react"
 import { useEffect, useState } from "react"
 import { usePathname, useRouter } from "next/navigation"
 import Image from "next/image"
-import { AiChatDialog } from "@/components/chat/ai-chat-dialog"
+import dynamic from "next/dynamic"
+const AiChatDialog = dynamic(() => import("@/components/chat/ai-chat-dialog").then(mod => ({ default: mod.AiChatDialog })))
 import { cn } from "@/lib/utils"
 import { useThemeAnimation } from "@/hooks/use-theme-animation"
 import { useIsMobile } from "@/hooks/use-mobile"
@@ -31,7 +32,8 @@ export function FloatingDock() {
 
   // Avoid hydration mismatch
   useEffect(() => {
-    setMounted(true)
+    const timer = setTimeout(() => setMounted(true), 0)
+    return () => clearTimeout(timer)
   }, [])
 
   const handleNavigation = (path: string) => {
