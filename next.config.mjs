@@ -4,6 +4,7 @@ const cspHeader = `
   script-src 'self' 'unsafe-eval' 'unsafe-inline' https://www.clarity.ms https://*.clarity.ms https://va.vercel-scripts.com;
   style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
   img-src 'self' blob: data: https://cdn.fadhildev.my.id https://skillicons.dev https://*.clarity.ms;
+  media-src 'self' https://cdn.fadhildev.my.id;
   font-src 'self' https://fonts.gstatic.com;
   connect-src 'self' https://*.supabase.co https://*.clarity.ms wss://*.clarity.ms https://vitals.vercel-insights.com;
   object-src 'none';

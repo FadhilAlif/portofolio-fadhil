@@ -9,9 +9,10 @@ import { useTranslation } from "react-i18next"
 import { siteConfig } from "@/lib/site-config"
 import { getExperienceSummary } from "@/utils/experience-summary"
 import { type WorkItem } from "@/components/section/work-section"
+import { useEffect, useState } from "react"
 
-const GitHubCalendar = dynamic(
-  () => import("react-github-calendar").then((mod) => mod.GitHubCalendar),
+const ActivityCalendar = dynamic(
+  () => import("react-activity-calendar").then((mod) => ({ default: mod.ActivityCalendar })),
   {
     ssr: false,
     loading: () => (
@@ -23,18 +24,84 @@ const GitHubCalendar = dynamic(
   }
 )
 
+type GitHubActivity = {
+  date: string
+  count: number
+  level: 0 | 1 | 2 | 3 | 4
+}
+
+function GitHubContributionCalendar({
+  username,
+  colorScheme,
+}: {
+  username: string
+  colorScheme: "light" | "dark"
+}) {
+  const [state, setState] = useState<{
+    data: GitHubActivity[] | null
+    error: string | null
+  }>({ data: null, error: null })
+
+  useEffect(() => {
+    let cancelled = false
+    fetch(`/api/github-contributions?username=${encodeURIComponent(username)}&year=last`)
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`)
+        return res.json()
+      })
+      .then((json: { contributions: GitHubActivity[] }) => {
+        if (!cancelled) setState({ data: json.contributions, error: null })
+      })
+      .catch(() => {
+        if (!cancelled) setState({ data: null, error: "Gagal memuat data kontribusi GitHub." })
+      })
+    return () => { cancelled = true }
+  }, [username])
+
+  const { data, error } = state
+
+  if (error) {
+    return (
+      <p className="text-sm text-muted-foreground">{error}</p>
+    )
+  }
+
+  if (!data) {
+    return (
+      <div
+        className="h-37 w-190 max-w-full rounded-lg border border-border/60 bg-card/35 animate-pulse"
+        aria-hidden="true"
+      />
+    )
+  }
+
+  return (
+    <ActivityCalendar
+      data={data}
+      colorScheme={colorScheme}
+      blockSize={13}
+      blockMargin={4}
+      fontSize={12}
+      theme={{
+        light: ["#ebedf0", "#9be9a8", "#40c463", "#30a14e", "#216e39"],
+        dark: ["#161b22", "#0e4429", "#006d32", "#26a641", "#39d353"],
+      }}
+    />
+  )
+}
+
 const EXPERIENCE_COMPANIES_FOR_SUMMARY = new Set([
   "TELKOM INDONESIA",
   "HORUS TECHNOLOGY",
   "TELKOMSIGMA (Telkom Indonesia Subsidiary)",
 ])
 
-export function StatsSection({ 
-  totalProjects, 
-  totalCertificates, 
-  experiences 
-}: { 
-  totalProjects: number, 
+export function StatsSection({
+  totalProjects,
+  totalCertificates,
+  experiences
+}: {
+  totalProjects: number,
   totalCertificates: number,
   experiences: WorkItem[]
 }) {
@@ -122,28 +189,9 @@ export function StatsSection({
           <div className="overflow-x-auto px-2 py-1">
             <div className="flex justify-center">
               <div className="w-fit min-w-max">
-                <GitHubCalendar
+                <GitHubContributionCalendar
                   username={siteConfig.github.username}
                   colorScheme={isDarkMode ? "dark" : "light"}
-                  blockSize={13}
-                  blockMargin={4}
-                  fontSize={12}
-                  theme={{
-                    light: [
-                      "#ebedf0",
-                      "#9be9a8",
-                      "#40c463",
-                      "#30a14e",
-                      "#216e39",
-                    ],
-                    dark: [
-                      "#161b22",
-                      "#0e4429",
-                      "#006d32",
-                      "#26a641",
-                      "#39d353",
-                    ],
-                  }}
                 />
               </div>
             </div>
