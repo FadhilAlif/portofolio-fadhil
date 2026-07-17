@@ -43,37 +43,50 @@ export const PixelImage = ({
   const [visible, setVisible] = useState(false)
   const [removeGrid, setRemoveGrid] = useState(false)
 
-  const { rows, cols } = useMemo(() => {
-    return customGrid ?? DEFAULT_GRIDS[grid]
-  }, [customGrid, grid])
+  const { rows, cols } = useMemo(
+    () => customGrid ?? DEFAULT_GRIDS[grid],
+    [customGrid, grid]
+  )
 
   useEffect(() => {
-    const start = setTimeout(() => setVisible(true), 50)
+    const reducedMotionQuery = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    )
 
-    const finish = setTimeout(
+    let finishTimer = 0
+    const startTimer = window.setTimeout(
       () => {
-        setRemoveGrid(true)
+        setVisible(true)
+        if (reducedMotionQuery.matches) {
+          setRemoveGrid(true)
+          return
+        }
+
+        finishTimer = window.setTimeout(
+          () => setRemoveGrid(true),
+          pixelFadeInDuration + maxAnimationDelay + 200
+        )
       },
-      pixelFadeInDuration + maxAnimationDelay + 200
+      reducedMotionQuery.matches ? 0 : 50
     )
 
     return () => {
-      clearTimeout(start)
-      clearTimeout(finish)
+      window.clearTimeout(startTimer)
+      window.clearTimeout(finishTimer)
     }
   }, [pixelFadeInDuration, maxAnimationDelay])
 
   const pieces = useMemo(() => {
+    if (removeGrid) return []
+
     const total = rows * cols
-    return Array.from({ length: total }, (_, index) => {
-      const delay = ((index * 37) % total) * (maxAnimationDelay / total)
-      return { delay }
-    })
-  }, [rows, cols, maxAnimationDelay])
+    return Array.from({ length: total }, (_, index) => ({
+      delay: ((index * 37) % total) * (maxAnimationDelay / total),
+    }))
+  }, [removeGrid, rows, cols, maxAnimationDelay])
 
   return (
     <div className={cn("relative h-full w-full overflow-hidden", className)}>
-      {/* Main Image */}
       <Image
         src={src}
         alt="Profile photo"
@@ -81,13 +94,12 @@ export const PixelImage = ({
         priority
         sizes={sizes}
         className={cn(
-          "object-cover transition-[filter] duration-700",
+          "object-cover transition-[filter] duration-700 motion-reduce:transition-none",
           grayscaleAnimation && !visible ? "grayscale" : "grayscale-0"
         )}
       />
 
-      {/* Pixel Overlay */}
-      {!removeGrid && (
+      {!removeGrid ? (
         <div
           className="absolute inset-0 grid"
           style={{
@@ -98,7 +110,7 @@ export const PixelImage = ({
           {pieces.map((piece, index) => (
             <div
               key={index}
-              className="bg-background"
+              className="bg-background motion-reduce:hidden"
               style={{
                 opacity: visible ? 0 : 1,
                 transition: `opacity ${pixelFadeInDuration}ms ease`,
@@ -107,7 +119,7 @@ export const PixelImage = ({
             />
           ))}
         </div>
-      )}
+      ) : null}
     </div>
   )
 }
