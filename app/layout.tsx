@@ -15,17 +15,20 @@ import { siteConfig } from "@/lib/site-config"
 const fontSans = Geist({
   subsets: ["latin"],
   variable: "--font-sans",
+  display: "swap",
 })
 
 const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
   variable: "--font-mono",
+  display: "swap",
 })
 
 const caveat = Caveat({
   subsets: ["latin"],
   weight: ["600"],
   variable: "--font-signature",
+  display: "swap",
 })
 
 export const metadata: Metadata = {

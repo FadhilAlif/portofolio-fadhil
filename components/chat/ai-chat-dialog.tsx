@@ -254,7 +254,7 @@ export function AiChatDialog({ isOpen, onClose }: AiChatDialogProps) {
             <button
               onClick={onClose}
               aria-label={t("chat.closeChatLabel")}
-              className="rounded-md p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              className="rounded-md p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground hover:cursor-pointer"
             >
               <XIcon className="h-4 w-4" />
             </button>
@@ -422,7 +422,7 @@ export function AiChatDialog({ isOpen, onClose }: AiChatDialogProps) {
                 type="submit"
                 aria-label={t("chat.sendMessageLabel")}
                 disabled={!input.trim() || isLoading || isLimitReached}
-                className="absolute right-1.5 rounded-full bg-primary p-1.5 text-primary-foreground disabled:cursor-not-allowed disabled:opacity-50 transition-opacity hover:opacity-90"
+                className="absolute right-1.5 rounded-full bg-primary p-1.5 text-primary-foreground disabled:cursor-not-allowed disabled:opacity-50 transition-opacity hover:opacity-90 hover:cursor-pointer"
               >
                 <PaperPlaneRightIcon className="h-4 w-4" />
               </button>
