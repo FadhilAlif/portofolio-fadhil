@@ -40,7 +40,7 @@ function matchesCertificateSearch(certificate: CertificateItem, query: string) {
 export default function CertificatesPage() {
   const { t, i18n } = useTranslation()
   const language = getSupportedLanguage(i18n.resolvedLanguage)
-  const certificates = getCertificates(language)
+  const certificates = getCertificates()
   const certificateFilters = getCertificateFilters(language)
 
   const [activeFilter, setActiveFilter] = useState<FilterId>("all")

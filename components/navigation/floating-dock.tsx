@@ -6,7 +6,14 @@ import { useEffect, useState } from "react"
 import { usePathname, useRouter } from "next/navigation"
 import Image from "next/image"
 import dynamic from "next/dynamic"
-const AiChatDialog = dynamic(() => import("@/components/chat/ai-chat-dialog").then(mod => ({ default: mod.AiChatDialog })))
+
+const AiChatDialog = dynamic(
+  () =>
+    import("@/components/chat/ai-chat-dialog").then((mod) => ({
+      default: mod.AiChatDialog,
+    })),
+  { ssr: false }
+)
 import { cn } from "@/lib/utils"
 import { useThemeAnimation } from "@/hooks/use-theme-animation"
 import { useIsMobile } from "@/hooks/use-mobile"

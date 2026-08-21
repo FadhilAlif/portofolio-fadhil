@@ -67,7 +67,7 @@ function TypewriterMarkdown({ content, onComplete }: { content: string, onComple
   return (
     <ReactMarkdown
       components={{
-        a: ({ node, ...props }) => (
+        a: ({...props }) => (
           <a {...props} target="_blank" rel="noopener noreferrer" />
         ),
       }}
@@ -157,14 +157,14 @@ export function AiChatDialog({ isOpen, onClose }: AiChatDialogProps) {
   const handleSend = async (e?: React.FormEvent, directMessage?: string, retryId?: string) => {
     e?.preventDefault()
     let userMessage = directMessage
-    
+
     if (retryId) {
       const msg = messages.find(m => m.id === retryId)
       if (msg) userMessage = msg.content
     } else {
       userMessage = userMessage ?? input.trim()
     }
-    
+
     if (!userMessage || isLoading || remaining <= 0 || !sessionId) return
 
     setInput("")
@@ -179,7 +179,7 @@ export function AiChatDialog({ isOpen, onClose }: AiChatDialogProps) {
     }
 
     const newMessageId = crypto.randomUUID()
-    
+
     // Optimistically add user message
     setMessages(prev => [
       ...prev.filter(m => !m.error || m.role !== "user"), // remove previous errors
@@ -254,7 +254,7 @@ export function AiChatDialog({ isOpen, onClose }: AiChatDialogProps) {
             <button
               onClick={onClose}
               aria-label={t("chat.closeChatLabel")}
-              className="rounded-md p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              className="rounded-md p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground hover:cursor-pointer"
             >
               <XIcon className="h-4 w-4" />
             </button>
@@ -286,8 +286,8 @@ export function AiChatDialog({ isOpen, onClose }: AiChatDialogProps) {
                   {msg.role === "assistant" ? (
                     <div className="prose prose-sm dark:prose-invert max-w-none [&_a]:break-all [&_li]:my-0 [&_ol]:my-1 [&_p]:m-0 [&_ul]:my-1">
                       {msg.isNew ? (
-                        <TypewriterMarkdown 
-                          content={msg.content} 
+                        <TypewriterMarkdown
+                          content={msg.content}
                           onComplete={() => {
                             setMessages(prev => prev.map(m => m.id === msg.id ? { ...m, isNew: false } : m))
                           }}
@@ -295,7 +295,7 @@ export function AiChatDialog({ isOpen, onClose }: AiChatDialogProps) {
                       ) : (
                         <ReactMarkdown
                           components={{
-                            a: ({ node, ...props }) => (
+                            a: ({...props }) => (
                               <a
                                 {...props}
                                 target="_blank"
@@ -313,7 +313,7 @@ export function AiChatDialog({ isOpen, onClose }: AiChatDialogProps) {
                   )}
                 </div>
                 {msg.error && msg.role === "user" && (
-                  <button 
+                  <button
                     onClick={() => handleSend(undefined, undefined, msg.id)}
                     className="mt-1 flex items-center gap-1 text-xs text-muted-foreground hover:text-primary transition-colors"
                   >
@@ -422,7 +422,7 @@ export function AiChatDialog({ isOpen, onClose }: AiChatDialogProps) {
                 type="submit"
                 aria-label={t("chat.sendMessageLabel")}
                 disabled={!input.trim() || isLoading || isLimitReached}
-                className="absolute right-1.5 rounded-full bg-primary p-1.5 text-primary-foreground disabled:cursor-not-allowed disabled:opacity-50 transition-opacity hover:opacity-90"
+                className="absolute right-1.5 rounded-full bg-primary p-1.5 text-primary-foreground disabled:cursor-not-allowed disabled:opacity-50 transition-opacity hover:opacity-90 hover:cursor-pointer"
               >
                 <PaperPlaneRightIcon className="h-4 w-4" />
               </button>

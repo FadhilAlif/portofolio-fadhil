@@ -30,21 +30,21 @@ export const resources = {
           "UI/UX Designer",
         ],
         intro:
-          "Fresh Graduate in Information Technology currently working as a Full-Stack Engineer at Telkomsigma, a subsidiary of PT Telkom Indonesia. Experienced in building enterprise systems and scalable web and mobile applications using modern frontend and backend technologies. Strong in Agile collaboration, cross-functional teamwork, and delivering secure, reliable, and user-focused digital solutions.",
+          "Software Engineer at Telkomsigma (PT Telkom Indonesia) specializing in building scalable enterprise systems, modern web platforms, and mobile applications. Passionate about transforming complex business requirements into intuitive, high-performance digital products through clean code and agile collaboration.",
         contactMe: "Contact Me",
         downloadCV: "Download CV",
         sectionExperience: "Experience",
         sectionEducation: "Education",
         sectionSkills: "Skills",
         skillsDescription:
-          "A selection of tools, languages, and frameworks I use to build digital solutions.",
+          "Technologies, frameworks, and tools I use to build scalable, production-ready applications.",
         sectionProjects: "Projects",
         projectsDescription:
-          "A collection of my work across web and mobile platforms.",
+          "A curated selection of enterprise systems, SaaS platforms, and AI-powered mobile apps I've built.",
         seeAllProjects: "See All Projects",
         sectionCertificates: "Certifications & Achievements",
         certificatesDescription:
-          "Highlights from my continuous learning journey and professional growth.",
+          "Verified industry credentials and professional milestones.",
         seeAllCertificates: "See All Certificates",
         sectionStats: "Statistics & GitHub Activity",
         statsDescription: "Quick stats and GitHub contribution activity.",
@@ -53,9 +53,9 @@ export const resources = {
         yearsExperience: "Years of Experience",
         monthsTotal: "{{count}} months total",
         githubContributions: "GitHub Contributions",
-        letsWorkTogether: "Let's Work Together",
+        letsWorkTogether: "Let's Build Something Exceptional!",
         ctaDescription:
-          "I'm always open to discussing new projects, creative ideas, or opportunities to bring your visions to life.",
+          "Looking for a Software Engineer to scale your product or join your engineering team? Let's connect and discuss how I can contribute.",
         availableBadge: "Available for new opportunities",
         getInTouch: "Get in Touch",
       },
@@ -63,7 +63,7 @@ export const resources = {
         breadcrumb: "fadhil.dev / projects",
         title: "Check out my latest work",
         subtitle:
-          "From mobile apps to enterprise web platforms - here are a few highlights from my work.",
+          "Explore production-grade enterprise platforms, full-stack web applications, and AI-driven mobile projects.",
         searchLabel: "Search projects",
         searchPlaceholder: "Search by project name, role, tech, or description",
         noProjects: "No projects found",
@@ -82,7 +82,7 @@ export const resources = {
         breadcrumb: "fadhil.dev / contact",
         title: "Get in touch",
         subtitle:
-          "I'm always open to discussing new projects, creative ideas, or opportunities to bring your visions to life.",
+          "Looking for a Software Engineer to scale your product or join your engineering team? Let's connect.",
         email: "Email",
         location: "Location",
         socials: "Socials",
@@ -213,20 +213,21 @@ export const resources = {
           "UI/UX Designer",
         ],
         intro:
-          "Lulusan baru Teknologi Informasi yang saat ini bekerja sebagai Full-Stack Engineer di Telkomsigma, anak perusahaan PT Telkom Indonesia. Berpengalaman membangun sistem enterprise serta aplikasi web dan mobile yang skalabel menggunakan teknologi frontend dan backend modern. Kuat dalam kolaborasi Agile, kerja lintas tim, serta menghadirkan solusi digital yang aman, andal, dan berfokus pada pengguna.",
+          "Software Engineer di Telkomsigma (PT Telkom Indonesia) dengan spesialisasi membangun sistem enterprise, platform web modern, dan aplikasi mobile yang skalabel. Berfokus mentransformasikan kebutuhan bisnis yang kompleks menjadi produk digital yang intuitif dan berkinerja tinggi melalui clean code dan kolaborasi agile.",
         contactMe: "Hubungi Saya",
         downloadCV: "Unduh CV",
         sectionExperience: "Pengalaman",
         sectionEducation: "Pendidikan",
         sectionSkills: "Keahlian",
         skillsDescription:
-          "Pilihan tools, bahasa, dan framework yang saya gunakan untuk membangun solusi digital.",
+          "Teknologi, framework, dan tools yang saya gunakan untuk membangun aplikasi yang skalabel dan siap produksi.",
         sectionProjects: "Proyek",
-        projectsDescription: "Kumpulan karya saya di platform web dan mobile.",
+        projectsDescription:
+          "Koleksi sistem enterprise, platform SaaS, dan aplikasi mobile berbasis AI yang telah saya bangun.",
         seeAllProjects: "Lihat Semua Proyek",
         sectionCertificates: "Sertifikasi & Prestasi",
         certificatesDescription:
-          "Sorotan dari perjalanan belajar berkelanjutan dan pertumbuhan profesional saya.",
+          "Sertifikasi industri terverifikasi dan pencapaian profesional dalam rekayasa perangkat lunak dan teknologi cloud.",
         seeAllCertificates: "Lihat Semua Sertifikat",
         sectionStats: "Statistik & Aktivitas GitHub",
         statsDescription: "Statistik singkat dan aktivitas kontribusi GitHub.",
@@ -235,9 +236,9 @@ export const resources = {
         yearsExperience: "Tahun Pengalaman",
         monthsTotal: "total {{count}} bulan",
         githubContributions: "Kontribusi GitHub",
-        letsWorkTogether: "Mari Bekerja Sama",
+        letsWorkTogether: "Mari Bangun Sesuatu yang Luar Biasa",
         ctaDescription:
-          "Saya selalu terbuka untuk berdiskusi tentang proyek baru, ide kreatif, atau peluang untuk mewujudkan visi Anda.",
+          "Mencari Software Engineer untuk mengembangkan produk atau bergabung dengan tim engineering Anda? Mari terhubung dan diskusikan bagaimana saya dapat berkontribusi.",
         availableBadge: "Tersedia untuk peluang baru",
         getInTouch: "Hubungi Saya",
       },
@@ -245,7 +246,7 @@ export const resources = {
         breadcrumb: "fadhil.dev / proyek",
         title: "Lihat karya terbaru saya",
         subtitle:
-          "Dari aplikasi mobile hingga platform web enterprise - berikut beberapa sorotan karya saya.",
+          "Jelajahi platform enterprise siap produksi, aplikasi web full-stack, dan proyek mobile berbasis AI.",
         searchLabel: "Cari proyek",
         searchPlaceholder:
           "Cari berdasarkan nama proyek, peran, teknologi, atau deskripsi",
@@ -266,7 +267,7 @@ export const resources = {
         breadcrumb: "fadhil.dev / kontak",
         title: "Hubungi saya",
         subtitle:
-          "Saya selalu terbuka untuk berdiskusi tentang proyek baru, ide kreatif, atau peluang untuk mewujudkan visi Anda.",
+          "Mencari Software Engineer untuk mengembangkan produk atau bergabung dengan tim engineering Anda? Mari terhubung.",
         email: "Email",
         location: "Lokasi",
         socials: "Sosial",
