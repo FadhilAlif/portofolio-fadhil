@@ -50,8 +50,9 @@ export function ContactEmailTemplate({
               color: "#0a0a0a",
             }}
           >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/favicon.ico"
+              src="https://fadhildev.my.id/favicon.ico"
               alt="FADHIL.DEV"
               style={{ width: "100%", height: "auto" }}
             />
@@ -179,10 +180,10 @@ export function ContactEmailTemplate({
         >
           This message was sent from the contact form at{" "}
           <a
-            href="https://fadhil.dev"
+            href="https://fadhildev.my.id"
             style={{ color: "rgba(255,255,255,0.4)", textDecoration: "none" }}
           >
-            fadhil.dev
+            fadhildev.my.id
           </a>
         </p>
       </div>

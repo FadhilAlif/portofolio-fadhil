@@ -1,13 +1,13 @@
 "use client"
 
 import { AnimatedSection, StaggerContainer, StaggerItem } from "@/components/section/animated-section"
-import SkillCategory, { type SkillCategoryItem } from "@/components/ui/skill-category"
+import SkillCategory from "@/components/ui/skill-category"
 import { useTranslation } from "react-i18next"
 import { type SkillGroup } from "@/lib/about-data"
 
 export function SkillsSection({ groups }: { groups: SkillGroup[] }) {
   const { t } = useTranslation()
-  
+
   return (
     <AnimatedSection
       variant="fade-up"

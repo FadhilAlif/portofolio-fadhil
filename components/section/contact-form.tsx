@@ -1,7 +1,7 @@
 "use client"
 
 import { useMemo, useState } from "react"
-import { useForm } from "react-hook-form"
+import { useForm, useWatch } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { motion, AnimatePresence } from "motion/react"
 import { cn } from "@/lib/utils"
@@ -243,15 +243,15 @@ export function ContactForm({ className }: ContactFormProps) {
   const {
     register,
     handleSubmit,
-    watch,
     reset,
+    control,
     formState: { errors, isSubmitting },
   } = useForm<ContactFormValues>({
     resolver: zodResolver(schema),
     defaultValues: { name: "", email: "", message: "", _honey: "" },
   })
 
-  const messageValue = watch("message") ?? ""
+  const messageValue = useWatch({ control, name: "message" }) ?? ""
 
   const onSubmit = async (data: ContactFormValues) => {
     setErrorMessage("")

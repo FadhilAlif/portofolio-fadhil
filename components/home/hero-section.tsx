@@ -6,7 +6,6 @@ import {
   GithubLogoIcon,
   LinkedinLogoIcon,
   MapPinIcon,
-  ArrowRightIcon,
 } from "@phosphor-icons/react"
 import { PixelImage } from "@/components/icons/pixel-image"
 import {
@@ -32,7 +31,7 @@ export function HeroSection() {
   }
 
   const trackContactButtonClick = (source: "hero" | "cta") => {
-    setClarityTag("contact_button_source", source as any)
+    setClarityTag("contact_button_source", source)
     trackClarityEvent(CLARITY_EVENTS.contactButtonClick)
   }
 

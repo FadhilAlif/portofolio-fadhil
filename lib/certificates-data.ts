@@ -463,7 +463,7 @@ export const certificates: CertificateItem[] = [
   },
 ]
 
-export function getCertificates(_language: AppLanguage): CertificateItem[] {
+export function getCertificates(): CertificateItem[] {
   return certificates
 }
 

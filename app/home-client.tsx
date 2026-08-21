@@ -29,7 +29,7 @@ export default function HomeClient() {
   
   const { experiences, educations, skillGroups } = getAboutData(language)
   const projects = getProjects(language)
-  const certificates = getCertificates(language)
+  const certificates = getCertificates()
 
   const spotlightColors = !isDarkMode
     ? ["rgba(120, 119, 198, 0.12)", "rgba(59, 130, 246, 0.08)"]
