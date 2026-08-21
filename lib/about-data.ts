@@ -143,7 +143,7 @@ const englishContent: AboutContent = {
         "Led the Capstone Project team, collaborating with mentors and peers to design, develop, and test a functional MVP.",
       ],
       logoUrl: "/assets/company-logo/bekup-icon.webp",
-      companyUrl: "https://bekup.kemenparekraf.go.id/",
+      companyUrl: "https://www.bekup-ekraf.id/program-bekup-create",
       gallery: [
         {
           id: "bekup-1",
