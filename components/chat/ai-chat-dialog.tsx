@@ -31,7 +31,7 @@ interface AiChatDialogProps {
 
 const MAX_QUESTIONS = 3
 const VISIBLE_SUGGESTIONS = 3
-const MAX_CHARS = 2000
+const MAX_CHARS = 1000
 
 // ── Helpers ────────────────────────────────────────────────
 /** Fisher-Yates shuffle — returns a new array */

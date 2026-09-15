@@ -10,7 +10,8 @@ import { z } from "zod"
 
 // ── Constants ──────────────────────────────────────────────
 const MAX_QUESTIONS_PER_SESSION = 3
-const MAX_MESSAGE_LENGTH = 2000
+const MAX_MESSAGE_LENGTH = 1000
+const MAX_HISTORY_ITEMS = 10
 
 // Fallback chain: try each model in order if the previous one is rate-limited
 const GEMINI_MODELS = [
@@ -44,16 +45,34 @@ const ipRatelimit = new Ratelimit({
   ephemeralCache: new Map(),
 })
 
+// ── Helpers ────────────────────────────────────────────────
+function sanitizeText(value: string, maxLength: number): string {
+  if (typeof value !== "string") return ""
+  return value
+    .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F-\u009F]/g, "")
+    .replace(/[\u200B-\u200D\uFEFF]/g, "")
+    .trim()
+    .slice(0, maxLength)
+}
+
 // ── Validation ─────────────────────────────────────────────
 const chatMessageSchema = z.object({
   role: z.enum(["user", "assistant"]),
-  content: z.string().max(MAX_MESSAGE_LENGTH).trim(),
+  content: z
+    .string()
+    .min(1)
+    .max(MAX_MESSAGE_LENGTH)
+    .transform((val) => sanitizeText(val, MAX_MESSAGE_LENGTH)),
 })
 
 const chatRequestSchema = z.object({
   session_id: z.string().uuid(),
-  message: z.string().min(1).max(MAX_MESSAGE_LENGTH).trim(),
-  history: z.array(chatMessageSchema).max(20).default([]),
+  message: z
+    .string()
+    .min(1)
+    .max(MAX_MESSAGE_LENGTH)
+    .transform((val) => sanitizeText(val, MAX_MESSAGE_LENGTH)),
+  history: z.array(chatMessageSchema).max(MAX_HISTORY_ITEMS).default([]),
   lang: z.string().optional(),
 })
 
@@ -106,7 +125,10 @@ function interpolate(
 export async function POST(request: Request) {
   try {
     const forwardedFor = request.headers.get("x-forwarded-for")
-    const ip = request.headers.get("x-real-ip") || (forwardedFor ? forwardedFor.split(",").pop()?.trim() : null) || "unknown"
+    const ip =
+      request.headers.get("x-real-ip") ||
+      (forwardedFor ? forwardedFor.split(",")[0]?.trim() : null) ||
+      "unknown"
     // 1. Global IP Rate Limiting
     if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) {
       try {
@@ -198,7 +220,21 @@ export async function POST(request: Request) {
       try {
         const stored = await kv.lrange(historyKey, 0, -1)
         if (stored && stored.length > 0) {
-          actualHistory = stored.map(s => typeof s === 'string' ? JSON.parse(s) : s) as ChatMessage[]
+          const validatedHistory: ChatMessage[] = []
+          for (const item of stored) {
+            try {
+              const raw = typeof item === "string" ? JSON.parse(item) : item
+              const parsedItem = chatMessageSchema.safeParse(raw)
+              if (parsedItem.success && parsedItem.data.content.length > 0) {
+                validatedHistory.push(parsedItem.data)
+              }
+            } catch {
+              // Ignore corrupted entries
+            }
+          }
+          if (validatedHistory.length > 0) {
+            actualHistory = validatedHistory.slice(-MAX_HISTORY_ITEMS)
+          }
         }
       } catch (e) {
         console.warn("[Chat] Failed to fetch ephemeral memory", e)
@@ -298,9 +334,9 @@ export async function POST(request: Request) {
     if (process.env.UPSTASH_REDIS_REST_URL) {
       try {
         const p = kv.pipeline()
-        p.rpush(historyKey, JSON.stringify({ role: "user", content: message.trim() }))
+        p.rpush(historyKey, JSON.stringify({ role: "user", content: message }))
         p.rpush(historyKey, JSON.stringify({ role: "assistant", content: aiResponse }))
-        p.ltrim(historyKey, -40, -1) // Keep max 20 pairs
+        p.ltrim(historyKey, -MAX_HISTORY_ITEMS, -1) // Keep max 10 messages (5 pairs)
         p.expire(historyKey, 3600) // 1 hour memory expiration
         await p.exec()
       } catch (e) {

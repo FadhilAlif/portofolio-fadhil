@@ -59,7 +59,7 @@ const socialLinks = [
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
-export default function ContactPage() {
+export default function ContactClient() {
   const { t } = useTranslation()
 
   const handleSocialClick = (platform: string) => {
