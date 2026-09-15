@@ -1,5 +1,6 @@
 "use client"
 
+import { useMemo } from "react"
 import { SpotlightBackground } from "@/components/ui/spotlight"
 import { Footer } from "@/components/section/footer"
 import { useThemeContext } from "@/components/theme-provider"
@@ -27,13 +28,20 @@ export default function HomeClient() {
   const { isDarkMode } = useThemeContext()
   const language = getSupportedLanguage(i18n.resolvedLanguage)
   
-  const { experiences, educations, skillGroups } = getAboutData(language)
-  const projects = getProjects(language)
-  const certificates = getCertificates()
+  const { experiences, educations, skillGroups } = useMemo(
+    () => getAboutData(language),
+    [language]
+  )
+  const projects = useMemo(() => getProjects(language), [language])
+  const certificates = useMemo(() => getCertificates(), [])
 
-  const spotlightColors = !isDarkMode
-    ? ["rgba(120, 119, 198, 0.12)", "rgba(59, 130, 246, 0.08)"]
-    : ["rgba(120, 119, 198, 0.35)", "rgba(59, 130, 246, 0.25)"]
+  const spotlightColors = useMemo(
+    () =>
+      !isDarkMode
+        ? ["rgba(120, 119, 198, 0.12)", "rgba(59, 130, 246, 0.08)"]
+        : ["rgba(120, 119, 198, 0.35)", "rgba(59, 130, 246, 0.25)"],
+    [isDarkMode]
+  )
 
   return (
     <div className="relative flex min-h-svh flex-col bg-background text-foreground">

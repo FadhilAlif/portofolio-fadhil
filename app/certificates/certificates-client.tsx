@@ -37,11 +37,11 @@ function matchesCertificateSearch(certificate: CertificateItem, query: string) {
     .some((value) => value.toLowerCase().includes(query))
 }
 
-export default function CertificatesPage() {
+export default function CertificatesClient() {
   const { t, i18n } = useTranslation()
   const language = getSupportedLanguage(i18n.resolvedLanguage)
-  const certificates = getCertificates()
-  const certificateFilters = getCertificateFilters(language)
+  const certificates = useMemo(() => getCertificates(), [])
+  const certificateFilters = useMemo(() => getCertificateFilters(language), [language])
 
   const [activeFilter, setActiveFilter] = useState<FilterId>("all")
   const [searchQuery, setSearchQuery] = useState("")

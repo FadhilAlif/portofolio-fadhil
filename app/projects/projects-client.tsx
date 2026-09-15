@@ -60,11 +60,11 @@ function EmptyState() {
   )
 }
 
-export default function ProjectsPage() {
+export default function ProjectsClient() {
   const { t, i18n } = useTranslation()
   const language = getSupportedLanguage(i18n.resolvedLanguage)
-  const projects = getProjects(language)
-  const projectFilters = getProjectFilters(language)
+  const projects = useMemo(() => getProjects(language), [language])
+  const projectFilters = useMemo(() => getProjectFilters(language), [language])
 
   const [activeFilter, setActiveFilter] = useState<FilterId>("all")
   const [searchQuery, setSearchQuery] = useState("")
