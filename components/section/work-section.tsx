@@ -106,16 +106,33 @@ function CompanyLink({ company, companyUrl }: CompanyLinkProps) {
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 
-type WorkSectionProps = {
+export type WorkSectionProps = {
   items: WorkItem[]
+  defaultOpenValue?: string
 }
 
-export function WorkSection({ items }: WorkSectionProps) {
+export function WorkSection({
+  items,
+  defaultOpenValue: propDefaultOpenValue,
+}: WorkSectionProps) {
   const { t } = useTranslation()
   const [isHintLocallyDismissed, setIsHintLocallyDismissed] = useState(false)
   const isHintDismissed = useReadLocalStorage<boolean>(WORK_HINT_STORAGE_KEY, {
     initializeWithValue: false,
   })
+
+  // Auto open TELKOMSIGMA (or current ongoing work) by default
+  const defaultOpenItem =
+    items.find(
+      (item) =>
+        item.company.toLowerCase().includes("telkomsigma") || !item.end
+    ) ?? items[0]
+
+  const defaultOpenValue =
+    propDefaultOpenValue ??
+    (defaultOpenItem
+      ? `${defaultOpenItem.company}-${defaultOpenItem.start}`
+      : undefined)
 
   const hasResolvedHintState = isHintDismissed !== undefined
   const showFirstItemHint =
@@ -123,11 +140,6 @@ export function WorkSection({ items }: WorkSectionProps) {
     !isHintLocallyDismissed &&
     isHintDismissed !== true &&
     items.length > 0
-
-  const firstItem = items[0]
-  const firstItemValue = firstItem
-    ? `${firstItem.company}-${firstItem.start}`
-    : null
 
   const dismissFirstItemHint = () => {
     setIsHintLocallyDismissed(true)
@@ -144,15 +156,14 @@ export function WorkSection({ items }: WorkSectionProps) {
     <AccordionPrimitive.Root
       type="single"
       collapsible
+      defaultValue={defaultOpenValue}
       className="flex w-full flex-col gap-6"
-      onValueChange={(value) => {
-        if (!showFirstItemHint || !firstItemValue) {
+      onValueChange={() => {
+        if (!showFirstItemHint) {
           return
         }
 
-        if (value === firstItemValue) {
-          dismissFirstItemHint()
-        }
+        dismissFirstItemHint()
       }}
     >
       {items.map((work, index) => {
@@ -194,7 +205,7 @@ export function WorkSection({ items }: WorkSectionProps) {
                         <span
                           className={cn(
                             "inline-flex items-center gap-1 rounded-full border border-primary/25 bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary",
-                            "transition-all duration-300 ease-out",
+                            "transition-all duration-300 ease-out group-data-[state=open]:hidden",
                             showFirstItemHint
                               ? "scale-100 animate-pulse opacity-100"
                               : "pointer-events-none scale-95 opacity-0"

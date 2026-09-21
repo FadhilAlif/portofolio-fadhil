@@ -284,7 +284,7 @@ export async function POST(request: Request) {
             contents,
             config: {
               systemInstruction: FADHIL_KNOWLEDGE_BASE,
-              temperature: 0.7,
+              temperature: 0.2,
               maxOutputTokens: 1024,
             },
           })
