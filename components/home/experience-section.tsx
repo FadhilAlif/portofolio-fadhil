@@ -5,7 +5,13 @@ import { WorkSection } from "@/components/section/work-section"
 import { useTranslation } from "react-i18next"
 import { type WorkItem } from "@/components/section/work-section"
 
-export function ExperienceSection({ items }: { items: WorkItem[] }) {
+export function ExperienceSection({
+  items,
+  defaultOpenValue,
+}: {
+  items: WorkItem[]
+  defaultOpenValue?: string
+}) {
   const { t } = useTranslation()
   
   return (
@@ -18,7 +24,7 @@ export function ExperienceSection({ items }: { items: WorkItem[] }) {
       <h2 className="text-2xl font-semibold tracking-tight text-foreground">
         {t("home.sectionExperience")}
       </h2>
-      <WorkSection items={items} />
+      <WorkSection items={items} defaultOpenValue={defaultOpenValue} />
     </AnimatedSection>
   )
 }
