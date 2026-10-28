@@ -8,5 +8,5 @@ export const siteConfig = {
   instagram: { url: "https://www.instagram.com/fdhlalf_" },
   whatsapp: { number: "6285727304551" },
   cdnUrl: "https://cdn.fadhildev.my.id",
-  cvUrl: "https://cdn.fadhildev.my.id/personal/CV-Fadhil%20Alif%20Priyatno-2026.pdf",
+  cvUrl: "https://cdn.fadhildev.my.id/personal/ATS-Resume-Fadhil%20Alif%20Priyatno-2026.pdf",
 } as const

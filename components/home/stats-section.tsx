@@ -1,91 +1,181 @@
 "use client"
 
-import { AnimatedSection } from "@/components/section/animated-section"
-import { MagicCard } from "@/components/ui/magic-card"
-import { useThemeContext } from "@/components/theme-provider"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { GithubLogoIcon } from "@phosphor-icons/react"
-import dynamic from "next/dynamic"
 import { useTranslation } from "react-i18next"
-import { siteConfig } from "@/lib/site-config"
-import { getExperienceSummary } from "@/utils/experience-summary"
+import { AnimatedSection } from "@/components/section/animated-section"
 import { type WorkItem } from "@/components/section/work-section"
-import { useEffect, useState } from "react"
+import { useThemeContext } from "@/components/theme-provider"
+import {
+  ActivityHeatmap,
+  type ActivityDay,
+} from "@/components/ui/activity-heatmap"
+import { MagicCard } from "@/components/ui/magic-card"
+import { siteConfig } from "@/lib/site-config"
+import { cn } from "@/lib/utils"
+import { getExperienceSummary } from "@/utils/experience-summary"
 
-const ActivityCalendar = dynamic(
-  () => import("react-activity-calendar").then((mod) => ({ default: mod.ActivityCalendar })),
+type ContributionPeriod = "last" | "2026" | "2025" | "2024"
+
+const PERIOD_OPTIONS: readonly {
+  value: ContributionPeriod
+  buttonLabel: string
+  periodText: string
+  ariaLabel: string
+}[] = [
   {
-    ssr: false,
-    loading: () => (
-      <div
-        className="h-37 w-190 max-w-full rounded-lg border border-border/60 bg-card/35"
-        aria-hidden="true"
-      />
-    ),
-  }
-)
+    value: "last",
+    buttonLabel: "Last year",
+    periodText: "the last year",
+    ariaLabel: "Contributions in the last year",
+  },
+  {
+    value: "2026",
+    buttonLabel: "2026",
+    periodText: "2026",
+    ariaLabel: "Contributions in 2026",
+  },
+  {
+    value: "2025",
+    buttonLabel: "2025",
+    periodText: "2025",
+    ariaLabel: "Contributions in 2025",
+  },
+  {
+    value: "2024",
+    buttonLabel: "2024",
+    periodText: "2024",
+    ariaLabel: "Contributions in 2024",
+  },
+]
 
-type GitHubActivity = {
-  date: string
-  count: number
-  level: 0 | 1 | 2 | 3 | 4
+interface GitHubContributionsApiResponse {
+  contributions?: ActivityDay[]
 }
 
-function GitHubContributionCalendar({
-  username,
-  colorScheme,
-}: {
-  username: string
-  colorScheme: "light" | "dark"
-}) {
-  const [state, setState] = useState<{
-    data: GitHubActivity[] | null
-    error: string | null
-  }>({ data: null, error: null })
+function GitHubContributionCalendar({ username }: { username: string }) {
+  const [selectedPeriod, setSelectedPeriod] =
+    useState<ContributionPeriod>("last")
+  const [selectedDate, setSelectedDate] = useState<string | null>(null)
+  const [days, setDays] = useState<ActivityDay[] | null>(null)
+  const [isLoading, setIsLoading] = useState<boolean>(true)
+  const [error, setError] = useState<string | null>(null)
+  const cacheRef = useRef<Partial<Record<ContributionPeriod, ActivityDay[]>>>({})
 
   useEffect(() => {
+    const cached = cacheRef.current[selectedPeriod]
+    if (cached) {
+      setDays(cached)
+      setError(null)
+      setIsLoading(false)
+      return
+    }
+
     let cancelled = false
-    fetch(`/api/github-contributions?username=${encodeURIComponent(username)}&year=last`)
+    setIsLoading(true)
+
+    fetch(
+      `/api/github-contributions?username=${encodeURIComponent(username)}&year=${selectedPeriod}`
+    )
       .then((res) => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`)
-        return res.json()
+        return res.json() as Promise<GitHubContributionsApiResponse>
       })
-      .then((json: { contributions: GitHubActivity[] }) => {
-        if (!cancelled) setState({ data: json.contributions, error: null })
+      .then((json) => {
+        if (cancelled) return
+        const contributions = Array.isArray(json.contributions)
+          ? json.contributions.map((item) => ({
+              date: item.date,
+              count: item.count,
+            }))
+          : []
+        cacheRef.current[selectedPeriod] = contributions
+        setDays(contributions)
+        setError(null)
+        setIsLoading(false)
       })
       .catch(() => {
-        if (!cancelled) setState({ data: null, error: "Gagal memuat data kontribusi GitHub." })
+        if (cancelled) return
+        setError("Failed to load GitHub contribution data.")
+        setIsLoading(false)
       })
-    return () => { cancelled = true }
-  }, [username])
 
-  const { data, error } = state
+    return () => {
+      cancelled = true
+    }
+  }, [username, selectedPeriod])
 
-  if (error) {
-    return (
-      <p className="text-sm text-muted-foreground">{error}</p>
-    )
+  const handleSelectDate = useCallback((date: string) => {
+    setSelectedDate((current) => (current === date ? null : date))
+  }, [])
+
+  const activePeriod =
+    PERIOD_OPTIONS.find((option) => option.value === selectedPeriod) ??
+    PERIOD_OPTIONS[0]
+
+  if (error && !days) {
+    return <p className="text-sm text-muted-foreground">{error}</p>
   }
 
-  if (!data) {
+  if (!days) {
     return (
       <div
-        className="h-37 w-190 max-w-full rounded-lg border border-border/60 bg-card/35 animate-pulse"
+        className="flex w-full flex-col gap-3"
+        aria-busy="true"
         aria-hidden="true"
-      />
+      >
+        <div className="flex items-center justify-between gap-2">
+          <div className="h-5 w-48 animate-pulse rounded-md bg-muted/70" />
+          <div className="h-6 w-40 animate-pulse rounded-md bg-muted/60" />
+        </div>
+        <div className="h-32 w-full animate-pulse rounded-lg border border-border/60 bg-card/35" />
+        <div className="flex items-center justify-between">
+          <div className="h-4 w-24 animate-pulse rounded bg-muted/50" />
+          <div className="h-4 w-28 animate-pulse rounded bg-muted/60" />
+        </div>
+      </div>
     )
   }
 
   return (
-    <ActivityCalendar
-      data={data}
-      colorScheme={colorScheme}
-      blockSize={13}
-      blockMargin={4}
-      fontSize={12}
-      theme={{
-        light: ["#ebedf0", "#9be9a8", "#40c463", "#30a14e", "#216e39"],
-        dark: ["#161b22", "#0e4429", "#006d32", "#26a641", "#39d353"],
-      }}
+    <ActivityHeatmap
+      days={days}
+      label={activePeriod.ariaLabel}
+      period={activePeriod.periodText}
+      selectedDate={selectedDate}
+      onSelectDate={handleSelectDate}
+      thresholds={[3, 6, 12]}
+      className={cn(
+        "transition-opacity duration-200",
+        isLoading && "opacity-75"
+      )}
+      actions={
+        <div
+          role="group"
+          aria-label="Filter contributions by period"
+          className="inline-flex flex-wrap items-center gap-1 rounded-lg border border-border/70 bg-muted/40 p-0.5"
+        >
+          {PERIOD_OPTIONS.map((option) => {
+            const isActive = option.value === selectedPeriod
+            return (
+              <button
+                key={option.value}
+                type="button"
+                aria-pressed={isActive}
+                onClick={() => setSelectedPeriod(option.value)}
+                className={cn(
+                  "rounded-md px-2 py-1 text-xs font-medium transition-colors",
+                  isActive
+                    ? "bg-background text-foreground shadow-2xs"
+                    : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                {option.buttonLabel}
+              </button>
+            )
+          })}
+        </div>
+      }
     />
   )
 }
@@ -99,10 +189,10 @@ const EXPERIENCE_COMPANIES_FOR_SUMMARY = new Set([
 export function StatsSection({
   totalProjects,
   totalCertificates,
-  experiences
+  experiences,
 }: {
-  totalProjects: number,
-  totalCertificates: number,
+  totalProjects: number
+  totalCertificates: number
   experiences: WorkItem[]
 }) {
   const { t } = useTranslation()
@@ -178,24 +268,25 @@ export function StatsSection({
         glowTo={isDarkMode ? "#3b82f6" : "#BFDBFE"}
         className="rounded-xl p-0"
       >
-        <div className="overflow-hidden rounded-[inherit] bg-card/65 p-5 backdrop-blur-sm">
-          <div className="mb-4 flex items-center gap-2">
-            <GithubLogoIcon className="h-5 w-5 text-foreground" />
-            <h4 className="text-sm font-medium text-foreground">
-              {t("home.githubContributions")}
-            </h4>
+        <div className=" rounded-[inherit] bg-card/65 p-4 backdrop-blur-sm sm:p-5">
+          <div className="mb-4 flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <GithubLogoIcon className="h-5 w-5 text-foreground" />
+              <h4 className="text-sm font-medium text-foreground">
+                {t("home.githubContributions")}
+              </h4>
+            </div>
+            <a
+              href={siteConfig.github.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs text-muted-foreground transition-colors hover:text-foreground"
+            >
+              @{siteConfig.github.username}
+            </a>
           </div>
 
-          <div className="overflow-x-auto px-2 py-1">
-            <div className="flex justify-center">
-              <div className="w-fit min-w-max">
-                <GitHubContributionCalendar
-                  username={siteConfig.github.username}
-                  colorScheme={isDarkMode ? "dark" : "light"}
-                />
-              </div>
-            </div>
-          </div>
+          <GitHubContributionCalendar username={siteConfig.github.username} />
         </div>
       </MagicCard>
     </AnimatedSection>
