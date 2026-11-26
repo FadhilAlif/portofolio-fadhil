@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useState, type CSSProperties } from "react"
 import Image from "next/image"
 import { cn } from "@/lib/utils"
 
@@ -9,13 +9,14 @@ interface Grid {
   cols: number
 }
 
-const DEFAULT_GRIDS: Record<string, Grid> = {
+const DEFAULT_GRIDS = {
+  "5x6": { rows: 6, cols: 5 },
   "6x4": { rows: 4, cols: 6 },
   "8x8": { rows: 8, cols: 8 },
   "8x3": { rows: 3, cols: 8 },
   "4x6": { rows: 6, cols: 4 },
   "3x8": { rows: 8, cols: 3 },
-}
+} as const satisfies Record<string, Grid>
 
 type PredefinedGridKey = keyof typeof DEFAULT_GRIDS
 
@@ -32,15 +33,13 @@ interface PixelImageProps {
 
 export const PixelImage = ({
   src,
-  grid = "6x4",
+  grid = "5x6",
   customGrid,
-  grayscaleAnimation = true,
-  pixelFadeInDuration = 800,
-  maxAnimationDelay = 1200,
+  pixelFadeInDuration = 420,
+  maxAnimationDelay = 580,
   className,
   sizes = "(max-width: 768px) 224px, (max-width: 1024px) 256px, 280px",
 }: PixelImageProps) => {
-  const [visible, setVisible] = useState(false)
   const [removeGrid, setRemoveGrid] = useState(false)
 
   const { rows, cols } = useMemo(
@@ -49,30 +48,20 @@ export const PixelImage = ({
   )
 
   useEffect(() => {
-    const reducedMotionQuery = window.matchMedia(
+    const prefersReducedMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)"
-    )
+    ).matches
 
-    let finishTimer = 0
-    const startTimer = window.setTimeout(
-      () => {
-        setVisible(true)
-        if (reducedMotionQuery.matches) {
-          setRemoveGrid(true)
-          return
-        }
+    const cleanupDelay = prefersReducedMotion
+      ? 0
+      : pixelFadeInDuration + maxAnimationDelay + 120
 
-        finishTimer = window.setTimeout(
-          () => setRemoveGrid(true),
-          pixelFadeInDuration + maxAnimationDelay + 200
-        )
-      },
-      reducedMotionQuery.matches ? 0 : 50
-    )
+    const timer = window.setTimeout(() => {
+      setRemoveGrid(true)
+    }, cleanupDelay)
 
     return () => {
-      window.clearTimeout(startTimer)
-      window.clearTimeout(finishTimer)
+      window.clearTimeout(timer)
     }
   }, [pixelFadeInDuration, maxAnimationDelay])
 
@@ -81,7 +70,7 @@ export const PixelImage = ({
 
     const total = rows * cols
     return Array.from({ length: total }, (_, index) => ({
-      delay: ((index * 37) % total) * (maxAnimationDelay / total),
+      delay: Math.round(((index * 37) % total) * (maxAnimationDelay / total)),
     }))
   }, [removeGrid, rows, cols, maxAnimationDelay])
 
@@ -92,16 +81,16 @@ export const PixelImage = ({
         alt="Profile photo"
         fill
         priority
+        loading="eager"
+        fetchPriority="high"
         sizes={sizes}
-        className={cn(
-          "object-cover transition-[filter] duration-700 motion-reduce:transition-none",
-          grayscaleAnimation && !visible ? "grayscale" : "grayscale-0"
-        )}
+        className="object-cover grayscale-0"
       />
 
       {!removeGrid ? (
         <div
-          className="absolute inset-0 grid"
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 grid"
           style={{
             gridTemplateColumns: `repeat(${cols}, 1fr)`,
             gridTemplateRows: `repeat(${rows}, 1fr)`,
@@ -110,12 +99,13 @@ export const PixelImage = ({
           {pieces.map((piece, index) => (
             <div
               key={index}
-              className="bg-background motion-reduce:hidden"
-              style={{
-                opacity: visible ? 0 : 1,
-                transition: `opacity ${pixelFadeInDuration}ms ease`,
-                transitionDelay: `${piece.delay}ms`,
-              }}
+              className="pixel-reveal-tile bg-background"
+              style={
+                {
+                  "--pixel-duration": `${pixelFadeInDuration}ms`,
+                  "--pixel-delay": `${piece.delay}ms`,
+                } as CSSProperties
+              }
             />
           ))}
         </div>

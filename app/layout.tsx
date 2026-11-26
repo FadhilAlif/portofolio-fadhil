@@ -145,14 +145,14 @@ export default function RootLayout({
                 siteConfig.github.url,
                 siteConfig.instagram.url,
               ],
-              jobTitle: "Software Engineer",
+              jobTitle: "Full-Stack Engineer",
               worksFor: {
                 "@type": "Organization",
-                name: "Telkom Indonesia",
+                name: "Telkomsigma (PT Sigma Cipta Caraka)",
               },
               address: {
                 "@type": "PostalAddress",
-                addressLocality: "Yogyakarta",
+                addressLocality: "Jakarta",
                 addressCountry: "ID",
               },
               email: `mailto:${siteConfig.email}`,

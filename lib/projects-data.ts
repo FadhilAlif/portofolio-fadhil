@@ -103,12 +103,12 @@ export const projects: ProjectItem[] = [
     dates: "Dec 2025 – Apr 2026",
     association: "Telkomsigma",
     category: ["private", "web"],
-    role: "Frontend Engineer",
+    role: "Full-Stack Engineer",
     featured: true,
     isInternal: true,
     description:
-      "A Public WBS that enables external users to securely submit reports with flexible identity options (full, partial, or anonymous). It ensures structured reporting while allowing users to track the status of their submissions.",
-    tags: ["Next.js", "TypeScript", "Tailwind CSS"],
+      "Public Whistleblowing System built from scratch with Next.js and Django serving 1,200+ employees. Enables secure report submissions with flexible identity options (full, partial, or anonymous), i18n support, and real-time submission tracking.",
+    tags: ["Next.js", "TypeScript", "Tailwind CSS", "Django"],
     image: `${R2_URL}/wbs-public-preview.avif`,
   },
   {
@@ -116,11 +116,11 @@ export const projects: ProjectItem[] = [
     dates: "Dec 2025 – Apr 2026",
     association: "Telkomsigma",
     category: ["private", "web"],
-    role: "Frontend Engineer",
+    role: "Full-Stack Engineer",
     isInternal: true,
     description:
-      "An internal WBS for the Internal Audit team to manage, validate, and monitor whistleblowing reports end-to-end. It centralizes data from multiple sources, supports structured workflows, and provides dashboards for effective monitoring and decision-making.",
-    tags: ["Next.js", "TypeScript", "Tailwind CSS"],
+      "Internal audit and admin platform built with Next.js and Django serving 1,200+ employees. Centralizes whistleblowing reports with RBAC-based complaint workflows, full audit trails, and monitoring dashboards.",
+    tags: ["Next.js", "TypeScript", "Tailwind CSS", "Django"],
     image: `${R2_URL}/wbs-internal-preview.avif`,
   },
   {
@@ -131,7 +131,7 @@ export const projects: ProjectItem[] = [
     role: "Frontend Engineer",
     isInternal: true,
     description:
-      "Enhanced web-based ticketing system for monitoring SPBU shifts and operational issues, featuring Ticket Summary, FAQ, L3 internal tickets, reporting, and a dashboard with filters, insights, and downloadable reports.",
+      "Shift Management and Ticket Summary module for the PlusTix Pertamina helpdesk platform built with Next.js. Consolidates SPBU operational analytics dashboards, exportable reports, L3 internal tickets, and rating & review insights into a unified view.",
     tags: ["Next.js", "TypeScript", "Tailwind CSS"],
     image: `${R2_URL}/plustix-preview.avif`,
   },
@@ -161,7 +161,7 @@ export const projects: ProjectItem[] = [
     role: "Mobile Developer",
     featured: true,
     description:
-      "A smart, modern finance app built with Flutter to make expense tracking effortless. Features receipt scanning, AI auto-categorization, seamless Supabase sync, and WhatsApp Bot integration.",
+      "A smart personal finance mobile app built with Flutter to automate expense tracking and eliminate manual entry. Features AI receipt scanning via Gemini API, Supabase sync, and WhatsApp Bot integration (WAHA).",
     tags: ["Flutter", "Dart", "Supabase"],
     image: `${R2_URL}/duwitku-banner.avif`,
     video: `${siteConfig.cdnUrl}/project/Duwitku_DemoVideo.mp4`,
@@ -189,11 +189,11 @@ export const projects: ProjectItem[] = [
     dates: "Sep 2025 – Nov 2025",
     association: "Telkomsigma",
     category: ["private", "web"],
-    role: "Frontend Engineer",
+    role: "Full-Stack Engineer",
     isInternal: true,
     description:
-      "A web-based module within Logistic Sourcing Management (LSM) that enables Finance teams to track vendor invoice submissions, featuring searchable logs and integrated reporting for better visibility and control.",
-    tags: ["Nuxt.js", "TypeScript", "Tailwind CSS"],
+      "Invoice Receipt module for the Logistic Sourcing Management (LSM) platform built with Nuxt.js and Django. Equips Finance teams with a centralized, searchable vendor invoice log and integrated reporting for full lifecycle visibility.",
+    tags: ["Nuxt.js", "TypeScript", "Tailwind CSS", "Django"],
     image: `${R2_URL}/lsm-preview.avif`,
   },
   {
@@ -204,7 +204,7 @@ export const projects: ProjectItem[] = [
     featured: true,
     role: "Flutter Developer · Team Lead",
     description:
-      "A mobile app that preserves Indonesia's traditional culinary heritage through AI-powered image recognition using Gemini API to identify traditional dishes from camera.",
+      "A Flutter mobile app preserving Indonesia's traditional culinary heritage using Gemini API image recognition to identify traditional dishes and nearby food locations, backed by Firebase and Google Sign-In.",
     tags: ["Flutter", "Dart", "Firebase"],
     image: `${R2_URL}/dishcovery-banner.avif`,
     video:
@@ -255,7 +255,7 @@ export const projects: ProjectItem[] = [
     role: "Frontend Engineer",
     isInternal: true,
     description:
-      "A web-based ERP platform covering management, accounting, and inventory modules. Built responsive and scalable UI using Vue 3, Pinia, and Tailwind CSS with microservice-based API integration.",
+      "A SaaS ERP platform covering Management, Accounting, and Inventory modules. Built responsive, cross-browser UI with Vue 3, Pinia, Tailwind CSS, and PrimeVue, integrating Flask microservices and real-time SSE role-update notifications.",
     tags: ["Vue.js", "Pinia", "JavaScript", "Tailwind CSS", "Python", "Flask"],
     image: `${R2_URL}/ting-preview.avif`,
     href: "https://ting.id",
@@ -281,13 +281,13 @@ export const projects: ProjectItem[] = [
   },
   {
     title: "Apilogy Admin Dashboard",
-    dates: "Feb 2024 – Jun 2024",
+    dates: "Feb 2024 – Jul 2024",
     association: "Telkom Indonesia — MSIB Batch 6",
     category: ["private", "web"],
     role: "Frontend Engineer",
     isInternal: true,
     description:
-      "A web-based admin dashboard for managing users across Apilogy platforms (Developer & Publisher). Built with optimized performance using React,Zustand, TanStack Query, Nest.js and Docker for efficient data handling and scalability.",
+      "Internal admin dashboard for managing users across Apilogy platforms (Developer & Publisher) with RBAC. Built with React, TypeScript, Tailwind CSS, Legion UI, Zustand, TanStack Query, NestJS, and Docker.",
     tags: ["React", "TypeScript", "Tailwind CSS", "Nestjs", "Docker"],
     image: `${R2_URL}/apilogy-landing.avif`,
     href: "https://apilogy.id/",
@@ -360,27 +360,27 @@ export const projects: ProjectItem[] = [
 
 const PROJECT_DESCRIPTION_ID: Record<string, string> = {
   "Duwitku App":
-    "Aplikasi finansial modern berbasis Flutter untuk memudahkan pencatatan pengeluaran dengan fitur scan struk, auto-kategorisasi AI, sinkronisasi Supabase, dan integrasi WhatsApp Bot.",
+    "Aplikasi keuangan pribadi berbasis Flutter untuk mengotomatisasi pencatatan pengeluaran tanpa input manual, dilengkapi scan struk AI (Gemini API), sinkronisasi Supabase, dan integrasi WhatsApp Bot (WAHA).",
   "WBS Public — Whistleblowing System":
-    "Sistem WBS publik yang memungkinkan pengguna eksternal mengirim laporan secara aman dengan opsi identitas fleksibel (penuh, sebagian, atau anonim) serta pelacakan status laporan.",
+    "Sistem WBS publik yang dibangun dari awal dengan Next.js dan Django untuk 1.200+ karyawan, mendukung pelaporan aman (identitas penuh, sebagian, atau anonim), i18n, serta pelacakan status laporan.",
   "WBS Internal — Whistleblowing System":
-    "Sistem WBS internal untuk tim Audit Internal dalam mengelola, memvalidasi, dan memantau laporan whistleblowing secara end-to-end, lengkap dengan workflow terstruktur dan dashboard monitoring.",
+    "Platform admin dan audit internal berbasis Next.js dan Django untuk 1.200+ karyawan, memusatkan laporan whistleblowing dengan workflow RBAC, audit trail lengkap, dan dashboard monitoring.",
   "PLUSTIX — Pertamina":
-    "Sistem ticketing berbasis web untuk memantau shift SPBU dan isu operasional, dilengkapi ringkasan tiket, FAQ, tiket internal L3, pelaporan, serta dashboard dengan filter dan insight.",
+    "Modul Shift Management dan Ticket Summary pada platform helpdesk PlusTix Pertamina berbasis Next.js yang menyatukan dashboard analitik operasional SPBU, ekspor laporan, tiket L3, serta insight rating & review.",
   "JSON Polish":
     "Tool modern untuk formatting dan validasi JSON dengan syntax highlighting, diff comparison, auto-fix (quotes, trailing comma, brackets), editor bertab, upload/download file, serta dark/light theme.",
   "LSM - Invoice Receipt Module":
-    "Modul berbasis web pada Logistic Sourcing Management (LSM) yang membantu tim Finance memantau pengajuan invoice vendor melalui log pencarian dan pelaporan terintegrasi.",
+    "Modul Invoice Receipt pada platform Logistic Sourcing Management (LSM) berbasis Nuxt.js dan Django yang memberi tim Finance log invoice vendor terpusat, mudah dicari, dan pelaporan terintegrasi.",
   Dishcovery:
-    "Aplikasi mobile yang membantu melestarikan kuliner tradisional Indonesia melalui pengenalan gambar berbasis AI (Gemini API) untuk mengidentifikasi hidangan dari kamera.",
+    "Aplikasi mobile Flutter pelestarian kuliner tradisional Indonesia menggunakan pengenalan gambar berbasis Gemini API untuk mengidentifikasi hidangan dan lokasi kuliner terdekat, dengan Firebase dan Google Sign-In.",
   "ManganKu App":
     "Aplikasi Flutter yang memanfaatkan TensorFlow Lite dan Firebase ML untuk mengenali makanan dari foto, lalu menghasilkan informasi nutrisi via Gemini AI serta resep dari MealDB dan YouTube API.",
   "TING.ID SaaS ERP":
-    "Platform ERP berbasis web untuk modul manajemen, akuntansi, dan inventory. UI dibangun responsif dan skalabel dengan Vue 3, Pinia, Tailwind CSS, dan integrasi API microservice.",
+    "Platform ERP SaaS untuk modul Management, Accounting, dan Inventory. Dibangun responsif dengan Vue 3, Pinia, Tailwind CSS, PrimeVue, integrasi microservice Flask, serta notifikasi role real-time via SSE.",
   DiabExpert:
     "Sistem pakar berbasis web untuk deteksi dini Diabetes Mellitus tipe 1 dan tipe 2 menggunakan metode Certainty Factor, memproses gejala dan tingkat keyakinan pengguna.",
   "Apilogy Admin Dashboard":
-    "Dashboard admin berbasis web untuk manajemen user pada platform Apilogy (Developer & Publisher), dioptimalkan dengan React, Zustand, TanStack Query, Nest.js, dan Docker.",
+    "Dashboard admin internal untuk manajemen user dan RBAC pada platform Apilogy (Developer & Publisher), dibangun dengan React, TypeScript, Tailwind CSS, Legion UI, Zustand, TanStack Query, NestJS, dan Docker.",
   "Cuisine Cash":
     "Aplikasi kasir restoran berbasis web sebagai proyek capstone individu, dilengkapi manajemen produk, pemrosesan pesanan real-time, dan dashboard laporan penjualan.",
   Agriplant:

@@ -34,36 +34,52 @@ export function CertificatesSection({ items }: { items: CertificateItem[] }) {
         interval={4000}
         gap={16}
         itemMinWidth={260}
-        renderItem={(cert) => (
-          <a
-            href={cert.credentialUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group flex h-full flex-col overflow-hidden rounded-xl border border-border bg-card/50 backdrop-blur-sm transition-[border-color,box-shadow] duration-300 hover:border-border/80 hover:shadow-lg hover:ring-1 hover:shadow-primary/5 hover:ring-primary/10"
-          >
-            <div className="relative aspect-4/3 w-full overflow-hidden bg-muted">
-              <Image
-                src={cert.image}
-                alt={cert.title}
-                fill
-                className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-                loading="lazy"
-                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-              />
-            </div>
-            <div className="flex flex-1 flex-col gap-1 p-3">
-              <h4 className="line-clamp-2 text-xs leading-snug font-semibold text-foreground">
-                {cert.title}
-              </h4>
-              <span className="text-[11px] text-muted-foreground">
-                {cert.issuer}
-              </span>
-              <span className="mt-auto text-[10px] text-muted-foreground/60">
-                {cert.issuedDate}
-              </span>
-            </div>
-          </a>
-        )}
+        renderItem={(cert) => {
+          const credentialUrl = cert.credentialUrl?.trim()
+          const cardClassName =
+            "group flex h-full flex-col overflow-hidden rounded-xl border border-border bg-card/50 backdrop-blur-sm transition-[border-color,box-shadow] duration-300 hover:border-border/80 hover:shadow-lg hover:ring-1 hover:shadow-primary/5 hover:ring-primary/10"
+
+          const cardContent = (
+            <>
+              <div className="relative aspect-4/3 w-full overflow-hidden bg-muted">
+                <Image
+                  src={cert.image}
+                  alt={cert.title}
+                  fill
+                  className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                  loading="lazy"
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                />
+              </div>
+              <div className="flex flex-1 flex-col gap-1 p-3">
+                <h3 className="line-clamp-2 text-xs leading-snug font-semibold text-foreground">
+                  {cert.title}
+                </h3>
+                <span className="text-[11px] text-muted-foreground">
+                  {cert.issuer}
+                </span>
+                <span className="mt-auto text-[10px] text-muted-foreground/60">
+                  {cert.issuedDate}
+                </span>
+              </div>
+            </>
+          )
+
+          if (credentialUrl) {
+            return (
+              <a
+                href={credentialUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={cardClassName}
+              >
+                {cardContent}
+              </a>
+            )
+          }
+
+          return <div className={cardClassName}>{cardContent}</div>
+        }}
       />
 
       <Link

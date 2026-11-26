@@ -141,7 +141,17 @@ export default function CertificatesClient() {
 
         {/* ── Certificate Grid ──────────────────────────────────────────── */}
         <div>
-          <ExpandableCertificateGrid certificates={filtered} />
+          <ExpandableCertificateGrid
+            certificates={filtered}
+            onResetFilters={
+              activeFilter !== "all" || searchQuery !== ""
+                ? () => {
+                    setActiveFilter("all")
+                    setSearchQuery("")
+                  }
+                : undefined
+            }
+          />
         </div>
       </main>
 

@@ -80,7 +80,13 @@ export const TechIcon = memo(function TechIcon({
         height={size}
         loading="lazy"
         decoding="async"
-        onLoad={() => setImageState({ sourceKey, errorCount: 0 })}
+        onLoad={() => {
+          setImageState((current) =>
+            current.sourceKey === sourceKey && current.errorCount === 0
+              ? current
+              : { sourceKey, errorCount: 0 }
+          )
+        }}
         onError={() => {
           setImageState((current) => ({
             sourceKey,

@@ -16,6 +16,9 @@ import {
 } from "@/lib/projects-data"
 import useDebounce from "@/hooks/use-debounce"
 import { FilterSearchToolbar } from "@/components/ui/filter-search-toolbar"
+import { EmptyState as ArcEmptyState } from "@/components/arc/empty-state/empty-state"
+import { Button } from "@/components/ui/button"
+import { Search } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { getSupportedLanguage } from "@/lib/i18n/config"
 import { GithubLogoIcon } from "@phosphor-icons/react"
@@ -38,25 +41,31 @@ function matchesProjectSearch(project: ProjectItem, query: string) {
     .some((value) => value.toLowerCase().includes(query))
 }
 
-function EmptyState() {
+function EmptyState({ onReset }: { onReset?: () => void }) {
   const { t } = useTranslation()
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="col-span-full flex flex-col items-center justify-center py-20 text-center"
-    >
-      <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-xl border border-border/60 bg-muted/40 text-2xl">
-        🔍
-      </div>
-      <p className="text-sm font-medium text-foreground">
-        {t("projectsPage.noProjects")}
-      </p>
-      <p className="mt-1 text-xs text-muted-foreground">
-        {t("projectsPage.noProjectsHint")}
-      </p>
-    </motion.div>
+    <div className="col-span-full">
+      <ArcEmptyState
+        className="pt-4! pb-24!"
+        icon={<Search size={22} />}
+        title={t("projectsPage.noProjects")}
+        description={t("projectsPage.noProjectsHint")}
+        action={
+          onReset ? (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={onReset}
+              className="cursor-pointer rounded-lg"
+            >
+              {t("projectsPage.resetFilters")}
+            </Button>
+          ) : undefined
+        }
+      />
+    </div>
   )
 }
 
@@ -169,7 +178,17 @@ export default function ProjectsClient() {
         <div className="grid w-full auto-rows-fr grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <AnimatePresence mode="popLayout">
             {filtered.length === 0 ? (
-              <EmptyState />
+              <EmptyState
+                onReset={
+                  activeFilter !== "all" || searchQuery !== ""
+                    ? () => {
+                        setActiveFilter("all")
+                        setSearchQuery("")
+                        setVisibleCount(9)
+                      }
+                    : undefined
+                }
+              />
             ) : (
               filtered.slice(0, visibleCount).map((project, index) => (
                 <motion.div

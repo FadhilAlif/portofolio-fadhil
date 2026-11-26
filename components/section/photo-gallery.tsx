@@ -35,6 +35,8 @@ export function PhotoGallery({ photos, className }: PhotoGalleryProps) {
   }, [activePhoto])
 
   useEffect(() => {
+    if (!activePhoto) return
+
     function onKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
         setActivePhoto(null)
@@ -43,7 +45,7 @@ export function PhotoGallery({ photos, className }: PhotoGalleryProps) {
 
     window.addEventListener("keydown", onKeyDown)
     return () => window.removeEventListener("keydown", onKeyDown)
-  }, [])
+  }, [activePhoto])
 
   if (photos.length === 0) {
     return null
@@ -77,7 +79,7 @@ export function PhotoGallery({ photos, className }: PhotoGalleryProps) {
                   src={photo.imageUrl}
                   alt={photo.alt ?? photo.title}
                   fill
-                  sizes="(max-width: 640px) 180px, (max-width: 1024px) 220px, 25vw"
+                  sizes="(max-width: 640px) 180px, (max-width: 1024px) 220px, 240px"
                   className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                   loading="lazy"
                 />

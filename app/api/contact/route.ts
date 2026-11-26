@@ -1,19 +1,18 @@
 import { NextRequest, NextResponse } from "next/server"
 import { Resend } from "resend"
+import { Redis } from "@upstash/redis"
+import { Ratelimit } from "@upstash/ratelimit"
 import { contactSchema } from "@/lib/contact-schema"
-
 import { env } from "@/lib/env"
+import { getClientIp } from "@/lib/client-ip"
 
-// ─── Resend client ────────────────────────────────────────────────────────────
+// ─── Resend & Redis clients ───────────────────────────────────────────────────
 
 const resend = new Resend(env.RESEND_API_KEY)
 
-import { Redis } from "@upstash/redis"
-import { Ratelimit } from "@upstash/ratelimit"
-
 const kv = new Redis({
-  url: process.env.UPSTASH_REDIS_REST_URL || "",
-  token: process.env.UPSTASH_REDIS_REST_TOKEN || "",
+  url: env.UPSTASH_REDIS_REST_URL,
+  token: env.UPSTASH_REDIS_REST_TOKEN,
 })
 
 const ratelimit = new Ratelimit({
@@ -25,6 +24,7 @@ const ratelimit = new Ratelimit({
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>()
 const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000 // 1 hour
 const RATE_LIMIT_MAX = 3
+const MAX_RATE_LIMIT_MAP_ENTRIES = 5000
 
 type SupportedLanguage = "en" | "id"
 
@@ -53,28 +53,31 @@ const CONTACT_TEXT = {
 } as const
 
 async function checkRateLimit(ip: string): Promise<{ allowed: boolean; retryAfter: number }> {
-  if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) {
-    try {
-      const { success, reset } = await ratelimit.limit(`ratelimit:contact:${ip}`)
-      return { 
-        allowed: success, 
-        retryAfter: success ? 0 : Math.max(0, Math.ceil((reset - Date.now()) / 1000)) 
-      }
-    } catch (error) {
-      console.warn("[contact/rate-limit] Upstash Ratelimit failed, falling back to memory", error)
+  try {
+    const { success, reset } = await ratelimit.limit(`ratelimit:contact:${ip}`)
+    return {
+      allowed: success,
+      retryAfter: success ? 0 : Math.max(0, Math.ceil((reset - Date.now()) / 1000)),
     }
+  } catch (error) {
+    console.warn("[contact/rate-limit] Upstash Ratelimit failed, falling back to memory", error)
   }
 
-  // Fallback: In-memory rate limiting
+  // Fallback: Bounded in-memory rate limiting when Redis throws at runtime
   const now = Date.now()
   const entry = rateLimitMap.get(ip)
 
   if (!entry || now > entry.resetAt) {
-    rateLimitMap.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS })
     // Cleanup expired entries
     for (const [k, v] of Array.from(rateLimitMap.entries())) {
       if (now > v.resetAt) rateLimitMap.delete(k)
     }
+    // Enforce hard cap to prevent unbounded memory growth
+    if (rateLimitMap.size >= MAX_RATE_LIMIT_MAP_ENTRIES) {
+      const oldestKey = rateLimitMap.keys().next().value
+      if (oldestKey !== undefined) rateLimitMap.delete(oldestKey)
+    }
+    rateLimitMap.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS })
     return { allowed: true, retryAfter: 0 }
   }
   if (entry.count >= RATE_LIMIT_MAX) {
@@ -202,11 +205,7 @@ function buildEmailHtml(
 export async function POST(request: NextRequest) {
   try {
     // ── 1. Rate limit ────────────────────────────────────────────────────────
-    const forwardedFor = request.headers.get("x-forwarded-for")
-    const ip =
-      request.headers.get("x-real-ip") ??
-      (forwardedFor ? forwardedFor.split(",").pop()?.trim() : null) ??
-      "unknown"
+    const ip = getClientIp(request)
 
     const { allowed, retryAfter } = await checkRateLimit(ip)
     const fallbackLanguage = resolveLanguage(
@@ -221,6 +220,15 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Enforce JSON Content-Type to prevent simple cross-site form CSRF
+    const contentType = request.headers.get("content-type") ?? ""
+    if (!contentType.toLowerCase().includes("application/json")) {
+      return NextResponse.json(
+        { error: fallbackText.invalidJson },
+        { status: 415 }
+      )
+    }
+
     // ── 2. Validate body ─────────────────────────────────────────────────────
     let body: unknown
     try {
@@ -230,6 +238,17 @@ export async function POST(request: NextRequest) {
         { error: fallbackText.invalidJson },
         { status: 400 }
       )
+    }
+
+    // ── 3. Silent Honeypot (must run before Zod schema validation) ───────────
+    if (
+      typeof body === "object" &&
+      body !== null &&
+      "_honey" in body &&
+      typeof (body as { _honey?: unknown })._honey === "string" &&
+      (body as { _honey: string })._honey.length > 0
+    ) {
+      return NextResponse.json({ success: true })
     }
 
     const requestedLanguage =
@@ -249,12 +268,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const { name, email, message, _honey } = parsed.data
-
-    // ── 3. Honeypot ──────────────────────────────────────────────────────────
-    if (_honey && _honey.length > 0) {
-      return NextResponse.json({ success: true })
-    }
+    const { name, email, message } = parsed.data
 
     // ── 4. Build & send email ────────────────────────────────────────────────
     const sentAt = new Intl.DateTimeFormat("en-US", {
@@ -265,12 +279,13 @@ export async function POST(request: NextRequest) {
 
     const toEmail = env.CONTACT_EMAIL_TO
     const html = buildEmailHtml(name, email, message, sentAt)
+    const safeSubjectName = name.replace(/[\r\n]+/g, " ").trim()
 
     const { data, error } = await resend.emails.send({
       from: "FADHIL.DEV Contact <noreply@inbox.fadhildev.my.id>",
       to: [toEmail],
       replyTo: email,
-      subject: `New message from ${name} — fadhil.dev`,
+      subject: `New message from ${safeSubjectName} — fadhil.dev`,
       html,
     })
 

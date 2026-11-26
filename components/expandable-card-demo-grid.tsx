@@ -7,12 +7,17 @@ import { useOutsideClick } from "@/hooks/use-outside-click"
 import Image from "next/image"
 import { CertificateItem } from "@/lib/certificates-data"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { EmptyState } from "@/components/arc/empty-state/empty-state"
+import { Award } from "lucide-react"
 import { useTranslation } from "react-i18next"
 
 export default function ExpandableCertificateGrid({
   certificates,
+  onResetFilters,
 }: {
   certificates: CertificateItem[]
+  onResetFilters?: () => void
 }) {
   const { t } = useTranslation()
   const [active, setActive] = useState<CertificateItem | boolean | null>(null)
@@ -232,21 +237,27 @@ export default function ExpandableCertificateGrid({
       <div className="mx-auto grid w-full grid-cols-1 items-stretch gap-6 md:grid-cols-2 lg:grid-cols-3">
         <AnimatePresence mode="popLayout">
           {certificates.length === 0 ? (
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="col-span-full flex flex-col items-center justify-center py-20 text-center"
-            >
-              <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-xl border border-border/60 bg-muted/40 text-2xl">
-                🏅
-              </div>
-              <p className="text-sm font-medium text-foreground">
-                {t("certificateGrid.noCertificates")}
-              </p>
-              <p className="mt-1 text-xs text-muted-foreground">
-                {t("certificateGrid.noCertificatesHint")}
-              </p>
-            </motion.div>
+            <div className="col-span-full">
+              <EmptyState
+                className="pt-4! pb-24!"
+                icon={<Award size={22} />}
+                title={t("certificateGrid.noCertificates")}
+                description={t("certificateGrid.noCertificatesHint")}
+                action={
+                  onResetFilters ? (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={onResetFilters}
+                      className="cursor-pointer rounded-lg"
+                    >
+                      {t("certificateGrid.resetFilters")}
+                    </Button>
+                  ) : undefined
+                }
+              />
+            </div>
           ) : (
             certificates.slice(0, visibleCount).map((card, i) => (
               <motion.div

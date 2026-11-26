@@ -13,6 +13,8 @@ import { ContactForm } from "@/components/section/contact-form"
 import { Footer } from "@/components/section/footer"
 import { AnimatedSection } from "@/components/section/animated-section"
 import { SpotlightBackground } from "@/components/ui/spotlight"
+import { CopyButton } from "@/components/arc/copy-button/copy-button"
+import { ExpandingButtonGroup } from "@/components/arc/expanding-button-group/expanding-button-group"
 import { useTranslation } from "react-i18next"
 import { CLARITY_EVENTS, setClarityTag, trackClarityEvent } from "@/lib/clarity"
 import { siteConfig } from "@/lib/site-config"
@@ -28,7 +30,7 @@ const contactInfo = [
   },
   {
     labelKey: "contactPage.location",
-    value: "Yogyakarta",
+    value: siteConfig.location,
     href: null,
     icon: MapPinIcon,
   },
@@ -129,18 +131,29 @@ export default function ContactClient() {
                       {t(item.labelKey)}
                     </span>
                     {item.href ? (
-                      <a
-                        href={item.href}
-                        onClick={
-                          item.href.startsWith("mailto:")
-                            ? handleEmailClick
-                            : undefined
-                        }
-                        className="group flex items-center gap-2 text-sm font-medium text-foreground transition-colors hover:text-primary"
-                      >
-                        <item.icon className="h-4 w-4 text-muted-foreground transition-colors group-hover:text-primary" />
-                        {item.value}
-                      </a>
+                      <div className="flex items-center gap-2">
+                        <a
+                          href={item.href}
+                          onClick={
+                            item.href.startsWith("mailto:")
+                              ? handleEmailClick
+                              : undefined
+                          }
+                          className="group flex items-center gap-2 text-sm font-medium text-foreground transition-colors hover:text-primary"
+                        >
+                          <item.icon className="h-4 w-4 text-muted-foreground transition-colors group-hover:text-primary" />
+                          {item.value}
+                        </a>
+                        {item.href.startsWith("mailto:") && (
+                          <CopyButton
+                            value={item.value}
+                            label={t("contactPage.copyEmail")}
+                            iconOnly
+                            variant="outline"
+                            onCopied={handleEmailClick}
+                          />
+                        )}
+                      </div>
                     ) : (
                       <span className="flex items-center gap-2 text-sm font-medium text-foreground">
                         <item.icon className="h-4 w-4 text-muted-foreground" />
@@ -159,23 +172,21 @@ export default function ContactClient() {
                 <span className="text-xs font-medium tracking-wider text-muted-foreground uppercase">
                   {t("contactPage.socials")}
                 </span>
-                <div className="flex gap-3">
-                  {socialLinks.map((s) => (
-                    <a
-                      key={s.label}
-                      href={s.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={() => handleSocialClick(s.label.toLowerCase())}
-                      aria-label={s.label}
-                      className="group flex h-9 w-9 items-center justify-center rounded-lg border border-border/60 bg-card/50 text-muted-foreground transition-all duration-200 hover:border-primary/40 hover:bg-card hover:text-primary"
-                    >
-                      <s.icon
-                        className="h-4 w-4 transition-transform duration-200 group-hover:scale-110"
-                        weight="bold"
-                      />
-                    </a>
-                  ))}
+                <div className="flex justify-start">
+                  <ExpandingButtonGroup
+                    label={t("contactPage.socials")}
+                    defaultExpanded="github"
+                    size="md"
+                    items={socialLinks.map((s) => ({
+                      id: s.label.toLowerCase(),
+                      label: s.label,
+                      icon: <s.icon weight="bold" />,
+                      onSelect: () => {
+                        handleSocialClick(s.label.toLowerCase())
+                        window.open(s.href, "_blank", "noopener,noreferrer")
+                      },
+                    }))}
+                  />
                 </div>
               </div>
 

@@ -10,6 +10,7 @@ import {
 } from "@phosphor-icons/react"
 import { cn } from "@/lib/utils"
 import Image from "next/image"
+import { ExpandingButtonGroup } from "@/components/arc/expanding-button-group/expanding-button-group"
 import { useTranslation } from "react-i18next"
 import { CLARITY_EVENTS, setClarityTag, trackClarityEvent } from "@/lib/clarity"
 import { siteConfig } from "@/lib/site-config"
@@ -138,27 +139,25 @@ export function Footer({ className }: FooterProps) {
             </p>
 
             {/* Social icons */}
-            <div className="flex items-center gap-3">
-              {socialLinks.map((social) => (
-                <a
-                  key={social.label}
-                  href={social.href}
-                  target={social.href.startsWith("http") ? "_blank" : undefined}
-                  rel={
-                    social.href.startsWith("http")
-                      ? "noopener noreferrer"
-                      : undefined
-                  }
-                  onClick={() => handleSocialClick(social.label.toLowerCase())}
-                  aria-label={social.label}
-                  className="group flex h-8 w-8 items-center justify-center rounded-lg border border-border/60 bg-card/50 text-muted-foreground transition-all duration-200 hover:border-border hover:bg-card hover:text-foreground"
-                >
-                  <social.icon
-                    weight="bold"
-                    className="h-4 w-4 transition-transform duration-200 group-hover:scale-110"
-                  />
-                </a>
-              ))}
+            <div className="flex items-center justify-start sm:min-w-62">
+              <ExpandingButtonGroup
+                label={t("contactPage.socials")}
+                defaultExpanded="github"
+                size="sm"
+                items={socialLinks.map((social) => ({
+                  id: social.label.toLowerCase(),
+                  label: social.label,
+                  icon: <social.icon weight="bold" />,
+                  onSelect: () => {
+                    handleSocialClick(social.label.toLowerCase())
+                    if (social.href.startsWith("http")) {
+                      window.open(social.href, "_blank", "noopener,noreferrer")
+                    } else {
+                      window.location.href = social.href
+                    }
+                  },
+                }))}
+              />
             </div>
           </div>
         </div>
