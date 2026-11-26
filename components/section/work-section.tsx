@@ -1,14 +1,14 @@
 "use client"
 
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import Image from "next/image"
-import { Accordion as AccordionPrimitive } from "radix-ui"
+import { Accordion } from "@/components/arc/accordion/accordion"
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
-import { ChevronDown, MousePointerClick } from "lucide-react"
+import { MousePointerClick } from "lucide-react"
 import { ArrowSquareOutIcon } from "@phosphor-icons/react"
 import { cn } from "@/lib/utils"
 import { useReadLocalStorage } from "@/hooks/use-read-local-storage"
@@ -91,10 +91,13 @@ function CompanyLink({ company, companyUrl }: CompanyLinkProps) {
           target="_blank"
           rel="noopener noreferrer"
           onClick={(e) => e.stopPropagation()}
-          className="group/link inline-flex items-center gap-1 leading-none font-semibold underline-offset-2 hover:underline"
+          className="group/link inline-flex min-h-6 min-w-6 items-center gap-1 py-0.5 leading-tight font-semibold underline-offset-2 hover:underline"
         >
           {company}
-          <ArrowSquareOutIcon className="size-3 opacity-0 transition-opacity duration-150 group-hover/link:opacity-60" />
+          <ArrowSquareOutIcon
+            aria-hidden="true"
+            className="size-3 opacity-0 transition-opacity duration-150 group-hover/link:opacity-60"
+          />
         </a>
       </TooltipTrigger>
       <TooltipContent side="top">
@@ -122,17 +125,20 @@ export function WorkSection({
   })
 
   // Auto open TELKOMSIGMA (or current ongoing work) by default
-  const defaultOpenItem =
-    items.find(
+  const defaultOpenIndex = useMemo(() => {
+    if (propDefaultOpenValue) {
+      const propIndex = items.findIndex(
+        (item) => `${item.company}-${item.start}` === propDefaultOpenValue
+      )
+      if (propIndex >= 0) return propIndex
+    }
+
+    const ongoingIndex = items.findIndex(
       (item) =>
         item.company.toLowerCase().includes("telkomsigma") || !item.end
-    ) ?? items[0]
-
-  const defaultOpenValue =
-    propDefaultOpenValue ??
-    (defaultOpenItem
-      ? `${defaultOpenItem.company}-${defaultOpenItem.start}`
-      : undefined)
+    )
+    return ongoingIndex >= 0 ? ongoingIndex : 0
+  }, [items, propDefaultOpenValue])
 
   const hasResolvedHintState = isHintDismissed !== undefined
   const showFirstItemHint =
@@ -153,103 +159,75 @@ export function WorkSection({
   }
 
   return (
-    <AccordionPrimitive.Root
-      type="single"
-      collapsible
-      defaultValue={defaultOpenValue}
-      className="flex w-full flex-col gap-6"
+    <Accordion
+      lazyMount
+      defaultOpen={defaultOpenIndex}
+      className="border-t-0! [&_[class*='item']]:border-border/50 [&_[class*='item']:last-child]:border-b-0 [&_[class*='panelInner']]:pr-0 [&_[class*='trigger']]:py-4 [&_[class*='trigger']]:items-start sm:[&_[class*='trigger']]:items-center"
       onValueChange={() => {
         if (!showFirstItemHint) {
           return
         }
-
         dismissFirstItemHint()
       }}
-    >
-      {items.map((work, index) => {
+      items={items.map((work, index) => {
         const value = `${work.company}-${work.start}`
         const isFirstItem = index === 0
 
-        return (
-          <AccordionPrimitive.Item
-            key={value}
-            value={value}
-            className="flex w-full flex-col gap-0"
-          >
-            {/* Trigger */}
-            <AccordionPrimitive.Header className="flex">
-              <AccordionPrimitive.Trigger
-                className="group flex w-full cursor-pointer flex-col items-start gap-2 text-left outline-none sm:flex-row sm:justify-between sm:gap-x-3"
-                onClick={() => {
-                  if (showFirstItemHint && isFirstItem) {
-                    dismissFirstItemHint()
-                  }
-                }}
-              >
-                {/* Left: logo + company info */}
-                <div className="flex min-w-0 flex-1 items-center gap-x-3">
-                  <LogoImage src={work.logoUrl} alt={`${work.company} logo`} />
-                  <div className="flex min-w-0 flex-1 flex-col gap-1">
-                    <div className="flex flex-wrap items-center gap-1.5 leading-none">
-                      <CompanyLink
-                        company={work.company}
-                        companyUrl={work.companyUrl}
-                      />
-                      <ChevronDown
+        return {
+          id: value,
+          title: (
+            <div className="flex w-full flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-x-3">
+              {/* Left: logo + company info */}
+              <div className="flex min-w-0 flex-1 items-center gap-x-3">
+                <LogoImage src={work.logoUrl} alt={`${work.company} logo`} />
+                <div className="flex min-w-0 flex-1 flex-col gap-1">
+                  <div className="flex flex-wrap items-center gap-1.5 leading-none">
+                    <CompanyLink
+                      company={work.company}
+                      companyUrl={work.companyUrl}
+                    />
+                    {isFirstItem && showFirstItemHint && (
+                      <span
                         className={cn(
-                          "size-3.5 shrink-0 stroke-2 text-muted-foreground transition-transform duration-200",
-                          "group-data-[state=open]:rotate-180"
+                          "inline-flex animate-pulse items-center gap-1 rounded-full border border-primary/25 bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary transition-all duration-300 ease-out [[data-state=open]_&]:hidden"
                         )}
-                      />
-                      {isFirstItem && (
-                        <span
-                          className={cn(
-                            "inline-flex items-center gap-1 rounded-full border border-primary/25 bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary",
-                            "transition-all duration-300 ease-out group-data-[state=open]:hidden",
-                            showFirstItemHint
-                              ? "scale-100 animate-pulse opacity-100"
-                              : "pointer-events-none scale-95 opacity-0"
-                          )}
-                        >
-                          <MousePointerClick className="size-3" />
-                          {t("workSection.clickHint")}
-                        </span>
-                      )}
-                    </div>
-                    <span className="text-sm text-muted-foreground">
-                      {work.role}
-                    </span>
+                      >
+                        <MousePointerClick className="size-3" />
+                        {t("workSection.clickHint")}
+                      </span>
+                    )}
                   </div>
+                  <span className="text-sm font-normal text-muted-foreground">
+                    {work.role}
+                  </span>
                 </div>
-
-                {/* Right: date badge only */}
-                <div className="pl-13 sm:pl-0">
-                  <DateBadge start={work.start} end={work.end} />
-                </div>
-              </AccordionPrimitive.Trigger>
-            </AccordionPrimitive.Header>
-
-            {/* Content */}
-            <AccordionPrimitive.Content className="overflow-hidden data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down">
-              <div className="ml-13 space-y-5 pt-4 pb-1 text-sm text-muted-foreground">
-                <ul className="space-y-3">
-                  {work.description.map((desc, i) => (
-                    <li key={i} className="flex gap-2">
-                      <span className="mt-0.5 shrink-0 text-primary/50">•</span>
-                      <span className="leading-relaxed">{desc}</span>
-                    </li>
-                  ))}
-                </ul>
-
-                {work.gallery && work.gallery.length > 0 && (
-                  <PhotoGallery photos={work.gallery} />
-                )}
               </div>
-            </AccordionPrimitive.Content>
-          </AccordionPrimitive.Item>
-        )
+
+              {/* Right: date badge */}
+              <div className="pl-13 sm:pl-0">
+                <DateBadge start={work.start} end={work.end} />
+              </div>
+            </div>
+          ),
+          content: (
+            <div className="ml-13 space-y-5 pt-2 pb-1 text-sm text-muted-foreground">
+              <ul className="space-y-3">
+                {work.description.map((desc, i) => (
+                  <li key={i} className="flex gap-2">
+                    <span className="mt-0.5 shrink-0 text-primary/50">•</span>
+                    <span className="leading-relaxed">{desc}</span>
+                  </li>
+                ))}
+              </ul>
+
+              {work.gallery && work.gallery.length > 0 && (
+                <PhotoGallery photos={work.gallery} />
+              )}
+            </div>
+          ),
+        }
       })}
-    </AccordionPrimitive.Root>
+    />
   )
 }
 

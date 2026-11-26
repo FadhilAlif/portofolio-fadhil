@@ -1,5 +1,7 @@
-import { Search } from "lucide-react"
-import { Button } from "@/components/ui/button"
+"use client"
+
+import SegmentedControl from "@/components/arc/segmented-control/segmented-control"
+import { SearchField } from "@/components/arc/search-field/search-field"
 import { cn } from "@/lib/utils"
 
 type FilterOption<T extends string> = {
@@ -20,45 +22,6 @@ interface FilterSearchToolbarProps<T extends string> {
   className?: string
 }
 
-function FilterTab({
-  label,
-  count,
-  active,
-  onClick,
-}: {
-  label: string
-  count: number
-  active: boolean
-  onClick: () => void
-}) {
-  return (
-    <Button
-      type="button"
-      onClick={onClick}
-      aria-pressed={active}
-      variant="ghost"
-      className={cn(
-        "relative flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-medium transition-all",
-        active
-          ? "bg-foreground text-background shadow-sm"
-          : "text-muted-foreground hover:bg-muted/60 hover:text-foreground"
-      )}
-    >
-      {label}
-      <span
-        className={cn(
-          "flex h-4 min-w-4 items-center justify-center rounded px-1 text-[10px] font-semibold tabular-nums",
-          active
-            ? "bg-background/20 text-background"
-            : "bg-muted text-muted-foreground"
-        )}
-      >
-        {count}
-      </span>
-    </Button>
-  )
-}
-
 export function FilterSearchToolbar<T extends string>({
   filters,
   activeFilter,
@@ -74,37 +37,45 @@ export function FilterSearchToolbar<T extends string>({
   return (
     <div
       className={cn(
-        "flex w-full flex-col gap-3 rounded-2xl p-2 sm:flex-row sm:items-center sm:justify-between sm:gap-4",
+        "flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4",
         className
       )}
     >
-      <div className="w-full min-w-0 flex-1 overflow-x-auto">
-        <div className="inline-flex min-w-max items-center gap-1 rounded-xl border border-border/60 bg-card/50 p-1.5">
-          {filters.map((filter) => (
-            <FilterTab
-              key={filter.id}
-              label={filter.label}
-              count={counts[filter.id]}
-              active={activeFilter === filter.id}
-              onClick={() => onFilterChange(filter.id)}
-            />
-          ))}
-        </div>
+      <div className="w-full min-w-0 flex-1">
+        <SegmentedControl
+          label="Filter by category"
+          value={activeFilter}
+          onValueChange={(next) => onFilterChange(next as T)}
+          options={filters.map((filter) => {
+            const isActive = activeFilter === filter.id
+            return {
+              value: filter.id,
+              label: filter.label,
+              accessory: (
+                <span
+                  className={cn(
+                    "inline-flex h-4 min-w-4 items-center justify-center rounded px-1 text-[10px] font-semibold tabular-nums transition-colors",
+                    isActive
+                      ? "bg-foreground/10 text-foreground"
+                      : "bg-muted text-muted-foreground"
+                  )}
+                >
+                  {counts[filter.id]}
+                </span>
+              ),
+            }
+          })}
+        />
       </div>
 
-      <div className="relative w-full shrink-0 sm:max-w-sm">
-        <label htmlFor={searchInputId} className="sr-only">
-          {searchLabel}
-        </label>
-        <Search className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-        <input
+      <div className="w-full shrink-0 sm:max-w-sm [&_label]:sr-only">
+        <SearchField
           id={searchInputId}
-          type="search"
+          label={searchLabel}
           autoComplete="off"
           value={searchValue}
-          onChange={(event) => onSearchChange(event.target.value)}
+          onValueChange={onSearchChange}
           placeholder={searchPlaceholder}
-          className="h-11 w-full rounded-xl border border-border/60 bg-card/60 pr-4 pl-10 text-sm text-foreground transition-colors outline-none placeholder:text-muted-foreground/70 focus:border-primary/50"
         />
       </div>
     </div>

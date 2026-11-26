@@ -57,18 +57,30 @@ export default function HomeClient() {
         
         <div className="mt-12 grid w-full grid-cols-1 gap-12">
           <ExperienceSection items={experiences} />
-          <EducationSection items={educations} />
-          <SkillsSection groups={skillGroups} />
+          <div className="cv-section">
+            <EducationSection items={educations} />
+          </div>
+          <div className="cv-section-tall">
+            <SkillsSection groups={skillGroups} />
+          </div>
         </div>
 
-        <ProjectsSection items={projects} />
-        <CertificatesSection items={certificates} />
-        <StatsSection 
-          totalProjects={projects.length} 
-          totalCertificates={certificates.length} 
-          experiences={experiences} 
-        />
-        <ContactCtaSection />
+        <div className="cv-section-tall">
+          <ProjectsSection items={projects} />
+        </div>
+        <div className="cv-section">
+          <CertificatesSection items={certificates} />
+        </div>
+        <div className="cv-section">
+          <StatsSection
+            totalProjects={projects.length}
+            totalCertificates={certificates.length}
+            experiences={experiences}
+          />
+        </div>
+        <div className="cv-section-compact">
+          <ContactCtaSection />
+        </div>
       </main>
 
       <Footer className="relative z-10" />

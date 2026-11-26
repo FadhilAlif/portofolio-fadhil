@@ -10,6 +10,8 @@ import {
   ActivityHeatmap,
   type ActivityDay,
 } from "@/components/ui/activity-heatmap"
+import { AnimatedCounter } from "@/components/arc/animated-counter/animated-counter"
+import SegmentedControl from "@/components/arc/segmented-control/segmented-control"
 import { MagicCard } from "@/components/ui/magic-card"
 import { siteConfig } from "@/lib/site-config"
 import { cn } from "@/lib/utils"
@@ -53,57 +55,149 @@ interface GitHubContributionsApiResponse {
   contributions?: ActivityDay[]
 }
 
+const githubContributionsCache = new Map<string, ActivityDay[]>()
+const githubContributionsInFlight = new Map<string, Promise<ActivityDay[]>>()
+
+function getGitHubContributionsCacheKey(
+  username: string,
+  period: ContributionPeriod
+): string {
+  return `${username}:${period}`
+}
+
+async function fetchGitHubContributions(
+  username: string,
+  period: ContributionPeriod
+): Promise<ActivityDay[]> {
+  const key = getGitHubContributionsCacheKey(username, period)
+  const cached = githubContributionsCache.get(key)
+  if (cached) {
+    return cached
+  }
+
+  const inFlight = githubContributionsInFlight.get(key)
+  if (inFlight) {
+    return inFlight
+  }
+
+  const request = fetch(
+    `/api/github-contributions?username=${encodeURIComponent(username)}&year=${period}`
+  )
+    .then((res) => {
+      if (!res.ok) throw new Error(`HTTP ${res.status}`)
+      return res.json() as Promise<GitHubContributionsApiResponse>
+    })
+    .then((json) => {
+      const contributions = Array.isArray(json.contributions)
+        ? json.contributions.map((item) => ({
+            date: item.date,
+            count: item.count,
+          }))
+        : []
+      githubContributionsCache.set(key, contributions)
+      return contributions
+    })
+    .finally(() => {
+      githubContributionsInFlight.delete(key)
+    })
+
+  githubContributionsInFlight.set(key, request)
+  return request
+}
+
 function GitHubContributionCalendar({ username }: { username: string }) {
   const [selectedPeriod, setSelectedPeriod] =
     useState<ContributionPeriod>("last")
   const [selectedDate, setSelectedDate] = useState<string | null>(null)
-  const [days, setDays] = useState<ActivityDay[] | null>(null)
-  const [isLoading, setIsLoading] = useState<boolean>(true)
-  const [error, setError] = useState<string | null>(null)
-  const cacheRef = useRef<Partial<Record<ContributionPeriod, ActivityDay[]>>>({})
+  const [dataState, setDataState] = useState<{
+    daysByPeriod: Partial<Record<ContributionPeriod, ActivityDay[]>>
+    errorsByPeriod: Partial<Record<ContributionPeriod, string>>
+  }>({
+    daysByPeriod: {},
+    errorsByPeriod: {},
+  })
+  const [shouldFetch, setShouldFetch] = useState<boolean>(false)
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  const days = dataState.daysByPeriod[selectedPeriod] ?? null
+  const error = dataState.errorsByPeriod[selectedPeriod] ?? null
+  const isLoading = shouldFetch && days === null && error === null
+
+  const prefetchPeriod = useCallback(
+    (period: string) => {
+      void fetchGitHubContributions(
+        username,
+        period as ContributionPeriod
+      ).catch(() => {
+        // Ignore silent prefetch errors; active selection handles error UI.
+      })
+    },
+    [username]
+  )
 
   useEffect(() => {
-    const cached = cacheRef.current[selectedPeriod]
-    if (cached) {
-      setDays(cached)
-      setError(null)
-      setIsLoading(false)
-      return
+    if (shouldFetch) return
+
+    if (typeof IntersectionObserver === "undefined") {
+      const fallbackId = globalThis.setTimeout(() => setShouldFetch(true), 0)
+      return () => clearTimeout(fallbackId)
     }
 
-    let cancelled = false
-    setIsLoading(true)
+    const node = containerRef.current
+    if (!node) return
 
-    fetch(
-      `/api/github-contributions?username=${encodeURIComponent(username)}&year=${selectedPeriod}`
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          setShouldFetch(true)
+          observer.disconnect()
+        }
+      },
+      { rootMargin: "300px 0px" }
     )
-      .then((res) => {
-        if (!res.ok) throw new Error(`HTTP ${res.status}`)
-        return res.json() as Promise<GitHubContributionsApiResponse>
-      })
-      .then((json) => {
+
+    observer.observe(node)
+    return () => observer.disconnect()
+  }, [shouldFetch])
+
+  useEffect(() => {
+    if (!shouldFetch) return
+
+    let cancelled = false
+
+    fetchGitHubContributions(username, selectedPeriod)
+      .then((contributions) => {
         if (cancelled) return
-        const contributions = Array.isArray(json.contributions)
-          ? json.contributions.map((item) => ({
-              date: item.date,
-              count: item.count,
-            }))
-          : []
-        cacheRef.current[selectedPeriod] = contributions
-        setDays(contributions)
-        setError(null)
-        setIsLoading(false)
+        setDataState((prev) => {
+          if (prev.daysByPeriod[selectedPeriod] === contributions) {
+            return prev
+          }
+          const nextErrors = { ...prev.errorsByPeriod }
+          delete nextErrors[selectedPeriod]
+          return {
+            daysByPeriod: {
+              ...prev.daysByPeriod,
+              [selectedPeriod]: contributions,
+            },
+            errorsByPeriod: nextErrors,
+          }
+        })
       })
       .catch(() => {
         if (cancelled) return
-        setError("Failed to load GitHub contribution data.")
-        setIsLoading(false)
+        setDataState((prev) => ({
+          ...prev,
+          errorsByPeriod: {
+            ...prev.errorsByPeriod,
+            [selectedPeriod]: "Failed to load GitHub contribution data.",
+          },
+        }))
       })
 
     return () => {
       cancelled = true
     }
-  }, [username, selectedPeriod])
+  }, [username, selectedPeriod, shouldFetch])
 
   const handleSelectDate = useCallback((date: string) => {
     setSelectedDate((current) => (current === date ? null : date))
@@ -113,70 +207,55 @@ function GitHubContributionCalendar({ username }: { username: string }) {
     PERIOD_OPTIONS.find((option) => option.value === selectedPeriod) ??
     PERIOD_OPTIONS[0]
 
-  if (error && !days) {
-    return <p className="text-sm text-muted-foreground">{error}</p>
-  }
-
-  if (!days) {
-    return (
-      <div
-        className="flex w-full flex-col gap-3"
-        aria-busy="true"
-        aria-hidden="true"
-      >
-        <div className="flex items-center justify-between gap-2">
-          <div className="h-5 w-48 animate-pulse rounded-md bg-muted/70" />
-          <div className="h-6 w-40 animate-pulse rounded-md bg-muted/60" />
-        </div>
-        <div className="h-32 w-full animate-pulse rounded-lg border border-border/60 bg-card/35" />
-        <div className="flex items-center justify-between">
-          <div className="h-4 w-24 animate-pulse rounded bg-muted/50" />
-          <div className="h-4 w-28 animate-pulse rounded bg-muted/60" />
-        </div>
-      </div>
-    )
-  }
-
   return (
-    <ActivityHeatmap
-      days={days}
-      label={activePeriod.ariaLabel}
-      period={activePeriod.periodText}
-      selectedDate={selectedDate}
-      onSelectDate={handleSelectDate}
-      thresholds={[3, 6, 12]}
-      className={cn(
-        "transition-opacity duration-200",
-        isLoading && "opacity-75"
-      )}
-      actions={
+    <div ref={containerRef} className="min-h-[188px]">
+      {error && !days ? (
+        <p className="text-sm text-muted-foreground">{error}</p>
+      ) : !days ? (
         <div
-          role="group"
-          aria-label="Filter contributions by period"
-          className="inline-flex flex-wrap items-center gap-1 rounded-lg border border-border/70 bg-muted/40 p-0.5"
+          className="flex w-full flex-col gap-3"
+          aria-busy="true"
+          aria-hidden="true"
         >
-          {PERIOD_OPTIONS.map((option) => {
-            const isActive = option.value === selectedPeriod
-            return (
-              <button
-                key={option.value}
-                type="button"
-                aria-pressed={isActive}
-                onClick={() => setSelectedPeriod(option.value)}
-                className={cn(
-                  "rounded-md px-2 py-1 text-xs font-medium transition-colors",
-                  isActive
-                    ? "bg-background text-foreground shadow-2xs"
-                    : "text-muted-foreground hover:text-foreground"
-                )}
-              >
-                {option.buttonLabel}
-              </button>
-            )
-          })}
+          <div className="flex items-center justify-between gap-2">
+            <div className="h-5 w-48 animate-pulse rounded-md bg-muted/70" />
+            <div className="h-6 w-40 animate-pulse rounded-md bg-muted/60" />
+          </div>
+          <div className="h-32 w-full animate-pulse rounded-lg border border-border/60 bg-card/35" />
+          <div className="flex items-center justify-between">
+            <div className="h-4 w-24 animate-pulse rounded bg-muted/50" />
+            <div className="h-4 w-28 animate-pulse rounded bg-muted/60" />
+          </div>
         </div>
-      }
-    />
+      ) : (
+        <ActivityHeatmap
+          days={days}
+          label={activePeriod.ariaLabel}
+          period={activePeriod.periodText}
+          selectedDate={selectedDate}
+          onSelectDate={handleSelectDate}
+          thresholds={[3, 6, 12]}
+          className={cn(
+            "transition-opacity duration-200",
+            isLoading && "opacity-75"
+          )}
+          actions={
+            <SegmentedControl
+              label="Filter contributions by period"
+              value={selectedPeriod}
+              onValueChange={(next) =>
+                setSelectedPeriod(next as ContributionPeriod)
+              }
+              onOptionIntent={prefetchPeriod}
+              options={PERIOD_OPTIONS.map((option) => ({
+                value: option.value,
+                label: option.buttonLabel,
+              }))}
+            />
+          }
+        />
+      )}
+    </div>
   )
 }
 
@@ -203,18 +282,24 @@ export function StatsSection({
       includedCompanies: EXPERIENCE_COMPANIES_FOR_SUMMARY,
     })
 
-  const snapshotStats = [
+  const snapshotStats: {
+    label: string
+    value: number
+    decimals?: number
+    description?: string
+  }[] = [
     {
       label: t("home.totalProjects"),
-      value: String(totalProjects),
+      value: totalProjects,
     },
     {
       label: t("home.totalCertificates"),
-      value: String(totalCertificates),
+      value: totalCertificates,
     },
     {
       label: t("home.yearsExperience"),
-      value: yearsOfExperience.toFixed(1),
+      value: Number(yearsOfExperience.toFixed(1)),
+      decimals: 1,
       description: t("home.monthsTotal", { count: experienceMonths }),
     },
   ]
@@ -249,9 +334,13 @@ export function StatsSection({
               <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
                 {item.label}
               </p>
-              <p className="mt-2 text-3xl font-semibold text-foreground">
-                {item.value}
-              </p>
+              <div className="mt-2">
+                <AnimatedCounter
+                  value={item.value}
+                  decimals={item.decimals ?? 0}
+                  animateOnView
+                />
+              </div>
               {item.description ? (
                 <p className="mt-auto pt-2 text-xs text-muted-foreground">
                   {item.description}
@@ -272,9 +361,9 @@ export function StatsSection({
           <div className="mb-4 flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">
               <GithubLogoIcon className="h-5 w-5 text-foreground" />
-              <h4 className="text-sm font-medium text-foreground">
+              <h3 className="text-sm font-medium text-foreground">
                 {t("home.githubContributions")}
-              </h4>
+              </h3>
             </div>
             <a
               href={siteConfig.github.url}

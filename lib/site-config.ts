@@ -1,5 +1,7 @@
 export const siteConfig = {
   name: "Fadhil Alif Priyatno",
+  role: "Full-Stack Engineer",
+  location: "Jakarta, Indonesia",
   domain: "fadhildev.my.id",
   url: "https://fadhildev.my.id",
   email: "fadhil.alifp@gmail.com",

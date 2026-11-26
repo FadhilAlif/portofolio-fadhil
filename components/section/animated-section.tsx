@@ -5,28 +5,27 @@ import { motion, type Variants } from "motion/react"
 import { cn } from "@/lib/utils"
 
 // ─── Animation Variants ─────────────────────────────────────────────────────
-// Uses a subtle blur(2px) for section-level reveal animations.
-// StaggerItem variants use ONLY transform + opacity (GPU-compositable) to avoid
-// the Lighthouse "non-composited animations" diagnostic when many items animate.
+// Uses GPU-compositable opacity + transform properties only (no filter blur)
+// to avoid expensive non-composited animations and main-thread style recalculations.
 
 const fadeInUp: Variants = {
-  hidden: { opacity: 0, y: 30, filter: "blur(2px)" },
-  visible: { opacity: 1, y: 0, filter: "blur(0px)" },
+  hidden: { opacity: 0, y: 30 },
+  visible: { opacity: 1, y: 0 },
 }
 
 const fadeInLeft: Variants = {
-  hidden: { opacity: 0, x: -30, filter: "blur(2px)" },
-  visible: { opacity: 1, x: 0, filter: "blur(0px)" },
+  hidden: { opacity: 0, x: -30 },
+  visible: { opacity: 1, x: 0 },
 }
 
 const fadeInRight: Variants = {
-  hidden: { opacity: 0, x: 30, filter: "blur(2px)" },
-  visible: { opacity: 1, x: 0, filter: "blur(0px)" },
+  hidden: { opacity: 0, x: 30 },
+  visible: { opacity: 1, x: 0 },
 }
 
 const scaleIn: Variants = {
-  hidden: { opacity: 0, scale: 0.9, filter: "blur(2px)" },
-  visible: { opacity: 1, scale: 1, filter: "blur(0px)" },
+  hidden: { opacity: 0, scale: 0.9 },
+  visible: { opacity: 1, scale: 1 },
 }
 
 const variantMap = {

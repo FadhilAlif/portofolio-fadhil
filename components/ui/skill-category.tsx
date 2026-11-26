@@ -19,9 +19,9 @@ export type SkillCategoryProps = {
 function SkillCategory({ title, skills, className }: SkillCategoryProps) {
   return (
     <div className={cn("flex flex-col gap-4", className)}>
-      <h4 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+      <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
         {title}
-      </h4>
+      </h3>
 
       <div className="flex flex-wrap items-center gap-3 md:gap-4 lg:gap-5">
         {skills.map((skill) => (

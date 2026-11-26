@@ -67,6 +67,8 @@ export function FloatingDock() {
         >
           <DockItem
             active={pathname === "/"}
+            ariaCurrent={pathname === "/" ? "page" : undefined}
+            ariaLabel={t("dock.about")}
             onClick={() => handleNavigation("/")}
           >
             <DockLabel>{t("dock.about")}</DockLabel>
@@ -84,6 +86,8 @@ export function FloatingDock() {
 
           <DockItem
             active={pathname === "/projects"}
+            ariaCurrent={pathname === "/projects" ? "page" : undefined}
+            ariaLabel={t("dock.projects")}
             onClick={() => handleNavigation("/projects")}
           >
             <DockLabel>{t("dock.projects")}</DockLabel>
@@ -101,6 +105,8 @@ export function FloatingDock() {
 
           <DockItem
             active={pathname === "/certificates"}
+            ariaCurrent={pathname === "/certificates" ? "page" : undefined}
+            ariaLabel={t("dock.certificates")}
             onClick={() => handleNavigation("/certificates")}
           >
             <DockLabel>{t("dock.certificates")}</DockLabel>
@@ -118,6 +124,8 @@ export function FloatingDock() {
 
           <DockItem
             active={pathname === "/contact"}
+            ariaCurrent={pathname === "/contact" ? "page" : undefined}
+            ariaLabel={t("dock.contact")}
             onClick={() => handleNavigation("/contact")}
           >
             <DockLabel>{t("dock.contact")}</DockLabel>
@@ -133,10 +141,13 @@ export function FloatingDock() {
             </DockIcon>
           </DockItem>
 
-          <div className="mx-1.5 h-full w-px bg-border sm:mx-2" />
+          <div aria-hidden="true" className="mx-1.5 h-full w-px bg-border sm:mx-2" />
 
           <DockItem
             active={isChatOpen}
+            ariaExpanded={isChatOpen}
+            ariaHaspopup="dialog"
+            ariaLabel={t("dock.aiChat")}
             onClick={() => setIsChatOpen((prev) => !prev)}
           >
             <DockLabel>{t("dock.aiChat")}</DockLabel>
@@ -155,6 +166,7 @@ export function FloatingDock() {
           <DockItem
             className="group"
             active={isLanguageActive}
+            ariaLabel={t("dock.language")}
             onClick={handleLanguageToggle}
           >
             <DockLabel>{t("dock.language")}</DockLabel>
@@ -171,7 +183,7 @@ export function FloatingDock() {
                 <div className="absolute inset-0 flex scale-75 items-center justify-center opacity-0 transition-all duration-150 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover:scale-105 group-hover:opacity-100">
                   <span className="relative block size-full overflow-hidden rounded-full">
                     <Image
-                      alt={`${activeLanguageFlag.label} flag`}
+                      alt=""
                       className="object-cover"
                       fill
                       sizes="40px"
@@ -183,7 +195,7 @@ export function FloatingDock() {
             </DockIcon>
           </DockItem>
 
-          <DockItem onClick={toggleTheme}>
+          <DockItem ariaLabel={t("dock.theme")} onClick={toggleTheme}>
             <DockLabel>{t("dock.theme")}</DockLabel>
             <DockIcon>
               {mounted && theme === "dark" ? (

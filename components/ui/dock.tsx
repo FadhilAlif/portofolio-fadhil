@@ -37,8 +37,12 @@ interface DockProps {
 interface DockItemProps {
   className?: string
   children: React.ReactNode
-  onClick?: React.MouseEventHandler<HTMLDivElement>
+  onClick?: React.MouseEventHandler<HTMLButtonElement>
   active?: boolean
+  ariaLabel?: string
+  ariaCurrent?: React.AriaAttributes["aria-current"]
+  ariaHaspopup?: React.AriaAttributes["aria-haspopup"]
+  ariaExpanded?: boolean
 }
 interface DockLabelProps {
   className?: string
@@ -156,8 +160,17 @@ function Dock({
   )
 }
 
-function DockItem({ children, className, onClick, active }: DockItemProps) {
-  const ref = useRef<HTMLDivElement>(null)
+function DockItem({
+  children,
+  className,
+  onClick,
+  active,
+  ariaLabel,
+  ariaCurrent,
+  ariaHaspopup,
+  ariaExpanded,
+}: DockItemProps) {
+  const ref = useRef<HTMLButtonElement>(null)
 
   const { distance, magnification, mouseX, spring } = useDock()
 
@@ -177,10 +190,13 @@ function DockItem({ children, className, onClick, active }: DockItemProps) {
   const width = useSpring(widthTransform, spring)
 
   return (
-    <motion.div
-      aria-haspopup="true"
+    <motion.button
+      aria-current={ariaCurrent}
+      aria-expanded={ariaExpanded}
+      aria-haspopup={ariaHaspopup}
+      aria-label={ariaLabel}
       className={cn(
-        "relative inline-flex items-center justify-center hover:cursor-pointer",
+        "relative inline-flex items-center justify-center rounded-xl hover:cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
         className
       )}
       onBlur={() => isHovered.set(0)}
@@ -194,13 +210,14 @@ function DockItem({ children, className, onClick, active }: DockItemProps) {
       }}
       onClick={(event) => {
         onClick?.(event)
-        event.currentTarget.blur()
+        if (event.detail !== 0) {
+          event.currentTarget.blur()
+        }
         isHovered.set(0)
       }}
       ref={ref}
-      role="button"
       style={{ width }}
-      tabIndex={0}
+      type="button"
     >
       {Children.map(children, (child) =>
         cloneElement(
@@ -212,7 +229,7 @@ function DockItem({ children, className, onClick, active }: DockItemProps) {
           { width, isHovered, active }
         )
       )}
-    </motion.div>
+    </motion.button>
   )
 }
 
@@ -259,6 +276,7 @@ function DockIcon({ children, className, ...rest }: DockIconProps) {
 
   return (
     <motion.div
+      aria-hidden="true"
       className={cn("flex items-center justify-center", className)}
       style={{ width: widthTransform }}
     >
@@ -276,31 +294,31 @@ export function Demo() {
   return (
     <div className="fixed inset-0 flex items-end justify-center pb-8">
       <Dock>
-        <DockItem>
+        <DockItem ariaLabel="Home">
           <DockLabel>Home</DockLabel>
           <DockIcon>
             <Home className="size-full text-neutral-600 dark:text-neutral-300" />
           </DockIcon>
         </DockItem>
-        <DockItem>
+        <DockItem ariaLabel="Messages">
           <DockLabel>Messages</DockLabel>
           <DockIcon>
             <MessageSquare className="size-full text-neutral-600 dark:text-neutral-300" />
           </DockIcon>
         </DockItem>
-        <DockItem>
+        <DockItem ariaLabel="Profile">
           <DockLabel>Profile</DockLabel>
           <DockIcon>
             <User className="size-full text-neutral-600 dark:text-neutral-300" />
           </DockIcon>
         </DockItem>
-        <DockItem>
+        <DockItem ariaLabel="Notifications">
           <DockLabel>Notifications</DockLabel>
           <DockIcon>
             <Bell className="size-full text-neutral-600 dark:text-neutral-300" />
           </DockIcon>
         </DockItem>
-        <DockItem>
+        <DockItem ariaLabel="Settings">
           <DockLabel>Settings</DockLabel>
           <DockIcon>
             <Settings className="size-full text-neutral-600 dark:text-neutral-300" />
